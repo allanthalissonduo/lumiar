@@ -66,12 +66,11 @@ export default function SettingsPage() {
   return (
     <div>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Settings
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Configurações
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Everything in one place — your account and your workspace. Pick a
-          section to manage it.
+        <p className="mt-1 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Tudo em um lugar — sua conta e seu workspace. Escolha uma seção.
         </p>
       </div>
 

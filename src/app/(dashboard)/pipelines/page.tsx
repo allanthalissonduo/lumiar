@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Pipeline, PipelineStage, Deal } from "@/types";
 import { PipelineBoard } from "@/components/pipelines/pipeline-board";
@@ -319,13 +319,14 @@ export default function PipelinesPage() {
           {/* Pipeline selector dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors data-[popup-open]:bg-muted"
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+              style={{ backgroundColor: "var(--ei-surface-card)", border: "1px solid rgba(159,176,201,0.18)", color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
-              <GitBranch className="h-4 w-4 text-primary" />
+              <GitBranch className="h-4 w-4" style={{ color: "var(--ei-cobalt)" }} />
               <span className="font-semibold">
-                {selectedPipeline?.name ?? "Select Pipeline"}
+                {selectedPipeline?.name ?? "Selecionar Pipeline"}
               </span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              <ChevronDown className="h-4 w-4" style={{ color: "var(--ei-text-soft)" }} />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
@@ -390,22 +391,25 @@ export default function PipelinesPage() {
 
       {/* Board */}
       {pipelines.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20">
-          <GitBranch className="h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-medium text-foreground">
-            No pipelines yet
+        <div className="flex flex-col items-center justify-center rounded-xl py-20" style={{ border: "1px dashed rgba(159,176,201,0.25)" }}>
+          <div className="flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(43,111,219,0.10)" }}>
+            <GitBranch className="h-7 w-7" style={{ color: "var(--ei-cobalt)" }} />
+          </div>
+          <h3 className="mt-4 text-base font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Nenhum pipeline ainda
           </h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Create a pipeline to start tracking deals
+          <p className="mt-1 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Crie um pipeline para começar a rastrear negócios
           </p>
           <GatedButton
             canAct={canEditSettings}
             gateReason="create pipelines"
             onClick={() => setNewPipelineOpen(true)}
-            className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
+            className="mt-5 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
           >
             <Plus className="mr-1 h-4 w-4" />
-            Create Pipeline
+            Criar Pipeline
           </GatedButton>
         </div>
       ) : (
