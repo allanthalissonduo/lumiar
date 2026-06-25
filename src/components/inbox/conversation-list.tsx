@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { cn } from "@/lib/utils";
 import type { Conversation, ConversationStatus } from "@/types";
 import { Search, ChevronDown } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -31,9 +30,9 @@ interface ConversationListProps {
 }
 
 const STATUS_COLORS: Record<ConversationStatus, string> = {
-  open: "bg-primary",
-  pending: "bg-amber-500",
-  closed: "bg-muted-foreground",
+  open: "var(--ei-iris)",
+  pending: "#EAA40D",
+  closed: "rgba(159,176,201,0.50)",
 };
 
 type InboxFilter = ConversationStatus | "all" | "unread";
@@ -451,7 +450,8 @@ function ConversationItem({
               </span>
             )}
             <span
-              className={cn("h-2 w-2 rounded-full", STATUS_COLORS[conversation.status])}
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: STATUS_COLORS[conversation.status] }}
               title={conversation.status}
             />
           </div>
