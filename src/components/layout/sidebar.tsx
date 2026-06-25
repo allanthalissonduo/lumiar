@@ -18,6 +18,7 @@ import {
   Radio,
   Settings,
   Shield,
+  ShoppingCart,
   User,
   UserCog,
   Users,
@@ -90,6 +91,7 @@ const aiNavItems: NavItem[] = [
   { href: "/agents", label: "Agente IA", icon: Bot },
   { href: "/wa-flows", label: "WA Flows", icon: Layers, beta: true },
   { href: "/catalog", label: "Catálogo", icon: Package, beta: true },
+  { href: "/vtex", label: "VTEX Commerce", icon: ShoppingCart },
 ];
 
 const bottomNavItems = [
