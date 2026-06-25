@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
 import {
@@ -32,27 +31,27 @@ import type { AccountRole } from "@/lib/auth/roles";
 
 const ROLE_CHIP: Record<
   AccountRole,
-  { icon: typeof Crown; label: string; className: string }
+  { icon: typeof Crown; label: string; style: React.CSSProperties }
 > = {
   owner: {
     icon: Crown,
-    label: "Owner",
-    className: "border-amber-500/40 bg-amber-500/10 text-amber-300",
+    label: "Proprietário",
+    style: { border: "1px solid rgba(245,158,11,0.40)", backgroundColor: "rgba(245,158,11,0.10)", color: "#fcd34d" },
   },
   admin: {
     icon: Shield,
     label: "Admin",
-    className: "border-primary/40 bg-primary/10 text-primary",
+    style: { border: "1px solid rgba(43,111,219,0.40)", backgroundColor: "rgba(43,111,219,0.12)", color: "var(--ei-cobalt)" },
   },
   agent: {
     icon: UserCog,
-    label: "Agent",
-    className: "border-[rgba(159,176,201,0.25)] bg-[rgba(159,176,201,0.10)] text-[var(--ei-offwhite)]",
+    label: "Agente",
+    style: { border: "1px solid rgba(159,176,201,0.25)", backgroundColor: "rgba(159,176,201,0.10)", color: "var(--ei-offwhite)" },
   },
   viewer: {
     icon: User,
-    label: "Viewer",
-    className: "border-[rgba(159,176,201,0.18)] bg-[rgba(159,176,201,0.06)] text-[var(--ei-text-soft)]",
+    label: "Visualizador",
+    style: { border: "1px solid rgba(159,176,201,0.18)", backgroundColor: "rgba(159,176,201,0.06)", color: "var(--ei-text-soft)" },
   },
 };
 
@@ -169,8 +168,8 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               aria-label={`${totalUnread} não lidas`}
               className="relative flex h-2 w-2 shrink-0"
             >
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ backgroundColor: "var(--ei-cobalt)" }} />
+              <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: "var(--ei-cobalt)" }} />
             </span>
           )}
         </Link>
@@ -184,21 +183,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         type="button"
         aria-label="Fechar menu"
         onClick={onClose}
-        className={cn(
-          "fixed inset-0 z-30 bg-background/70 backdrop-blur-sm transition-opacity lg:hidden",
-          open
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0",
-        )}
+        className={`fixed inset-0 z-30 backdrop-blur-sm transition-opacity lg:hidden ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+        style={{ backgroundColor: "rgba(10,22,40,0.70)" }}
       />
 
       <aside
-        className={cn(
-          "fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col",
-          "transition-transform duration-200 ease-out will-change-transform",
-          open ? "translate-x-0" : "-translate-x-full",
-          "lg:static lg:z-0 lg:w-56 lg:translate-x-0 lg:transition-none",
-        )}
+        className={`fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col transition-transform duration-200 ease-out will-change-transform lg:static lg:z-0 lg:w-56 lg:translate-x-0 lg:transition-none ${open ? "translate-x-0" : "-translate-x-full"}`}
         style={{ backgroundColor: "var(--ei-abyssal)", borderRight: "1px solid rgba(159,176,201,0.18)" }}
         aria-label="Navegação principal"
       >
@@ -246,7 +236,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               <span className="font-mono text-[9px] font-medium uppercase tracking-[0.14em]" style={{ color: "var(--ei-text-soft)" }}>
                 IA
               </span>
-              <div className="h-px flex-1 bg-border" />
+              <div className="h-px flex-1" style={{ backgroundColor: "rgba(159,176,201,0.14)" }} />
             </div>
           </div>
 
@@ -296,7 +286,8 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                   const Icon = meta.icon;
                   return (
                     <span
-                      className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${meta.className}`}
+                      className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider"
+                      style={meta.style}
                     >
                       <Icon className="size-3" />
                       {meta.label}

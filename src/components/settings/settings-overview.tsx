@@ -9,8 +9,6 @@ import { useTheme } from '@/hooks/use-theme';
 import { THEMES } from '@/lib/themes';
 import { CURRENCIES } from '@/lib/currency';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 import { SECTION_META, type SettingsSection } from './settings-sections';
 import { SettingsChip, StatusDot } from './settings-chip';
@@ -41,10 +39,6 @@ export function SettingsOverview({
 
   const [counts, setCounts] = useState<OverviewCounts | null>(null);
   const [countsLoading, setCountsLoading] = useState(true);
-  // WhatsApp status is tracked separately: its health check decrypts the
-  // token and pings Meta, which is far slower than the cheap count
-  // queries. Gating it independently keeps a slow/flaky Meta round-trip
-  // from blanking the rest of the landing.
   const [whatsapp, setWhatsapp] = useState<WhatsAppStatus | null>(null);
   const [whatsappLoading, setWhatsappLoading] = useState(true);
 
@@ -55,7 +49,6 @@ export function SettingsOverview({
     const userId = user.id;
     const acctId = accountId;
 
-    // Cheap counts — resolve fast, render immediately.
     (async () => {
       setCountsLoading(true);
       const [membersRes, invitesRes, templatesTotal, templatesPending, tagsRes, fieldsRes] =
@@ -113,7 +106,6 @@ export function SettingsOverview({
       setCountsLoading(false);
     })();
 
-    // WhatsApp connection status — slower, independent.
     (async () => {
       setWhatsappLoading(true);
       const [row, health] = await Promise.allSettled([
@@ -137,7 +129,7 @@ export function SettingsOverview({
     };
   }, [user, accountId, canManageMembers]);
 
-  const displayName = profile?.full_name || profile?.email || 'Your account';
+  const displayName = profile?.full_name || profile?.email || 'Sua conta';
   const initial = (profile?.full_name || profile?.email || 'U').charAt(0).toUpperCase();
   const roleMeta = accountRole ? ROLE_META[accountRole] : null;
   const RoleIcon = roleMeta?.icon;
@@ -145,10 +137,8 @@ export function SettingsOverview({
   const currencyLabel =
     CURRENCIES.find((c) => c.code === defaultCurrency)?.label ?? defaultCurrency;
   const themeName = THEMES.find((t) => t.id === theme)?.name ?? theme;
-  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const modeLabel = mode === 'dark' ? 'Escuro' : mode === 'light' ? 'Claro' : mode;
 
-  // Per-tile loading + subtitle. `null` counts render as a graceful
-  // fallback so a single failed query never blanks a tile.
   const tiles: {
     section: SettingsSection;
     loading: boolean;
@@ -158,14 +148,14 @@ export function SettingsOverview({
       section: 'whatsapp',
       loading: whatsappLoading,
       subtitle: !whatsapp?.configured ? (
-        'Not set up yet'
+        'Ainda não configurado'
       ) : whatsapp.connected ? (
         <>
-          <StatusDot tone="ok" /> Connected
+          <StatusDot tone="ok" /> Conectado
         </>
       ) : (
         <>
-          <StatusDot tone="muted" /> Needs reconnecting
+          <StatusDot tone="muted" /> Precisa reconectar
         </>
       ),
     },
@@ -174,12 +164,12 @@ export function SettingsOverview({
       loading: countsLoading,
       subtitle:
         counts?.members == null
-          ? 'View team members'
-          : `${counts.members} member${counts.members === 1 ? '' : 's'}${
+          ? 'Ver membros da equipe'
+          : `${counts.members} membro${counts.members === 1 ? '' : 's'}${
               counts.pendingInvites
-                ? ` · ${counts.pendingInvites} pending invite${
+                ? ` · ${counts.pendingInvites} convite${
                     counts.pendingInvites === 1 ? '' : 's'
-                  }`
+                  } pendente${counts.pendingInvites === 1 ? '' : 's'}`
                 : ''
             }`,
     },
@@ -188,10 +178,10 @@ export function SettingsOverview({
       loading: countsLoading,
       subtitle:
         counts?.templates == null
-          ? 'Manage message templates'
+          ? 'Gerenciar templates de mensagem'
           : `${counts.templates} template${counts.templates === 1 ? '' : 's'}${
               counts.templatesPending
-                ? ` · ${counts.templatesPending} pending review`
+                ? ` · ${counts.templatesPending} em revisão`
                 : ''
             }`,
     },
@@ -205,36 +195,52 @@ export function SettingsOverview({
       loading: countsLoading,
       subtitle:
         counts?.tags == null && counts?.customFields == null
-          ? 'Tags and custom fields'
+          ? 'Tags e campos personalizados'
           : `${counts?.tags ?? 0} tag${counts?.tags === 1 ? '' : 's'} · ${
               counts?.customFields ?? 0
-            } custom field${counts?.customFields === 1 ? '' : 's'}`,
+            } campo${counts?.customFields === 1 ? '' : 's'} personalizado${counts?.customFields === 1 ? '' : 's'}`,
     },
     {
       section: 'appearance',
       loading: false,
-      subtitle: `${cap(mode)} mode · ${themeName} accent`,
+      subtitle: `${modeLabel} · ${themeName}`,
     },
   ];
 
   return (
     <section className="animate-in fade-in-50 duration-200">
-      {/* Identity */}
-      <Card className="flex-row items-center gap-4 px-5 py-5">
+      {/* Identidade */}
+      <div
+        className="flex flex-row items-center gap-4 px-5 py-5"
+        style={{
+          backgroundColor: "rgba(159,176,201,0.04)",
+          border: "1px solid rgba(159,176,201,0.16)",
+          borderRadius: "12px",
+        }}
+      >
         <Avatar size="lg" className="size-14">
           {profile?.avatar_url ? (
             <AvatarImage src={profile.avatar_url} alt={displayName} />
           ) : null}
-          <AvatarFallback className="bg-primary/10 text-xl text-primary">
+          <AvatarFallback
+            className="text-xl"
+            style={{ backgroundColor: "rgba(43,111,219,0.14)", color: "var(--ei-cobalt)" }}
+          >
             {initial}
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-base font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <div
+            className="truncate text-base font-semibold"
+            style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
             {displayName}
           </div>
           {profile?.email ? (
-            <div className="truncate text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            <div
+              className="truncate text-sm"
+              style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
               {profile.email}
             </div>
           ) : null}
@@ -245,9 +251,9 @@ export function SettingsOverview({
             {roleMeta.label}
           </SettingsChip>
         ) : null}
-      </Card>
+      </div>
 
-      {/* Status tiles */}
+      {/* Tiles de seção */}
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {tiles.map(({ section, loading, subtitle }) => {
           const meta = SECTION_META[section];
@@ -262,14 +268,23 @@ export function SettingsOverview({
               onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(43,111,219,0.40)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(159,176,201,0.18)"; }}
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: "rgba(43,111,219,0.12)", color: "var(--ei-cobalt)" }}>
+              <span
+                className="flex size-9 shrink-0 items-center justify-center rounded-lg"
+                style={{ backgroundColor: "rgba(43,111,219,0.12)", color: "var(--ei-cobalt)" }}
+              >
                 <Icon className="size-4" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                <span
+                  className="block text-sm font-semibold"
+                  style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
                   {meta.label}
                 </span>
-                <span className="mt-0.5 flex items-center gap-1.5 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                <span
+                  className="mt-0.5 flex items-center gap-1.5 text-xs"
+                  style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
                   {loading ? (
                     <>
                       <Loader2 className="size-3 animate-spin" /> Carregando…
@@ -279,7 +294,10 @@ export function SettingsOverview({
                   )}
                 </span>
               </span>
-              <ChevronRight className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: "var(--ei-text-soft)" }} />
+              <ChevronRight
+                className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+                style={{ color: "var(--ei-text-soft)" }}
+              />
             </button>
           );
         })}

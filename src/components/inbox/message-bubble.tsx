@@ -100,8 +100,8 @@ function MediaImage({ url, alt }: { url: string; alt: string }) {
 
   if (loading) {
     return (
-      <div className="flex h-40 w-60 items-center justify-center rounded-lg bg-muted">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      <div className="flex h-40 w-60 items-center justify-center rounded-lg" style={{ backgroundColor: "rgba(159,176,201,0.10)" }}>
+        <div className="h-5 w-5 animate-spin rounded-full border-2" style={{ borderColor: "var(--ei-cobalt)", borderTopColor: "transparent" }} />
       </div>
     );
   }
