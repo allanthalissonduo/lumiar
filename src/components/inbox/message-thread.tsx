@@ -133,9 +133,9 @@ function groupMessagesByDate(messages: Message[]) {
 }
 
 const STATUS_OPTIONS: { label: string; value: ConversationStatus; color: string }[] = [
-  { label: "Open", value: "open", color: "text-primary" },
-  { label: "Pending", value: "pending", color: "text-amber-400" },
-  { label: "Closed", value: "closed", color: "text-muted-foreground" },
+  { label: "Aberto", value: "open", color: "var(--ei-iris)" },
+  { label: "Pendente", value: "pending", color: "#EAA40D" },
+  { label: "Fechado", value: "closed", color: "rgba(159,176,201,0.70)" },
 ];
 
 /**
@@ -964,13 +964,14 @@ export function MessageThread({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="border-border bg-popover"
+              style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}
             >
               {STATUS_OPTIONS.map((opt) => (
                 <DropdownMenuItem
                   key={opt.value}
                   onClick={() => handleStatusChange(opt.value)}
-                  className={cn("text-sm", opt.color)}
+                  className="text-sm"
+                  style={{ color: opt.color, fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 >
                   {opt.label}
                 </DropdownMenuItem>
@@ -990,11 +991,11 @@ export function MessageThread({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="border-border bg-popover"
+              style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}
             >
               {profiles.length === 0 ? (
-                <DropdownMenuItem disabled className="text-sm text-muted-foreground">
-                  No teammates available
+                <DropdownMenuItem disabled className="text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Nenhum membro disponível
                 </DropdownMenuItem>
               ) : (
                 profiles.map((p) => {
@@ -1004,10 +1005,8 @@ export function MessageThread({
                     <DropdownMenuItem
                       key={p.id}
                       onClick={() => handleAssignChange(p.user_id)}
-                      className={cn(
-                        "text-sm",
-                        isSelected ? "text-primary" : "text-popover-foreground"
-                      )}
+                      className="text-sm"
+                      style={{ color: isSelected ? "var(--ei-cobalt)" : "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                     >
                       <PresenceDot
                         status={presence}
@@ -1020,7 +1019,7 @@ export function MessageThread({
                       />
                       <span className="flex-1">
                         {p.full_name}
-                        {p.user_id === user?.id ? " (me)" : ""}
+                        {p.user_id === user?.id ? " (eu)" : ""}
                       </span>
                       {isSelected && <Check className="ml-2 h-3 w-3" />}
                     </DropdownMenuItem>
@@ -1029,12 +1028,13 @@ export function MessageThread({
               )}
               {assignedAgentId && (
                 <>
-                  <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuSeparator style={{ backgroundColor: "rgba(159,176,201,0.14)" }} />
                   <DropdownMenuItem
                     onClick={() => handleAssignChange(null)}
-                    className="text-sm text-muted-foreground"
+                    className="text-sm"
+                    style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                   >
-                    Unassign
+                    Desatribuir
                   </DropdownMenuItem>
                 </>
               )}
