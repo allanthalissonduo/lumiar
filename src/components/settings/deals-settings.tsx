@@ -7,26 +7,8 @@ import { Coins, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CURRENCIES } from "@/lib/currency";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { SettingsPanelHead } from "./settings-panel-head";
 
-/**
- * Deals settings — account-wide default currency.
- *
- * One currency per account (issue #218): the chosen code seeds new
- * deals and formats every aggregated total. Existing deals keep their
- * own saved currency. Writes go straight to `accounts.default_currency`;
- * the `accounts_update` RLS policy (017) already restricts that to
- * admins+, so non-admins see a disabled, read-only control.
- */
 export function DealsSettings() {
   const supabase = createClient();
   const {
@@ -40,8 +22,6 @@ export function DealsSettings() {
   const [selected, setSelected] = useState(defaultCurrency);
   const [saving, setSaving] = useState(false);
 
-  // Keep the select in sync once the profile (and its account default)
-  // resolves, and after a save round-trips through refreshProfile.
   useEffect(() => {
     setSelected(defaultCurrency);
   }, [defaultCurrency]);
@@ -56,75 +36,79 @@ export function DealsSettings() {
       .update({ default_currency: selected })
       .eq("id", accountId);
     if (error) {
-      toast.error("Failed to save default currency");
+      toast.error("Falha ao salvar moeda padrão");
       setSaving(false);
       return;
     }
-    // Pull the new value back into the auth context so the deal form
-    // and every total pick it up without a full reload.
     await refreshProfile();
     setSaving(false);
-    toast.success("Default currency updated");
+    toast.success("Moeda padrão atualizada");
   }
 
   return (
     <section className="max-w-2xl animate-in fade-in-50 duration-200">
       <SettingsPanelHead
-        title="Deals & currency"
-        description="The currency used for new deals and for pipeline and dashboard totals."
+        title="Negócios e moeda"
+        description="A moeda usada para novos negócios e nos totais do pipeline e do dashboard."
       />
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-foreground">
-            <Coins className="size-4 text-primary" />
-            Default currency
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            New deals default to this currency, and pipeline and
-            dashboard totals are shown in it. Existing deals keep the
-            currency they were saved with.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-2 sm:max-w-xs">
-            <Label className="text-muted-foreground">Currency</Label>
-            <select
-              value={selected}
-              onChange={(e) => setSelected(e.target.value)}
-              disabled={!canEditSettings || profileLoading}
-              className="h-9 w-full rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {CURRENCIES.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.code} — {c.label}
-                </option>
-              ))}
-            </select>
-            {!canEditSettings && (
-              <p className="text-xs text-muted-foreground">
-                Only account admins can change the default currency.
-              </p>
-            )}
-          </div>
+      <div style={{ backgroundColor: "rgba(159,176,201,0.04)", border: "1px solid rgba(159,176,201,0.16)", borderRadius: "12px", padding: "20px" }}>
+        <div className="flex items-center gap-2 mb-1">
+          <Coins className="size-4" style={{ color: "var(--ei-cobalt)" }} />
+          <p className="font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Moeda padrão</p>
+        </div>
+        <p className="text-sm mb-4" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Novos negócios usam esta moeda por padrão, e os totais do pipeline e do dashboard são exibidos nela. Negócios existentes mantêm a moeda com que foram salvos.
+        </p>
+        <div className="grid gap-2 sm:max-w-xs">
+          <label className="text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Moeda</label>
+          <select
+            value={selected}
+            onChange={(e) => setSelected(e.target.value)}
+            disabled={!canEditSettings || profileLoading}
+            className="h-9 w-full rounded-lg px-2.5 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-60"
+            style={{
+              backgroundColor: "rgba(159,176,201,0.08)",
+              border: "1px solid rgba(159,176,201,0.22)",
+              color: "var(--ei-offwhite)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          >
+            {CURRENCIES.map((c) => (
+              <option key={c.code} value={c.code} style={{ backgroundColor: "#0d1e36" }}>
+                {c.code} — {c.label}
+              </option>
+            ))}
+          </select>
+          {!canEditSettings && (
+            <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Apenas admins da conta podem alterar a moeda padrão.
+            </p>
+          )}
+        </div>
 
-          {canEditSettings && (
-            <Button
+        {canEditSettings && (
+          <div className="mt-4">
+            <button
+              type="button"
               onClick={handleSave}
               disabled={saving || !dirty}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { if (!saving && dirty) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
             >
               {saving ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  Saving...
+                  Salvando...
                 </>
               ) : (
-                "Save"
+                "Salvar"
               )}
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+            </button>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

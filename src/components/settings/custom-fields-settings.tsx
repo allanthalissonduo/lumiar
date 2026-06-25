@@ -2,42 +2,24 @@
 
 import { Shield, SlidersHorizontal } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { CustomFieldsPanel } from '@/components/contacts/custom-fields-manager';
 import { SettingsChip } from './settings-chip';
 
-/**
- * Settings → Custom Fields card. Manages the account-wide custom
- * contact field catalogue (the same panel the Contacts page exposes
- * via a dialog). Writes are admin-gated by the caller and enforced by
- * `custom_fields` RLS.
- */
 export function CustomFieldsSettings() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-foreground">
-          <SlidersHorizontal className="size-4 text-primary" />
-          Custom fields
-          <SettingsChip variant="admin" className="font-medium">
-            <Shield />
-            Admin
-          </SettingsChip>
-        </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Extra contact fields (e.g. ZIP code, lead source). They appear on
-          every contact and in the “Update Contact Field” automation action.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <CustomFieldsPanel />
-      </CardContent>
-    </Card>
+    <div style={{ backgroundColor: "rgba(159,176,201,0.04)", border: "1px solid rgba(159,176,201,0.16)", borderRadius: "12px", padding: "20px" }}>
+      <div className="flex items-center gap-2 mb-1">
+        <SlidersHorizontal className="size-4" style={{ color: "var(--ei-cobalt)" }} />
+        <p className="font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Campos personalizados</p>
+        <SettingsChip variant="admin" className="font-medium">
+          <Shield />
+          Admin
+        </SettingsChip>
+      </div>
+      <p className="text-sm mb-4" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        Campos extras para contatos (ex. CEP, origem do lead). Aparecem em todos os contatos e na ação de automação &quot;Atualizar Campo do Contato&quot;.
+      </p>
+      <CustomFieldsPanel />
+    </div>
   );
 }

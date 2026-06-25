@@ -5,15 +5,7 @@ import { toast } from 'sonner';
 import { Loader2, Plus, Tag as TagIcon, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -22,25 +14,19 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
 import type { Tag } from '@/types';
 
 const PRESET_COLORS = [
-  { name: 'Red', value: '#ef4444' },
-  { name: 'Orange', value: '#f97316' },
-  { name: 'Amber', value: '#f59e0b' },
-  { name: 'Emerald', value: '#10b981' },
-  { name: 'Cyan', value: '#06b6d4' },
-  { name: 'Blue', value: '#3b82f6' },
-  { name: 'Violet', value: '#8b5cf6' },
-  { name: 'Pink', value: '#ec4899' },
+  { name: 'Vermelho', value: '#ef4444' },
+  { name: 'Laranja', value: '#f97316' },
+  { name: 'Âmbar', value: '#f59e0b' },
+  { name: 'Esmeralda', value: '#10b981' },
+  { name: 'Ciano', value: '#06b6d4' },
+  { name: 'Azul', value: '#3b82f6' },
+  { name: 'Violeta', value: '#8b5cf6' },
+  { name: 'Rosa', value: '#ec4899' },
 ];
 
-/**
- * Tags card — colour-coded contact labels. Creation is an inline row
- * (name + colour swatch + Add); deletion goes through a confirmation
- * dialog since it detaches the tag from every contact.
- */
 export function TagManager() {
   const supabase = createClient();
   const { user, accountId, loading: authLoading } = useAuth();
@@ -77,7 +63,7 @@ export function TagManager() {
       setTags(data || []);
     } catch (err) {
       console.error('Failed to fetch tags:', err);
-      toast.error('Failed to load tags');
+      toast.error('Falha ao carregar tags');
     } finally {
       setLoading(false);
     }
@@ -85,19 +71,17 @@ export function TagManager() {
 
   async function handleCreate() {
     if (!newTagName.trim()) {
-      toast.error('Tag name is required');
+      toast.error('Nome da tag é obrigatório');
       return;
     }
 
     try {
       setSaving(true);
       if (!user || !accountId) {
-        toast.error('Not authenticated');
+        toast.error('Não autenticado');
         return;
       }
 
-      // account_id is mandatory on every account-scoped insert (NOT
-      // NULL + RLS, no DB default).
       const { error } = await supabase.from('tags').insert({
         user_id: user.id,
         account_id: accountId,
@@ -107,13 +91,13 @@ export function TagManager() {
 
       if (error) throw error;
 
-      toast.success('Tag created');
+      toast.success('Tag criada');
       setNewTagName('');
       setSelectedColor(PRESET_COLORS[3].value);
       await fetchTags(user.id);
     } catch (err) {
       console.error('Create error:', err);
-      toast.error('Failed to create tag');
+      toast.error('Falha ao criar tag');
     } finally {
       setSaving(false);
     }
@@ -136,154 +120,159 @@ export function TagManager() {
 
       if (error) throw error;
 
-      toast.success('Tag deleted');
+      toast.success('Tag excluída');
       setTags((prev) => prev.filter((t) => t.id !== tagToDelete.id));
       setDeleteDialogOpen(false);
       setTagToDelete(null);
     } catch (err) {
       console.error('Delete error:', err);
-      toast.error('Failed to delete tag');
+      toast.error('Falha ao excluir tag');
     } finally {
       setDeleting(false);
     }
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-foreground">
-          <TagIcon className="size-4 text-primary" />
-          Tags
-        </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Colour-coded labels for grouping and filtering contacts.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="size-6 animate-spin text-primary" />
-          </div>
-        ) : (
-          <>
-            {tags.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="group inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
-                    style={{
-                      backgroundColor: `${tag.color}20`,
-                      color: tag.color,
-                      border: `1px solid ${tag.color}40`,
-                    }}
-                  >
-                    <span
-                      className="size-2 rounded-full"
-                      style={{ backgroundColor: tag.color }}
-                    />
-                    {tag.name}
-                    <button
-                      type="button"
-                      onClick={() => confirmDelete(tag)}
-                      aria-label={`Delete ${tag.name}`}
-                      className="ml-0.5 rounded-full p-0.5 opacity-60 transition-opacity hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                No tags yet — create your first one below.
-              </p>
-            )}
+    <div style={{ backgroundColor: "rgba(159,176,201,0.04)", border: "1px solid rgba(159,176,201,0.16)", borderRadius: "12px", padding: "20px" }}>
+      <div className="flex items-center gap-2 mb-1">
+        <TagIcon className="size-4" style={{ color: "var(--ei-cobalt)" }} />
+        <p className="font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Tags</p>
+      </div>
+      <p className="text-sm mb-4" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        Rótulos coloridos para agrupar e filtrar contatos.
+      </p>
 
-            {/* Inline create row */}
-            <div className="flex flex-wrap items-center gap-2.5">
-              <Input
-                placeholder="e.g. Newsletter"
-                value={newTagName}
-                onChange={(e) => setNewTagName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleCreate();
-                }}
-                disabled={saving}
-                maxLength={40}
-                className="min-w-[180px] flex-1"
-              />
-              <div className="flex gap-1.5">
-                {PRESET_COLORS.map((color) => (
+      {loading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="size-6 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {tags.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="group inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: `${tag.color}20`,
+                    color: tag.color,
+                    border: `1px solid ${tag.color}40`,
+                  }}
+                >
+                  <span className="size-2 rounded-full" style={{ backgroundColor: tag.color }} />
+                  {tag.name}
                   <button
-                    key={color.value}
                     type="button"
-                    onClick={() => setSelectedColor(color.value)}
-                    aria-label={`Use ${color.name}`}
-                    aria-pressed={selectedColor === color.value}
-                    className={cn(
-                      'size-6 rounded-md transition-transform hover:scale-110',
-                      selectedColor === color.value &&
-                        'outline outline-2 outline-offset-2 outline-primary',
-                    )}
-                    style={{ backgroundColor: color.value }}
-                    title={color.name}
-                  />
-                ))}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCreate}
-                disabled={saving || !newTagName.trim()}
-              >
-                {saving ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Plus className="size-4" />
-                )}
-                Add tag
-              </Button>
+                    onClick={() => confirmDelete(tag)}
+                    aria-label={`Excluir ${tag.name}`}
+                    className="ml-0.5 rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
+                    style={{ backgroundColor: "transparent" }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(0,0,0,0.15)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+                  >
+                    <X className="size-3" />
+                  </button>
+                </span>
+              ))}
             </div>
-          </>
-        )}
-      </CardContent>
+          ) : (
+            <p className="text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Nenhuma tag ainda — crie a primeira abaixo.
+            </p>
+          )}
 
-      {/* Delete confirmation */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Input
+              placeholder="ex. Newsletter"
+              value={newTagName}
+              onChange={(e) => setNewTagName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleCreate(); }}
+              disabled={saving}
+              maxLength={40}
+              className="min-w-[180px] flex-1"
+              style={{
+                backgroundColor: "rgba(159,176,201,0.08)",
+                border: "1px solid rgba(159,176,201,0.22)",
+                color: "var(--ei-offwhite)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            />
+            <div className="flex gap-1.5">
+              {PRESET_COLORS.map((color) => (
+                <button
+                  key={color.value}
+                  type="button"
+                  onClick={() => setSelectedColor(color.value)}
+                  aria-label={`Usar ${color.name}`}
+                  aria-pressed={selectedColor === color.value}
+                  className="size-6 rounded-md transition-transform hover:scale-110"
+                  style={{
+                    backgroundColor: color.value,
+                    outline: selectedColor === color.value ? `2px solid ${color.value}` : 'none',
+                    outlineOffset: selectedColor === color.value ? '2px' : '0',
+                  }}
+                  title={color.name}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleCreate}
+              disabled={saving || !newTagName.trim()}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { if (!saving && newTagName.trim()) { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; } }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
+            >
+              {saving ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+              Adicionar tag
+            </button>
+          </div>
+        </div>
+      )}
+
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm" style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
           <DialogHeader>
-            <DialogTitle>Delete tag</DialogTitle>
-            <DialogDescription>
-              Delete the tag &quot;{tagToDelete?.name}&quot;? This removes it
-              from all contacts and cannot be undone.
+            <DialogTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Excluir tag</DialogTitle>
+            <DialogDescription style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Excluir a tag &quot;{tagToDelete?.name}&quot;? Isso a remove de todos os contatos e não pode ser desfeito.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="ghost"
+          <DialogFooter style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
+            <button
+              type="button"
               onClick={() => setDeleteDialogOpen(false)}
               disabled={deleting}
+              className="rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{ backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
             >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
+              Cancelar
+            </button>
+            <button
+              type="button"
               onClick={handleDelete}
               disabled={deleting}
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{ backgroundColor: "#dc2626", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { if (!deleting) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#b91c1c"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#dc2626"; }}
             >
               {deleting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  Deleting...
+                  Excluindo...
                 </>
               ) : (
-                'Delete tag'
+                'Excluir tag'
               )}
-            </Button>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }

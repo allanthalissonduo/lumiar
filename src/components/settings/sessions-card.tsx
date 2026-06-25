@@ -5,14 +5,6 @@ import { toast } from 'sonner';
 import { Loader2, LogOut } from 'lucide-react';
 
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -30,17 +22,14 @@ export function SessionsCard() {
   const onConfirm = async () => {
     setSigningOut(true);
     try {
-      // scope: 'global' revokes every refresh token for this user
-      // across all devices; the next auth-state change on this tab
-      // triggers the usual redirect.
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) {
-        toast.error(`Sign-out failed: ${error.message}`);
+        toast.error(`Falha ao sair: ${error.message}`);
         return;
       }
       window.location.href = '/login';
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido';
       toast.error(msg);
     } finally {
       setSigningOut(false);
@@ -49,58 +38,65 @@ export function SessionsCard() {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-foreground">
-            <LogOut className="size-4 text-primary" />
-            Active sessions
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Sign out of every device where you&apos;re logged in — including
-            this one. Useful if you lost a laptop or shared your password.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(true)}
-          >
-            <LogOut className="size-4" />
-            Sign out of all devices
-          </Button>
-        </CardContent>
-      </Card>
+      <div style={{ backgroundColor: "rgba(159,176,201,0.04)", border: "1px solid rgba(159,176,201,0.16)", borderRadius: "12px", padding: "20px" }}>
+        <div className="flex items-center gap-2 mb-1">
+          <LogOut className="size-4" style={{ color: "var(--ei-cobalt)" }} />
+          <p className="font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sessões ativas</p>
+        </div>
+        <p className="text-sm mb-4" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Saia de todos os dispositivos onde você está conectado — incluindo este. Útil se você perdeu um laptop ou compartilhou sua senha.
+        </p>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+          style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
+        >
+          <LogOut className="size-4" />
+          Sair de todos os dispositivos
+        </button>
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
           <DialogHeader>
-            <DialogTitle>Sign out everywhere?</DialogTitle>
-            <DialogDescription>
-              Every device logged into this account will be signed out and
-              will need to log in again. You will be redirected to the login
-              page.
+            <DialogTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sair de todos os lugares?</DialogTitle>
+            <DialogDescription style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Todos os dispositivos conectados a esta conta serão desconectados e precisarão fazer login novamente. Você será redirecionado para a página de login.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button
+          <DialogFooter style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
+            <button
               type="button"
-              variant="ghost"
               onClick={() => setOpen(false)}
               disabled={signingOut}
+              className="rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{ backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
             >
-              Cancel
-            </Button>
-            <Button type="button" onClick={onConfirm} disabled={signingOut}>
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={onConfirm}
+              disabled={signingOut}
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { if (!signingOut) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
+            >
               {signingOut ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  Signing out…
+                  Saindo…
                 </>
               ) : (
-                'Sign out everywhere'
+                'Sair de todos os lugares'
               )}
-            </Button>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

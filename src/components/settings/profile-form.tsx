@@ -6,7 +6,6 @@ import { Loader2, Upload, Trash2, Mail, CircleAlert } from 'lucide-react';
 
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -14,7 +13,6 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
 import { SettingsPanelHead } from './settings-panel-head';
 
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
@@ -25,10 +23,14 @@ const ALLOWED_MIME = new Set([
   'image/gif',
 ]);
 
-// Rough email shape check — the real validator is Supabase Auth, which
-// rejects anything malformed when we call updateUser({ email }). We
-// just want to stop obvious typos before making a network call.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const inputStyle = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+};
 
 export function ProfileForm() {
   const { user, profile, refreshProfile } = useAuth();
@@ -43,14 +45,12 @@ export function ProfileForm() {
   const [saving, setSaving] = useState(false);
   const [emailChangePending, setEmailChangePending] = useState(false);
 
-  // Seed form state once the profile loads.
   useEffect(() => {
     if (!profile) return;
     setFullName(profile.full_name ?? '');
     setEmail(profile.email ?? '');
   }, [profile]);
 
-  // Cleanup object URLs to avoid leaks.
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -66,19 +66,15 @@ export function ProfileForm() {
 
   const onPickFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    e.target.value = ''; // reset so the same file can be re-picked
+    e.target.value = '';
     if (!file) return;
 
     if (!ALLOWED_MIME.has(file.type)) {
-      toast.error('Unsupported image type', {
-        description: 'Use PNG, JPG, WebP, or GIF.',
-      });
+      toast.error('Tipo de imagem não suportado', { description: 'Use PNG, JPG, WebP ou GIF.' });
       return;
     }
     if (file.size > MAX_AVATAR_BYTES) {
-      toast.error('Image is too large', {
-        description: 'Maximum 2 MB.',
-      });
+      toast.error('Imagem muito grande', { description: 'Máximo 2 MB.' });
       return;
     }
 
@@ -101,12 +97,12 @@ export function ProfileForm() {
 
     const trimmedName = fullName.trim();
     if (!trimmedName) {
-      toast.error('Display name is required');
+      toast.error('Nome de exibição é obrigatório');
       return;
     }
     const trimmedEmail = email.trim();
     if (!EMAIL_RE.test(trimmedEmail)) {
-      toast.error('Enter a valid email address');
+      toast.error('Insira um endereço de e-mail válido');
       return;
     }
 
@@ -114,10 +110,8 @@ export function ProfileForm() {
     try {
       let nextAvatarUrl: string | null = profile.avatar_url ?? null;
 
-      // Upload a newly-staged image, if any.
       if (pendingAvatar) {
-        const ext =
-          pendingAvatar.name.split('.').pop()?.toLowerCase() || 'png';
+        const ext = pendingAvatar.name.split('.').pop()?.toLowerCase() || 'png';
         const path = `${user.id}/avatar-${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from('avatars')
@@ -127,42 +121,28 @@ export function ProfileForm() {
             contentType: pendingAvatar.type,
           });
         if (uploadError) {
-          throw new Error(`Upload failed: ${uploadError.message}`);
+          throw new Error(`Falha no upload: ${uploadError.message}`);
         }
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from('avatars').getPublicUrl(path);
+        const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path);
         nextAvatarUrl = publicUrl;
       } else if (removeAvatar) {
         nextAvatarUrl = null;
       }
 
-      // Persist name + avatar to profiles.
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({
-          full_name: trimmedName,
-          avatar_url: nextAvatarUrl,
-        })
+        .update({ full_name: trimmedName, avatar_url: nextAvatarUrl })
         .eq('user_id', user.id);
       if (updateError) {
-        throw new Error(`Save failed: ${updateError.message}`);
+        throw new Error(`Falha ao salvar: ${updateError.message}`);
       }
 
-      // Email change goes through Supabase Auth, which emails a
-      // confirmation to both the old and new addresses. We don't
-      // touch profiles.email — Supabase will push the change there
-      // after the user clicks the link (handled by the handle_new_user
-      // trigger pattern in production deployments).
       let emailSent = false;
       if (trimmedEmail.toLowerCase() !== profile.email.toLowerCase()) {
-        const { error: emailError } = await supabase.auth.updateUser({
-          email: trimmedEmail,
-        });
+        const { error: emailError } = await supabase.auth.updateUser({ email: trimmedEmail });
         if (emailError) {
-          // Partial success: name/avatar saved but email didn't.
-          toast.success('Profile saved');
-          toast.error(`Email change failed: ${emailError.message}`);
+          toast.success('Perfil salvo');
+          toast.error(`Falha na alteração de e-mail: ${emailError.message}`);
           setSaving(false);
           await refreshProfile();
           return;
@@ -178,11 +158,11 @@ export function ProfileForm() {
 
       toast.success(
         emailSent
-          ? 'Profile saved — check your email to confirm the address change'
-          : 'Profile saved',
+          ? 'Perfil salvo — verifique seu e-mail para confirmar a alteração de endereço'
+          : 'Perfil salvo',
       );
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
+      const msg = err instanceof Error ? err.message : 'Erro desconhecido';
       toast.error(msg);
     } finally {
       setSaving(false);
@@ -197,7 +177,7 @@ export function ProfileForm() {
       removeAvatar);
 
   const joined = user?.created_at
-    ? new Date(user.created_at).toLocaleDateString(undefined, {
+    ? new Date(user.created_at).toLocaleDateString('pt-BR', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -207,19 +187,18 @@ export function ProfileForm() {
   return (
     <section className="max-w-2xl animate-in fade-in-50 duration-200">
       <SettingsPanelHead
-        title="Your profile"
-        description="How you show up across the app. Your avatar and name appear in the header, sidebar, and anywhere your teammates see you."
+        title="Seu perfil"
+        description="Como você aparece em toda a plataforma. Seu avatar e nome aparecem no cabeçalho, barra lateral e em todos os lugares onde sua equipe te vê."
       />
       <form onSubmit={onSubmit} className="space-y-4">
-        <Card>
-          <CardContent className="space-y-6">
+        <div style={{ backgroundColor: "rgba(159,176,201,0.04)", border: "1px solid rgba(159,176,201,0.16)", borderRadius: "12px", padding: "20px" }} className="space-y-6">
           {/* Avatar row */}
           <div className="flex flex-wrap items-center gap-5">
             <Avatar size="lg" className="size-16">
               {currentAvatar ? (
                 <AvatarImage src={currentAvatar} alt={fullName || 'Avatar'} />
               ) : null}
-              <AvatarFallback className="bg-primary/10 text-base text-primary">
+              <AvatarFallback style={{ backgroundColor: "rgba(43,111,219,0.14)", color: "var(--ei-cobalt)", fontSize: "18px", fontWeight: 600 }}>
                 {initial}
               </AvatarFallback>
             </Avatar>
@@ -232,37 +211,42 @@ export function ProfileForm() {
                 className="hidden"
                 onChange={onPickFile}
               />
-              <Button
+              <button
                 type="button"
-                variant="outline"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={saving}
+                className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50"
+                style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { if (!saving) { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; } }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
               >
                 <Upload className="size-4" />
-                {currentAvatar ? 'Change photo' : 'Upload photo'}
-              </Button>
+                {currentAvatar ? 'Alterar foto' : 'Enviar foto'}
+              </button>
               {currentAvatar && (
-                <Button
+                <button
                   type="button"
-                  variant="ghost"
                   onClick={onRemoveAvatar}
                   disabled={saving}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50"
+                  style={{ backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
                 >
                   <Trash2 className="size-4" />
-                  Remove
-                </Button>
+                  Remover
+                </button>
               )}
-              <p className="w-full text-xs text-muted-foreground">
-                PNG, JPG, WebP, or GIF. Up to 2 MB.
+              <p className="w-full text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                PNG, JPG, WebP ou GIF. Máximo 2 MB.
               </p>
             </div>
           </div>
 
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="profile-full-name" className="text-foreground">
-              Display name
+            <Label htmlFor="profile-full-name" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Nome de exibição
             </Label>
             <Input
               id="profile-full-name"
@@ -272,13 +256,14 @@ export function ProfileForm() {
               maxLength={120}
               disabled={saving}
               required
+              style={inputStyle}
             />
           </div>
 
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="profile-email" className="text-foreground">
-              Email
+            <Label htmlFor="profile-email" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              E-mail
             </Label>
             <Input
               id="profile-email"
@@ -287,38 +272,38 @@ export function ProfileForm() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={saving}
               required
+              style={inputStyle}
             />
             {emailChangePending && (
-              <p className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+              <p className="flex items-start gap-2 rounded-md px-3 py-2 text-xs" style={{ border: "1px solid rgba(251,191,36,0.30)", backgroundColor: "rgba(251,191,36,0.10)", color: "#fcd34d" }}>
                 <Mail className="mt-0.5 size-3.5 shrink-0" />
                 <span>
-                  Check the inbox for <strong>{profile?.email}</strong> and{' '}
-                  <strong>{email}</strong> — both need to confirm before the
-                  change takes effect.
+                  Verifique a caixa de entrada de <strong>{profile?.email}</strong> e{' '}
+                  <strong>{email}</strong> — ambos precisam confirmar para a alteração ter efeito.
                 </span>
               </p>
             )}
           </div>
 
           {/* Read-only block */}
-          <div className="rounded-lg border border-border bg-muted p-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Account details
+          <div className="rounded-lg p-4" style={{ border: "1px solid rgba(159,176,201,0.16)", backgroundColor: "rgba(159,176,201,0.06)" }}>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Detalhes da conta
             </p>
             <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
               <div>
-                <dt className="text-muted-foreground">Role</dt>
-                <dd className="mt-0.5 font-mono text-foreground">
+                <dt style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Função</dt>
+                <dd className="mt-0.5" style={{ color: "var(--ei-offwhite)", fontFamily: "'JetBrains Mono', monospace" }}>
                   {profile?.role ?? 'user'}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Joined</dt>
-                <dd className="mt-0.5 text-foreground">{joined}</dd>
+                <dt style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Entrou em</dt>
+                <dd className="mt-0.5" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{joined}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-muted-foreground">User ID</dt>
-                <dd className="mt-0.5 break-all font-mono text-xs text-muted-foreground">
+                <dt style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>ID do usuário</dt>
+                <dd className="mt-0.5 break-all text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
                   {user?.id ?? '—'}
                 </dd>
               </div>
@@ -326,26 +311,31 @@ export function ProfileForm() {
           </div>
 
           {!profile && (
-            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <p className="flex items-center gap-2 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               <CircleAlert className="size-4" />
-              Loading your profile…
+              Carregando seu perfil…
             </p>
           )}
-
-        </CardContent>
-        </Card>
+        </div>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={saving || !dirty || !profile}>
+          <button
+            type="submit"
+            disabled={saving || !dirty || !profile}
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+            style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            onMouseEnter={(e) => { if (!saving && dirty && profile) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
+          >
             {saving ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                Saving…
+                Salvando…
               </>
             ) : (
-              'Save changes'
+              'Salvar alterações'
             )}
-          </Button>
+          </button>
         </div>
       </form>
     </section>

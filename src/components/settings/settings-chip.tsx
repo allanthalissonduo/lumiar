@@ -1,24 +1,13 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils';
-
-/**
- * Small status / role pill used across the settings redesign
- * (Overview tiles, WhatsApp banner, the "Active" appearance markers).
- *
- * Status colours (emerald = good, amber = attention) follow the same
- * Tailwind palette the members tab already uses for role chips — they
- * are semantic accents, not neutrals, so they're intentionally not
- * tokenized. Neutrals stay on design tokens.
- */
 export type ChipVariant = 'owner' | 'admin' | 'ok' | 'warn' | 'muted';
 
-const VARIANTS: Record<ChipVariant, string> = {
-  owner: 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-300',
-  admin: 'border-primary-soft-2 bg-primary-soft text-primary',
-  ok: 'border-emerald-500/35 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300',
-  warn: 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-300',
-  muted: 'border-border bg-muted text-muted-foreground',
+const VARIANT_STYLES: Record<ChipVariant, React.CSSProperties> = {
+  owner: { border: "1px solid rgba(245,158,11,0.40)", backgroundColor: "rgba(245,158,11,0.10)", color: "#fcd34d" },
+  admin: { border: "1px solid rgba(43,111,219,0.40)", backgroundColor: "rgba(43,111,219,0.12)", color: "var(--ei-cobalt)" },
+  ok: { border: "1px solid rgba(16,185,129,0.35)", backgroundColor: "rgba(16,185,129,0.10)", color: "#34d399" },
+  warn: { border: "1px solid rgba(245,158,11,0.40)", backgroundColor: "rgba(245,158,11,0.10)", color: "#fcd34d" },
+  muted: { border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "rgba(159,176,201,0.08)", color: "var(--ei-text-soft)" },
 };
 
 export function SettingsChip({
@@ -32,18 +21,14 @@ export function SettingsChip({
 }) {
   return (
     <span
-      className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap [&_svg]:size-3.5',
-        VARIANTS[variant],
-        className,
-      )}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap [&_svg]:size-3.5 ${className ?? ''}`}
+      style={{ ...VARIANT_STYLES[variant], fontFamily: "'Plus Jakarta Sans', sans-serif" }}
     >
       {children}
     </span>
   );
 }
 
-/** A small live status dot (e.g. WhatsApp connected indicator). */
 export function StatusDot({
   tone = 'ok',
   className,
@@ -54,11 +39,8 @@ export function StatusDot({
   return (
     <span
       aria-hidden
-      className={cn(
-        'inline-block size-1.5 shrink-0 rounded-full',
-        tone === 'ok' ? 'bg-emerald-500' : 'bg-muted-foreground',
-        className,
-      )}
+      className={`inline-block size-1.5 shrink-0 rounded-full ${className ?? ''}`}
+      style={{ backgroundColor: tone === 'ok' ? "#10b981" : "var(--ei-text-soft)" }}
     />
   );
 }

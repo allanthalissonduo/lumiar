@@ -1,12 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils';
-
-/**
- * Section header shown at the top of every settings panel — a title,
- * a one-line description, and an optional right-aligned action (e.g.
- * "New template", "Invite member"). Mirrors the mockup's `.panel-head`.
- */
 export function SettingsPanelHead({
   title,
   description,
@@ -20,17 +13,14 @@ export function SettingsPanelHead({
 }) {
   return (
     <div
-      className={cn(
-        'mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between',
-        className,
-      )}
+      className={`mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between ${className ?? ''}`}
     >
       <div className="min-w-0">
-        <h2 className="text-lg font-semibold tracking-tight text-foreground">
+        <h2 className="text-lg font-semibold tracking-tight" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {title}
         </h2>
         {description ? (
-          <p className="mt-1 max-w-[62ch] text-sm text-muted-foreground">
+          <p className="mt-1 max-w-[62ch] text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             {description}
           </p>
         ) : null}
