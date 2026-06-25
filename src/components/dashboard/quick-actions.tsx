@@ -31,12 +31,32 @@ export function QuickActions() {
           <Link
             key={a.href}
             href={a.href}
-            className="group flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 transition-colors hover:border-border hover:bg-muted/60"
+            className="group flex items-center gap-3 rounded-xl px-4 py-3 transition-colors"
+            style={{
+              backgroundColor: "var(--ei-surface-card)",
+              border: "1px solid rgba(159,176,201,0.18)",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(43,111,219,0.40)"
+              ;(e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(43,111,219,0.06)"
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(159,176,201,0.18)"
+              ;(e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--ei-surface-card)"
+            }}
           >
-            <div className={`flex h-9 w-9 items-center justify-center rounded-lg bg-muted ${a.tint}`}>
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-lg ${a.tint}`}
+              style={{ backgroundColor: "rgba(43,111,219,0.10)" }}
+            >
               <Icon className="h-4 w-4" />
             </div>
-            <span className="text-sm font-medium text-foreground">{a.label}</span>
+            <span
+              className="text-sm font-medium"
+              style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              {a.label}
+            </span>
           </Link>
         )
       })}

@@ -122,8 +122,16 @@ export default function DashboardPage() {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1
+          className="text-2xl font-bold"
+          style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
+          Dashboard
+        </h1>
+        <p
+          className="mt-1 text-sm"
+          style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
           Live analytics across conversations, contacts, deals, broadcasts, and automations.
         </p>
       </div>

@@ -54,9 +54,23 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
     i === 0 || totalLoaded > PAGE_SIZES[i - 1]
 
   return (
-    <section className="rounded-xl border border-border bg-card">
-      <header className="flex items-center justify-between border-b border-border px-5 py-4">
-        <h2 className="text-sm font-semibold text-foreground">Recent Activity</h2>
+    <section
+      className="rounded-xl"
+      style={{
+        backgroundColor: "var(--ei-surface-card)",
+        border: "1px solid rgba(159,176,201,0.18)",
+      }}
+    >
+      <header
+        className="flex items-center justify-between px-5 py-4"
+        style={{ borderBottom: "1px solid rgba(159,176,201,0.18)" }}
+      >
+        <h2
+          className="text-sm font-semibold"
+          style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
+          Recent Activity
+        </h2>
         <Link
           href="/inbox"
           className="text-xs font-medium text-primary hover:text-primary/80"

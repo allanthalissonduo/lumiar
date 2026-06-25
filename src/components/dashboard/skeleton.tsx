@@ -12,10 +12,11 @@ export function Skeleton({ className }: { className?: string }) {
 export function SkeletonCard({ className }: { className?: string }) {
   return (
     <div
-      className={cn(
-        'rounded-xl border border-border bg-card p-5',
-        className,
-      )}
+      className={cn('rounded-xl p-5', className)}
+      style={{
+        backgroundColor: "var(--ei-surface-card)",
+        border: "1px solid rgba(159,176,201,0.18)",
+      }}
     >
       <Skeleton className="h-4 w-32" />
       <Skeleton className="mt-4 h-8 w-20" />
