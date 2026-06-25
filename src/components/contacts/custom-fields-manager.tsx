@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Plus, Trash2 } from 'lucide-react';
 
@@ -21,25 +20,18 @@ interface CustomFieldsManagerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-/**
- * Dialog wrapper around {@link CustomFieldsPanel}, used on the Contacts page.
- * The same panel is rendered inline under Settings → Custom Fields, so the
- * editing UI lives in one place. Radix unmounts the dialog content on close,
- * so the panel remounts (and refetches) on each open.
- */
 export function CustomFieldsManager({
   open,
   onOpenChange,
 }: CustomFieldsManagerProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-border bg-popover text-popover-foreground sm:max-w-md">
+      <DialogContent className="sm:max-w-md" style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
         <DialogHeader>
-          <DialogTitle className="text-popover-foreground">Custom fields</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Define extra contact fields (e.g. ZIP code, lead source). They
-            appear on every contact and in the “Update Contact Field” automation
-            action.
+          <DialogTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Campos personalizados</DialogTitle>
+          <DialogDescription style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Defina campos extras de contato (ex. CEP, fonte do lead). Aparecem em
+            cada contato e na ação "Atualizar campo de contato" das automações.
           </DialogDescription>
         </DialogHeader>
         <CustomFieldsPanel />
@@ -48,12 +40,6 @@ export function CustomFieldsManager({
   );
 }
 
-/**
- * Create / rename / delete account-wide custom contact field definitions.
- * Per-contact values are edited elsewhere (contact detail → Custom Fields);
- * this only manages the field catalogue. Admin+ gated by the caller — the
- * `custom_fields` RLS also rejects non-admin writes as defense in depth.
- */
 export function CustomFieldsPanel() {
   const supabase = createClient();
   const { user, accountId } = useAuth();
@@ -75,9 +61,6 @@ export function CustomFieldsPanel() {
     setLoading(false);
   }, [supabase, accountId]);
 
-  // Load the field list on mount once the account is known. The setters
-  // inside fetchFields run after the Supabase await — not synchronously in
-  // the effect body — so the cascade the lint rule warns about doesn't apply.
   useEffect(() => {
     if (accountId) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -85,7 +68,6 @@ export function CustomFieldsPanel() {
     }
   }, [accountId, fetchFields]);
 
-  /** Case-insensitive name clash within the loaded list. */
   function isDuplicate(name: string, exceptId?: string): boolean {
     const lower = name.toLowerCase();
     return fields.some(
@@ -97,11 +79,11 @@ export function CustomFieldsPanel() {
     const name = newName.trim();
     if (!name) return;
     if (!accountId || !user) {
-      toast.error('Your profile is not linked to an account.');
+      toast.error('Seu perfil não está vinculado a uma conta.');
       return;
     }
     if (isDuplicate(name)) {
-      toast.error(`A field named "${name}" already exists.`);
+      toast.error(`Já existe um campo chamado "${name}".`);
       return;
     }
 
@@ -115,16 +97,14 @@ export function CustomFieldsPanel() {
     setCreating(false);
 
     if (error) {
-      toast.error('Could not create field. You may not have permission.');
+      toast.error('Não foi possível criar o campo. Você pode não ter permissão.');
       return;
     }
-    toast.success(`Created "${name}".`);
+    toast.success(`Campo "${name}" criado.`);
     setNewName('');
     await fetchFields();
   }
 
-  /** Returns true on success so the row can keep the new name, false so it
-   *  reverts to the previous one. No-ops (blank / unchanged) count as success. */
   async function handleRename(
     field: CustomField,
     nextName: string
@@ -132,7 +112,7 @@ export function CustomFieldsPanel() {
     const name = nextName.trim();
     if (!name || name === field.field_name) return true;
     if (isDuplicate(name, field.id)) {
-      toast.error(`A field named "${name}" already exists.`);
+      toast.error(`Já existe um campo chamado "${name}".`);
       return false;
     }
     setBusyId(field.id);
@@ -142,7 +122,7 @@ export function CustomFieldsPanel() {
       .eq('id', field.id);
     setBusyId(null);
     if (error) {
-      toast.error('Could not rename field.');
+      toast.error('Não foi possível renomear o campo.');
       return false;
     }
     await fetchFields();
@@ -152,7 +132,7 @@ export function CustomFieldsPanel() {
   async function handleDelete(field: CustomField) {
     if (
       !window.confirm(
-        `Delete "${field.field_name}"? This also removes its stored value on every contact. This cannot be undone.`
+        `Excluir "${field.field_name}"? Os valores armazenados em todos os contatos também serão removidos. Essa ação não pode ser desfeita.`
       )
     ) {
       return;
@@ -164,10 +144,10 @@ export function CustomFieldsPanel() {
       .eq('id', field.id);
     setBusyId(null);
     if (error) {
-      toast.error('Could not delete field.');
+      toast.error('Não foi possível excluir o campo.');
       return;
     }
-    toast.success(`Deleted "${field.field_name}".`);
+    toast.success(`Campo "${field.field_name}" excluído.`);
     await fetchFields();
   }
 
@@ -184,43 +164,48 @@ export function CustomFieldsPanel() {
               void handleCreate();
             }
           }}
-          placeholder="New field name…"
-          className="bg-muted text-foreground"
+          placeholder="Nome do novo campo…"
+          style={{ backgroundColor: "rgba(159,176,201,0.08)", border: "1px solid rgba(159,176,201,0.22)", color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         />
-        <Button
+        <button
+          type="button"
           onClick={handleCreate}
           disabled={creating || !newName.trim()}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0"
+          className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+          style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          onMouseEnter={(e) => { if (!creating && newName.trim()) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
         >
           {creating ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
             <Plus className="size-4" />
           )}
-          Add
-        </Button>
+          Adicionar
+        </button>
       </div>
 
       {/* List */}
-      <div className="max-h-72 overflow-y-auto rounded-md border border-border">
+      <div className="max-h-72 overflow-y-auto rounded-md" style={{ border: "1px solid rgba(159,176,201,0.18)" }}>
         {loading ? (
-          <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-2 py-8 text-sm" style={{ color: "var(--ei-text-soft)" }}>
             <Loader2 className="size-4 animate-spin" />
-            Loading…
+            Carregando…
           </div>
         ) : fields.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            No custom fields yet.
+          <p className="py-8 text-center text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Nenhum campo personalizado ainda.
           </p>
         ) : (
-          <ul className="divide-y divide-border">
-            {fields.map((field) => (
+          <ul>
+            {fields.map((field, idx) => (
               <FieldRow
                 key={field.id}
                 field={field}
                 busy={busyId === field.id}
                 onRename={handleRename}
                 onDelete={handleDelete}
+                isLast={idx === fields.length - 1}
               />
             ))}
           </ul>
@@ -230,24 +215,24 @@ export function CustomFieldsPanel() {
   );
 }
 
-/** A single editable row. Controlled local state lets us commit on blur /
- *  Enter and cleanly revert to the last saved name when a rename fails. */
 function FieldRow({
   field,
   busy,
   onRename,
   onDelete,
+  isLast,
 }: {
   field: CustomField;
   busy: boolean;
   onRename: (field: CustomField, name: string) => Promise<boolean>;
   onDelete: (field: CustomField) => void;
+  isLast: boolean;
 }) {
   const [name, setName] = useState(field.field_name);
 
   async function commit() {
     if (name.trim() === field.field_name) {
-      setName(field.field_name); // normalise any whitespace-only edit
+      setName(field.field_name);
       return;
     }
     const ok = await onRename(field, name);
@@ -255,7 +240,10 @@ function FieldRow({
   }
 
   return (
-    <li className="flex items-center gap-2 px-3 py-2">
+    <li
+      className="flex items-center gap-2 px-3 py-2"
+      style={isLast ? {} : { borderBottom: "1px solid rgba(159,176,201,0.12)" }}
+    >
       <Input
         value={name}
         disabled={busy}
@@ -264,23 +252,26 @@ function FieldRow({
         onKeyDown={(e) => {
           if (e.key === 'Enter') e.currentTarget.blur();
         }}
-        aria-label={`Rename ${field.field_name}`}
-        className="focus:border-primary h-8 border-transparent bg-transparent text-foreground hover:border-border"
+        aria-label={`Renomear ${field.field_name}`}
+        className="h-8"
+        style={{ border: "none", backgroundColor: "transparent", color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       />
-      <Button
-        variant="ghost"
-        size="icon-sm"
+      <button
+        type="button"
         disabled={busy}
         onClick={() => onDelete(field)}
-        title="Delete field"
-        className="shrink-0 text-muted-foreground hover:text-red-400"
+        title="Excluir campo"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded transition-colors"
+        style={{ color: "var(--ei-text-soft)" }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#f87171"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
       >
         {busy ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (
           <Trash2 className="size-4" />
         )}
-      </Button>
+      </button>
     </li>
   );
 }
