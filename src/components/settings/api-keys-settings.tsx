@@ -1,27 +1,9 @@
 'use client';
 
-// ============================================================
-// ApiKeysSettings — Settings → API keys
-//
-// Manage the credentials that authenticate the public REST API
-// (`/api/v1/*`). Any member sees the roster (read-only); admin+ can
-// mint and revoke (gated by <RequireRole min="admin"> here and the
-// admin-only API routes + RLS on the server).
-//
-// One-time reveal: a freshly-minted key's plaintext is shown ONCE in
-// the creation dialog. After it closes, only the prefix remains —
-// the server stores just the hash. The UI states this explicitly so
-// the absence of a "copy again" button reads as intentional, not a
-// bug (same lesson as the invite-link flow).
-// ============================================================
-
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Copy, KeyRound, Loader2, Plus, Trash2 } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
@@ -54,7 +36,7 @@ interface ApiKey {
 }
 
 function fmtDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
+  return new Date(iso).toLocaleDateString('pt-BR', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -67,6 +49,13 @@ function keyStatus(k: ApiKey): 'active' | 'revoked' | 'expired' {
     return 'expired';
   return 'active';
 }
+
+const inputStyle = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+};
 
 export function ApiKeysSettings() {
   const { canEditSettings } = useAuth();
@@ -81,14 +70,14 @@ export function ApiKeysSettings() {
       const res = await fetch('/api/account/api-keys', { cache: 'no-store' });
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        toast.error(payload.error || 'Failed to load API keys');
+        toast.error(payload.error || 'Falha ao carregar chaves de API');
         return;
       }
       const data = (await res.json()) as { keys: ApiKey[] };
       setKeys(data.keys);
     } catch (err) {
       console.error('[ApiKeysSettings] load error:', err);
-      toast.error('Could not reach the server');
+      toast.error('Não foi possível alcançar o servidor');
     } finally {
       setLoading(false);
     }
@@ -106,11 +95,10 @@ export function ApiKeysSettings() {
       });
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        toast.error(payload.error || 'Failed to revoke key');
+        toast.error(payload.error || 'Falha ao revogar chave');
         return;
       }
-      toast.success(`Revoked "${key.name}"`);
-      // Reflect the revoke locally without a refetch.
+      toast.success(`"${key.name}" revogada`);
       setKeys((prev) =>
         prev.map((k) =>
           k.id === key.id ? { ...k, revoked_at: new Date().toISOString() } : k
@@ -118,7 +106,7 @@ export function ApiKeysSettings() {
       );
     } catch (err) {
       console.error('[ApiKeysSettings] revoke error:', err);
-      toast.error('Could not reach the server');
+      toast.error('Não foi possível alcançar o servidor');
     } finally {
       setRevoking(null);
     }
@@ -127,7 +115,7 @@ export function ApiKeysSettings() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="text-primary size-6 animate-spin" />
+        <Loader2 className="size-6 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
       </div>
     );
   }
@@ -135,133 +123,140 @@ export function ApiKeysSettings() {
   return (
     <section className="animate-in fade-in-50 space-y-6 duration-200">
       <SettingsPanelHead
-        title="API keys"
+        title="Chaves de API"
         description={
           <>
-            Keys authenticate the public REST API (
-            <code className="text-xs">/api/v1</code>) so you can build your own
-            automations. Send them as{' '}
-            <code className="text-xs">Authorization: Bearer &lt;key&gt;</code>.
+            As chaves autenticam a API REST pública (
+            <code className="text-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>/api/v1</code>) para suas automações. Envie como{' '}
+            <code className="text-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Authorization: Bearer &lt;chave&gt;</code>.
           </>
         }
         action={
           <RequireRole min="admin">
-            <Button onClick={() => setCreateOpen(true)}>
+            <button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+              style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
+            >
               <Plus className="size-4" />
-              New API key
-            </Button>
+              Nova chave de API
+            </button>
           </RequireRole>
         }
       />
 
       {keys.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-10 text-center">
-            <KeyRound className="text-muted-foreground size-6" />
-            <p className="text-muted-foreground mt-2 text-sm">
-              No API keys yet.
+        <div className="flex flex-col items-center justify-center py-10 text-center" style={{ backgroundColor: "rgba(159,176,201,0.04)", border: "1px solid rgba(159,176,201,0.16)", borderRadius: "12px" }}>
+          <KeyRound className="size-6" style={{ color: "var(--ei-text-soft)" }} />
+          <p className="mt-2 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Nenhuma chave de API ainda.
+          </p>
+          {canEditSettings ? (
+            <p className="mt-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Clique em <span style={{ color: "var(--ei-offwhite)" }}>Nova chave de API</span> para criar uma.
             </p>
-            {canEditSettings ? (
-              <p className="text-muted-foreground mt-1 text-xs">
-                Click <span className="text-foreground">New API key</span> to
-                create one.
-              </p>
-            ) : (
-              <p className="text-muted-foreground mt-1 text-xs">
-                Ask an admin to create one.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+          ) : (
+            <p className="mt-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Peça a um admin para criar uma.
+            </p>
+          )}
+        </div>
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <ul className="divide-border divide-y">
-              {keys.map((k) => {
-                const status = keyStatus(k);
-                const inactive = status !== 'active';
-                return (
-                  <li
-                    key={k.id}
-                    className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:gap-4"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`truncate text-sm font-medium ${
-                            inactive
-                              ? 'text-muted-foreground line-through'
-                              : 'text-foreground'
-                          }`}
-                        >
-                          {k.name}
+        <div style={{ backgroundColor: "rgba(159,176,201,0.04)", border: "1px solid rgba(159,176,201,0.16)", borderRadius: "12px", overflow: "hidden" }}>
+          <ul>
+            {keys.map((k, idx) => {
+              const status = keyStatus(k);
+              const inactive = status !== 'active';
+              const isLast = idx === keys.length - 1;
+              return (
+                <li
+                  key={k.id}
+                  className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:gap-4"
+                  style={isLast ? {} : { borderBottom: "1px solid rgba(159,176,201,0.10)" }}
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="truncate text-sm font-medium"
+                        style={{
+                          color: inactive ? "var(--ei-text-soft)" : "var(--ei-offwhite)",
+                          textDecoration: inactive ? "line-through" : "none",
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        }}
+                      >
+                        {k.name}
+                      </span>
+                      {status === 'revoked' && (
+                        <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide" style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "rgba(159,176,201,0.08)", color: "var(--ei-text-soft)" }}>
+                          Revogada
                         </span>
-                        {status === 'revoked' && (
-                          <Badge className="border-border bg-muted text-muted-foreground text-[10px] tracking-wide uppercase">
-                            Revoked
-                          </Badge>
-                        )}
-                        {status === 'expired' && (
-                          <Badge className="border-border bg-muted text-muted-foreground text-[10px] tracking-wide uppercase">
-                            Expired
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-muted-foreground mt-0.5 font-mono text-xs">
-                        {k.key_prefix}…
-                      </p>
-                      <div className="mt-1.5 flex flex-wrap gap-1">
-                        {k.scopes.length === 0 ? (
-                          <span className="text-muted-foreground text-xs">
-                            No scopes
-                          </span>
-                        ) : (
-                          k.scopes.map((s) => (
-                            <Badge
-                              key={s}
-                              className="border-border bg-muted text-muted-foreground text-[10px]"
-                            >
-                              {s}
-                            </Badge>
-                          ))
-                        )}
-                      </div>
-                      <p className="text-muted-foreground mt-1.5 text-xs">
-                        Created {fmtDate(k.created_at)}
-                        {' · '}
-                        {k.last_used_at
-                          ? `last used ${fmtDate(k.last_used_at)}`
-                          : 'never used'}
-                        {k.expires_at && status !== 'expired'
-                          ? ` · expires ${fmtDate(k.expires_at)}`
-                          : ''}
-                      </p>
+                      )}
+                      {status === 'expired' && (
+                        <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide" style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "rgba(159,176,201,0.08)", color: "var(--ei-text-soft)" }}>
+                          Expirada
+                        </span>
+                      )}
                     </div>
+                    <p className="mt-0.5 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
+                      {k.key_prefix}…
+                    </p>
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {k.scopes.length === 0 ? (
+                        <span className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                          Sem escopos
+                        </span>
+                      ) : (
+                        k.scopes.map((s) => (
+                          <span
+                            key={s}
+                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px]"
+                            style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "rgba(159,176,201,0.08)", color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}
+                          >
+                            {s}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                    <p className="mt-1.5 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                      Criada em {fmtDate(k.created_at)}
+                      {' · '}
+                      {k.last_used_at
+                        ? `último uso ${fmtDate(k.last_used_at)}`
+                        : 'nunca usada'}
+                      {k.expires_at && status !== 'expired'
+                        ? ` · expira em ${fmtDate(k.expires_at)}`
+                        : ''}
+                    </p>
+                  </div>
 
-                    {status === 'active' && (
-                      <RequireRole min="admin">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRevoke(k)}
-                          disabled={revoking === k.id}
-                          className="self-start border-red-500/40 bg-red-500/10 text-red-300 hover:border-red-500/60 hover:bg-red-500/20 hover:text-red-200 sm:self-auto"
-                        >
-                          {revoking === k.id ? (
-                            <Loader2 className="size-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="size-4" />
-                          )}
-                          Revoke
-                        </Button>
-                      </RequireRole>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </CardContent>
-        </Card>
+                  {status === 'active' && (
+                    <RequireRole min="admin">
+                      <button
+                        type="button"
+                        onClick={() => handleRevoke(k)}
+                        disabled={revoking === k.id}
+                        className="self-start inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 sm:self-auto"
+                        style={{ border: "1px solid rgba(248,113,113,0.40)", backgroundColor: "rgba(248,113,113,0.10)", color: "#f87171", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                        onMouseEnter={(e) => { if (revoking !== k.id) { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(248,113,113,0.20)"; (e.currentTarget as HTMLButtonElement).style.color = "#fca5a5"; } }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(248,113,113,0.10)"; (e.currentTarget as HTMLButtonElement).style.color = "#f87171"; }}
+                      >
+                        {revoking === k.id ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="size-4" />
+                        )}
+                        Revogar
+                      </button>
+                    </RequireRole>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
 
       <CreateKeyDialog
@@ -272,10 +267,6 @@ export function ApiKeysSettings() {
     </section>
   );
 }
-
-// ------------------------------------------------------------
-// Create dialog — form → one-time plaintext reveal.
-// ------------------------------------------------------------
 
 function CreateKeyDialog({
   open,
@@ -289,7 +280,6 @@ function CreateKeyDialog({
   const [name, setName] = useState('');
   const [scopes, setScopes] = useState<ApiScope[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  // Once set, we switch from the form to the reveal view.
   const [createdKey, setCreatedKey] = useState<string | null>(null);
 
   function reset() {
@@ -308,7 +298,7 @@ function CreateKeyDialog({
   async function handleCreate() {
     const trimmed = name.trim();
     if (!trimmed) {
-      toast.error('Give the key a name');
+      toast.error('Dê um nome à chave');
       return;
     }
     setSubmitting(true);
@@ -320,14 +310,14 @@ function CreateKeyDialog({
       });
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) {
-        toast.error(payload.error || 'Failed to create key');
+        toast.error(payload.error || 'Falha ao criar chave');
         return;
       }
       setCreatedKey(payload.plaintext as string);
       onCreated();
     } catch (err) {
       console.error('[CreateKeyDialog] create error:', err);
-      toast.error('Could not reach the server');
+      toast.error('Não foi possível alcançar o servidor');
     } finally {
       setSubmitting(false);
     }
@@ -337,9 +327,9 @@ function CreateKeyDialog({
     if (!createdKey) return;
     try {
       await navigator.clipboard.writeText(createdKey);
-      toast.success('API key copied');
+      toast.success('Chave de API copiada');
     } catch {
-      toast.error('Copy failed — select and copy manually');
+      toast.error('Falha ao copiar — selecione e copie manualmente');
     }
   }
 
@@ -351,75 +341,83 @@ function CreateKeyDialog({
         onOpenChange(next);
       }}
     >
-      <DialogContent className="border-border bg-popover sm:max-w-md">
+      <DialogContent className="sm:max-w-md" style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
         {createdKey ? (
           <>
             <DialogHeader>
-              <DialogTitle className="text-popover-foreground">
-                Copy your API key
+              <DialogTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Copie sua chave de API
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground">
-                This is the only time the full key is shown. Store it somewhere
-                safe — if you lose it, revoke it and create a new one.
+              <DialogDescription style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Esta é a única vez que a chave completa é exibida. Guarde-a em lugar seguro — se perder, revogue e crie uma nova.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-1.5">
-              <Label className="text-muted-foreground">API key</Label>
+              <Label style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Chave de API</Label>
               <div className="flex gap-2">
                 <Input
                   readOnly
                   value={createdKey}
-                  className="font-mono text-xs"
                   onFocus={(e) => e.currentTarget.select()}
+                  style={{ ...inputStyle, fontFamily: "'JetBrains Mono', monospace", fontSize: "12px" }}
                 />
-                <Button type="button" variant="outline" onClick={copyKey}>
+                <button
+                  type="button"
+                  onClick={copyKey}
+                  className="inline-flex items-center gap-2 shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                  style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
+                >
                   <Copy className="size-4" />
-                  Copy
-                </Button>
+                  Copiar
+                </button>
               </div>
             </div>
 
-            <DialogFooter>
-              <Button
-                onClick={() => {
-                  reset();
-                  onOpenChange(false);
-                }}
+            <DialogFooter style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
+              <button
+                type="button"
+                onClick={() => { reset(); onOpenChange(false); }}
+                className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
               >
-                Done
-              </Button>
+                Concluído
+              </button>
             </DialogFooter>
           </>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="text-popover-foreground">
-                New API key
+              <DialogTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Nova chave de API
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground">
-                Name it after the integration that will use it, and grant only
-                the scopes it needs.
+              <DialogDescription style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Nomeie-a com a integração que irá usá-la, e conceda apenas os escopos necessários.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="api-key-name" className="text-muted-foreground">
-                  Name
+                <Label htmlFor="api-key-name" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Nome
                 </Label>
                 <Input
                   id="api-key-name"
                   value={name}
                   maxLength={80}
-                  placeholder="e.g. Zapier automation"
+                  placeholder="ex. Integração Zapier"
                   onChange={(e) => setName(e.target.value)}
+                  style={inputStyle}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Scopes</Label>
-                <div className="border-border space-y-2 rounded-md border p-3">
+                <Label style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Escopos</Label>
+                <div className="space-y-2 rounded-lg p-3" style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "rgba(159,176,201,0.04)" }}>
                   {API_SCOPES.map((scope) => (
                     <label
                       key={scope}
@@ -433,45 +431,52 @@ function CreateKeyDialog({
                         className="mt-0.5"
                       />
                       <span className="min-w-0">
-                        <span className="text-foreground block font-mono text-xs">
+                        <span className="block text-xs" style={{ color: "var(--ei-offwhite)", fontFamily: "'JetBrains Mono', monospace" }}>
                           {scope}
                         </span>
-                        <span className="text-muted-foreground block text-xs">
+                        <span className="block text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                           {SCOPE_DESCRIPTIONS[scope]}
                         </span>
                       </span>
                     </label>
                   ))}
                 </div>
-                <p className="text-muted-foreground text-xs">
-                  A key with no scopes can still call{' '}
-                  <code className="text-[11px]">GET /api/v1/me</code> to verify
-                  it works.
+                <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Uma chave sem escopos ainda pode chamar{' '}
+                  <code className="text-[11px]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>GET /api/v1/me</code> para verificar se funciona.
                 </p>
               </div>
             </div>
 
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  reset();
-                  onOpenChange(false);
-                }}
-                className="border-border text-muted-foreground hover:bg-muted"
+            <DialogFooter style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
+              <button
+                type="button"
+                onClick={() => { reset(); onOpenChange(false); }}
+                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
               >
-                Cancel
-              </Button>
-              <Button onClick={handleCreate} disabled={submitting}>
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleCreate}
+                disabled={submitting}
+                className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+                style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { if (!submitting) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
+              >
                 {submitting ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    Creating…
+                    Criando…
                   </>
                 ) : (
-                  'Create key'
+                  'Criar chave'
                 )}
-              </Button>
+              </button>
             </DialogFooter>
           </>
         )}
