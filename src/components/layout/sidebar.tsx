@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
 import {
+  BarChart3,
   Bot,
   Crown,
   GitBranch,
@@ -92,6 +93,7 @@ const aiNavItems: NavItem[] = [
   { href: "/wa-flows", label: "WA Flows", icon: Layers, beta: true },
   { href: "/catalog", label: "Catálogo", icon: Package, beta: true },
   { href: "/vtex", label: "VTEX Commerce", icon: ShoppingCart },
+  { href: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 const bottomNavItems = [
