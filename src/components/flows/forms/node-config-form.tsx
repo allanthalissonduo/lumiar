@@ -24,7 +24,7 @@
  * renders the advanced rows.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Loader2,
   Paperclip,
@@ -35,8 +35,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -44,10 +42,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import { uploadAccountMedia, MEDIA_MAX_BYTES } from "@/lib/storage/upload-media";
 import { slugify, type BuilderNode } from "../shared";
 import { NextNodeRow, NodeKeySelect, TextRow } from "./fields";
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "6px 10px",
+  borderRadius: "6px",
+  border: "1px solid rgba(159,176,201,0.22)",
+  background: "rgba(159,176,201,0.08)",
+  color: "var(--ei-offwhite)",
+  fontSize: "12px",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  outline: "none",
+  boxSizing: "border-box",
+};
+
+const selectTriggerStyle: React.CSSProperties = {
+  background: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  fontSize: "12px",
+};
+
+const selectContentStyle: React.CSSProperties = {
+  background: "var(--ei-surface-card, #0E1C32)",
+  border: "1px solid rgba(159,176,201,0.18)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+};
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  marginBottom: "4px",
+  fontSize: "11px",
+  color: "var(--ei-text-soft)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+};
 
 interface NodeConfigFormProps {
   node: BuilderNode;
@@ -135,10 +168,10 @@ export function NodeConfigForm({
             rows={2}
           />
           <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
+            <label style={labelStyle}>
               Variable key (stored in flow_runs.vars; alphanumeric + underscore)
             </label>
-            <Input
+            <input
               value={(cfg as { var_key?: string }).var_key ?? ""}
               onChange={(e) =>
                 onUpdateConfig({
@@ -146,11 +179,25 @@ export function NodeConfigForm({
                 })
               }
               placeholder="e.g. name, email, company"
-              className="bg-muted font-mono text-xs"
+              style={{ ...inputStyle, fontFamily: "'JetBrains Mono', monospace" }}
             />
-            <p className="mt-1 text-[10px] text-muted-foreground">
+            <p
+              style={{
+                marginTop: "4px",
+                fontSize: "10px",
+                color: "var(--ei-text-soft)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            >
               Interpolate in downstream prompts and handoff notes with{" "}
-              <code className="rounded bg-muted px-1">
+              <code
+                style={{
+                  borderRadius: "3px",
+                  background: "rgba(159,176,201,0.08)",
+                  padding: "0 4px",
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
                 {"{{vars."}
                 {(cfg as { var_key?: string }).var_key || "name"}
                 {"}}"}
@@ -200,7 +247,13 @@ export function NodeConfigForm({
 
     case "end":
       return (
-        <p className="text-xs text-muted-foreground">
+        <p
+          style={{
+            fontSize: "12px",
+            color: "var(--ei-text-soft)",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}
+        >
           Terminal node. When the runner reaches this node the run is marked
           complete. No config needed.
         </p>
@@ -268,24 +321,36 @@ function SendButtonsForm({
         onChange={(v) => onUpdateConfig({ footer_text: v })}
       />
       <div>
-        <div className="mb-2 flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">
+        <div
+          style={{
+            marginBottom: "8px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <label style={labelStyle}>
             Buttons (1–3) — each one routes to a different next node
           </label>
         </div>
-        <div className="flex flex-col gap-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {buttons.map((b, i) => (
             <div
               key={i}
-              className={cn(
-                "grid grid-cols-1 gap-2 rounded-md border border-border bg-muted/40 p-3",
-                showAdvanced
-                  ? "md:grid-cols-[1fr_2fr_2fr_auto]"
-                  : "md:grid-cols-[2fr_2fr_auto]",
-              )}
+              style={{
+                display: "grid",
+                gridTemplateColumns: showAdvanced
+                  ? "1fr 2fr 2fr auto"
+                  : "2fr 2fr auto",
+                gap: "8px",
+                borderRadius: "6px",
+                border: "1px solid rgba(159,176,201,0.18)",
+                background: "rgba(159,176,201,0.04)",
+                padding: "12px",
+              }}
             >
               {showAdvanced && (
-                <Input
+                <input
                   value={b.reply_id}
                   onChange={(e) =>
                     updateButton(i, {
@@ -293,14 +358,14 @@ function SendButtonsForm({
                     })
                   }
                   placeholder="reply_id"
-                  className="bg-muted font-mono text-xs"
+                  style={{ ...inputStyle, fontFamily: "'JetBrains Mono', monospace" }}
                 />
               )}
-              <Input
+              <input
                 value={b.title}
                 onChange={(e) => updateButton(i, { title: e.target.value })}
                 placeholder="Visible title (≤20 chars)"
-                className="bg-muted"
+                style={inputStyle}
                 maxLength={20}
               />
               <NodeKeySelect
@@ -310,27 +375,21 @@ function SendButtonsForm({
                 onChange={(v) => updateButton(i, { next_node_key: v ?? "" })}
                 placeholder="Next node…"
               />
-              <Button
-                variant="ghost"
-                size="sm"
+              <IconButton
                 onClick={() => removeButton(i)}
-                className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                danger
+                aria-label="Remove button"
               >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
+                <Trash2 style={{ width: "14px", height: "14px" }} />
+              </IconButton>
             </div>
           ))}
         </div>
         {buttons.length < 3 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={addButton}
-            className="mt-2"
-          >
-            <Plus className="h-3.5 w-3.5" />
+          <GhostButton onClick={addButton} style={{ marginTop: "8px" }}>
+            <Plus style={{ width: "14px", height: "14px" }} />
             Add button
-          </Button>
+          </GhostButton>
         )}
       </div>
     </>
@@ -451,7 +510,13 @@ function SendListForm({
         onChange={(v) => onUpdateConfig({ text: v })}
         rows={3}
       />
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "12px",
+        }}
+      >
         <TextRow
           label="Tap-to-expand button label (≤20 chars)"
           value={cfg.button_label ?? ""}
@@ -464,48 +529,62 @@ function SendListForm({
         />
       </div>
 
-      <div className="mt-2">
-        <label className="mb-2 block text-xs text-muted-foreground">
+      <div style={{ marginTop: "8px" }}>
+        <label style={labelStyle}>
           Rows (1–10 total across all sections)
         </label>
         {sections.map((section, sIdx) => (
           <div
             key={sIdx}
-            className="mb-3 rounded-md border border-border bg-muted/40 p-3"
+            style={{
+              marginBottom: "12px",
+              borderRadius: "6px",
+              border: "1px solid rgba(159,176,201,0.18)",
+              background: "rgba(159,176,201,0.04)",
+              padding: "12px",
+            }}
           >
-            <div className="mb-2 flex items-center gap-2">
-              <Input
+            <div
+              style={{
+                marginBottom: "8px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              <input
                 value={section.title ?? ""}
                 onChange={(e) =>
                   updateSection(sIdx, { title: e.target.value })
                 }
                 placeholder={`Section ${sIdx + 1} title (optional)`}
-                className="bg-muted text-xs"
+                style={inputStyle}
               />
               {sections.length > 1 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <IconButton
                   onClick={() => removeSection(sIdx)}
-                  className="shrink-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                  danger
                   aria-label="Remove section"
+                  style={{ flexShrink: 0 }}
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                  <Trash2 style={{ width: "14px", height: "14px" }} />
+                </IconButton>
               )}
             </div>
             {section.rows.map((row, rIdx) => (
               <div
                 key={rIdx}
-                className={cn(
-                  "mb-2 grid grid-cols-1 gap-2",
-                  showAdvanced
-                    ? "md:grid-cols-[1fr_2fr_2fr_auto]"
-                    : "md:grid-cols-[2fr_2fr_auto]",
-                )}
+                style={{
+                  marginBottom: "8px",
+                  display: "grid",
+                  gridTemplateColumns: showAdvanced
+                    ? "1fr 2fr 2fr auto"
+                    : "2fr 2fr auto",
+                  gap: "8px",
+                }}
               >
                 {showAdvanced && (
-                  <Input
+                  <input
                     value={row.reply_id}
                     onChange={(e) =>
                       updateRow(sIdx, rIdx, {
@@ -516,16 +595,16 @@ function SendListForm({
                       })
                     }
                     placeholder="reply_id"
-                    className="bg-muted font-mono text-xs"
+                    style={{ ...inputStyle, fontFamily: "'JetBrains Mono', monospace" }}
                   />
                 )}
-                <Input
+                <input
                   value={row.title}
                   onChange={(e) =>
                     updateRow(sIdx, rIdx, { title: e.target.value })
                   }
                   placeholder="Row title (≤24)"
-                  className="bg-muted"
+                  style={inputStyle}
                   maxLength={24}
                 />
                 <NodeKeySelect
@@ -537,26 +616,19 @@ function SendListForm({
                   }
                   placeholder="Next node…"
                 />
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <IconButton
                   onClick={() => removeRow(sIdx, rIdx)}
-                  className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                  danger
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                  <Trash2 style={{ width: "14px", height: "14px" }} />
+                </IconButton>
               </div>
             ))}
             {totalRows < 10 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => addRow(sIdx)}
-                className="mt-1"
-              >
-                <Plus className="h-3.5 w-3.5" />
+              <GhostButton onClick={() => addRow(sIdx)} style={{ marginTop: "4px" }}>
+                <Plus style={{ width: "14px", height: "14px" }} />
                 Add row
-              </Button>
+              </GhostButton>
             )}
           </div>
         ))}
@@ -564,10 +636,10 @@ function SendListForm({
             by category (Billing / Support / Sales etc.) to give customers a
             scannable menu. */}
         {sections.length < 10 && (
-          <Button variant="outline" size="sm" onClick={addSection}>
-            <Plus className="h-3.5 w-3.5" />
+          <OutlineButton onClick={addSection}>
+            <Plus style={{ width: "14px", height: "14px" }} />
             Add section
-          </Button>
+          </OutlineButton>
         )}
       </div>
     </>
@@ -612,27 +684,29 @@ function ConditionForm({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "12px" }}
+      >
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">If</label>
+          <label style={labelStyle}>If</label>
           <Select
             value={subject}
             onValueChange={(v) =>
               onUpdateConfig({ subject: v as ConditionCfg["subject"] })
             }
           >
-            <SelectTrigger className="bg-muted">
+            <SelectTrigger style={selectTriggerStyle}>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent style={selectContentStyle}>
               <SelectItem value="var">Captured variable</SelectItem>
               <SelectItem value="tag">Contact has tag</SelectItem>
               <SelectItem value="contact_field">Contact field</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <div className="md:col-span-2">
-          <label className="mb-1 block text-xs text-muted-foreground">
+        <div>
+          <label style={labelStyle}>
             {subject === "var"
               ? "var name"
               : subject === "tag"
@@ -644,10 +718,10 @@ function ConditionForm({
               value={cfg.subject_key ?? ""}
               onValueChange={(v) => onUpdateConfig({ subject_key: v })}
             >
-              <SelectTrigger className="bg-muted">
+              <SelectTrigger style={selectTriggerStyle}>
                 <SelectValue placeholder="Pick a tag…" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent style={selectContentStyle}>
                 {tags.map((t) => (
                   <SelectItem key={t.id} value={t.id}>
                     {t.name}
@@ -660,10 +734,10 @@ function ConditionForm({
               value={cfg.subject_key ?? ""}
               onValueChange={(v) => onUpdateConfig({ subject_key: v })}
             >
-              <SelectTrigger className="bg-muted">
+              <SelectTrigger style={selectTriggerStyle}>
                 <SelectValue placeholder="Pick a field…" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent style={selectContentStyle}>
                 <SelectItem value="name">name</SelectItem>
                 <SelectItem value="email">email</SelectItem>
                 <SelectItem value="phone">phone</SelectItem>
@@ -671,36 +745,37 @@ function ConditionForm({
               </SelectContent>
             </Select>
           ) : (
-            <Input
+            <input
               value={cfg.subject_key ?? ""}
               onChange={(e) =>
                 onUpdateConfig({ subject_key: e.target.value })
               }
               placeholder={subject === "var" ? "e.g. email" : "tag UUID"}
-              className="bg-muted font-mono text-xs"
+              style={{ ...inputStyle, fontFamily: "'JetBrains Mono', monospace" }}
             />
           )}
         </div>
       </div>
 
       <div
-        className={cn(
-          "grid grid-cols-1 gap-3",
-          showValue ? "md:grid-cols-2" : "",
-        )}
+        style={{
+          display: "grid",
+          gridTemplateColumns: showValue ? "1fr 1fr" : "1fr",
+          gap: "12px",
+        }}
       >
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Operator</label>
+          <label style={labelStyle}>Operator</label>
           <Select
             value={operator}
             onValueChange={(v) =>
               onUpdateConfig({ operator: v as ConditionCfg["operator"] })
             }
           >
-            <SelectTrigger className="bg-muted">
+            <SelectTrigger style={selectTriggerStyle}>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent style={selectContentStyle}>
               <SelectItem value="present">is present</SelectItem>
               <SelectItem value="absent">is absent</SelectItem>
               <SelectItem value="equals">equals</SelectItem>
@@ -710,17 +785,19 @@ function ConditionForm({
         </div>
         {showValue && (
           <div>
-            <label className="mb-1 block text-xs text-muted-foreground">Value</label>
-            <Input
+            <label style={labelStyle}>Value</label>
+            <input
               value={cfg.value ?? ""}
               onChange={(e) => onUpdateConfig({ value: e.target.value })}
-              className="bg-muted"
+              style={inputStyle}
             />
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
+      >
         <NextNodeRow
           value={cfg.true_next ?? ""}
           allNodes={allNodes}
@@ -765,35 +842,37 @@ function SetTagForm({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
+      >
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Action</label>
+          <label style={labelStyle}>Action</label>
           <Select
             value={cfg.mode ?? "add"}
             onValueChange={(v) =>
               onUpdateConfig({ mode: v as SetTagCfg["mode"] })
             }
           >
-            <SelectTrigger className="bg-muted">
+            <SelectTrigger style={selectTriggerStyle}>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent style={selectContentStyle}>
               <SelectItem value="add">Add tag</SelectItem>
               <SelectItem value="remove">Remove tag</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Tag</label>
+          <label style={labelStyle}>Tag</label>
           {tags.length > 0 ? (
             <Select
               value={cfg.tag_id ?? ""}
               onValueChange={(v) => onUpdateConfig({ tag_id: v })}
             >
-              <SelectTrigger className="bg-muted">
+              <SelectTrigger style={selectTriggerStyle}>
                 <SelectValue placeholder="Pick a tag…" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent style={selectContentStyle}>
                 {tags.map((t) => (
                   <SelectItem key={t.id} value={t.id}>
                     {t.name}
@@ -802,11 +881,11 @@ function SetTagForm({
               </SelectContent>
             </Select>
           ) : (
-            <Input
+            <input
               value={cfg.tag_id ?? ""}
               onChange={(e) => onUpdateConfig({ tag_id: e.target.value })}
               placeholder="Tag UUID"
-              className="bg-muted font-mono text-xs"
+              style={{ ...inputStyle, fontFamily: "'JetBrains Mono', monospace" }}
             />
           )}
         </div>
@@ -930,7 +1009,7 @@ function SendMediaForm({
   return (
     <>
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">Media type</label>
+        <label style={labelStyle}>Media type</label>
         <Select
           value={mediaType}
           onValueChange={(v) => {
@@ -944,10 +1023,10 @@ function SendMediaForm({
             });
           }}
         >
-          <SelectTrigger className="bg-muted">
+          <SelectTrigger style={selectTriggerStyle}>
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent style={selectContentStyle}>
             <SelectItem value="image">Image (PNG, JPEG, WebP)</SelectItem>
             <SelectItem value="video">Video (MP4, 3GP)</SelectItem>
             <SelectItem value="document">
@@ -958,15 +1037,37 @@ function SendMediaForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">File</label>
+        <label style={labelStyle}>File</label>
         {cfg.media_url ? (
-          <div className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-xs">
-            <Paperclip className="h-3.5 w-3.5 shrink-0 text-cyan-400" />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              borderRadius: "6px",
+              border: "1px solid rgba(159,176,201,0.22)",
+              background: "rgba(159,176,201,0.08)",
+              padding: "8px 12px",
+              fontSize: "12px",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          >
+            <Paperclip
+              style={{ width: "14px", height: "14px", flexShrink: 0, color: "#22d3ee" }}
+            />
             <a
               href={cfg.media_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="min-w-0 flex-1 truncate text-foreground hover:text-cyan-300"
+              style={{
+                minWidth: 0,
+                flex: 1,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                color: "var(--ei-offwhite)",
+                textDecoration: "none",
+              }}
               title={displayName || cfg.media_url}
             >
               {displayName || cfg.media_url}
@@ -974,38 +1075,31 @@ function SendMediaForm({
             <button
               type="button"
               onClick={handleClear}
-              className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+              style={{
+                borderRadius: "4px",
+                padding: "4px",
+                background: "none",
+                border: "none",
+                color: "var(--ei-text-soft)",
+                cursor: "pointer",
+              }}
               aria-label="Remove file"
               disabled={uploading}
             >
-              <X className="h-3.5 w-3.5" />
+              <X style={{ width: "14px", height: "14px" }} />
             </button>
           </div>
         ) : (
-          <button
-            type="button"
+          <UploadDropzone
+            uploading={uploading}
             onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-4 text-xs text-muted-foreground transition-colors hover:border-border hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {uploading ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Uploading…
-              </>
-            ) : (
-              <>
-                <Upload className="h-3.5 w-3.5" />
-                Click to upload (max 16 MB)
-              </>
-            )}
-          </button>
+          />
         )}
         <input
           ref={fileInputRef}
           type="file"
           accept={MEDIA_ACCEPT[mediaType]}
-          className="hidden"
+          style={{ display: "none" }}
           onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) void handleFile(f);
@@ -1024,14 +1118,14 @@ function SendMediaForm({
 
       {isDocument && (
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">
+          <label style={labelStyle}>
             Filename shown to the customer (documents only)
           </label>
-          <Input
+          <input
             value={cfg.filename ?? ""}
             onChange={(e) => onUpdateConfig({ filename: e.target.value })}
             placeholder="invoice.pdf"
-            className="bg-muted text-xs"
+            style={inputStyle}
           />
         </div>
       )}
@@ -1044,5 +1138,168 @@ function SendMediaForm({
         label="After sending, advance to"
       />
     </>
+  );
+}
+
+// ============================================================
+// Small inline UI primitives (no Shadcn)
+// ============================================================
+
+function UploadDropzone({
+  uploading,
+  onClick,
+}: {
+  uploading: boolean;
+  onClick: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={uploading}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "flex",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
+        borderRadius: "6px",
+        border: `1px dashed ${hovered ? "rgba(159,176,201,0.35)" : "rgba(159,176,201,0.22)"}`,
+        background: hovered ? "rgba(159,176,201,0.08)" : "rgba(159,176,201,0.04)",
+        padding: "16px 12px",
+        fontSize: "12px",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        color: hovered ? "var(--ei-offwhite)" : "var(--ei-text-soft)",
+        cursor: uploading ? "not-allowed" : "pointer",
+        opacity: uploading ? 0.6 : 1,
+        transition: "background 0.15s, border-color 0.15s, color 0.15s",
+        boxSizing: "border-box",
+      }}
+    >
+      {uploading ? (
+        <>
+          <Loader2
+            style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }}
+          />
+          Uploading…
+        </>
+      ) : (
+        <>
+          <Upload style={{ width: "14px", height: "14px" }} />
+          Click to upload (max 16 MB)
+        </>
+      )}
+    </button>
+  );
+}
+
+function IconButton({
+  onClick,
+  danger,
+  children,
+  style,
+  ...rest
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  danger?: boolean;
+  style?: React.CSSProperties;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "6px",
+        borderRadius: "6px",
+        border: "none",
+        background: danger && hovered ? "rgba(239,68,68,0.1)" : "none",
+        color: danger ? (hovered ? "#fca5a5" : "#f87171") : "var(--ei-text-soft)",
+        cursor: "pointer",
+        transition: "background 0.15s, color 0.15s",
+        ...style,
+      }}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
+
+function GhostButton({
+  onClick,
+  children,
+  style,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        padding: "5px 10px",
+        borderRadius: "6px",
+        border: "none",
+        background: hovered ? "rgba(159,176,201,0.08)" : "none",
+        color: hovered ? "var(--ei-offwhite)" : "var(--ei-text-soft)",
+        fontSize: "12px",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        cursor: "pointer",
+        transition: "background 0.15s, color 0.15s",
+        ...style,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function OutlineButton({
+  onClick,
+  children,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        padding: "5px 12px",
+        borderRadius: "6px",
+        border: `1px solid ${hovered ? "rgba(159,176,201,0.35)" : "rgba(159,176,201,0.22)"}`,
+        background: hovered ? "rgba(159,176,201,0.08)" : "none",
+        color: hovered ? "var(--ei-offwhite)" : "var(--ei-text-soft)",
+        fontSize: "12px",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        cursor: "pointer",
+        transition: "background 0.15s, border-color 0.15s, color 0.15s",
+      }}
+    >
+      {children}
+    </button>
   );
 }

@@ -27,8 +27,6 @@ import {
   CornerDownRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -42,7 +40,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import { type ValidationIssue } from "@/lib/flows/validate";
 import {
   NODE_META,
@@ -150,7 +147,7 @@ export function FlowBuilder() {
   }, [flashKey]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       <TriggerPanel
         state={state}
         setState={setState}
@@ -159,16 +156,30 @@ export function FlowBuilder() {
 
       <EntryPicker state={state} setState={setState} />
 
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-foreground">
+      <section style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h2 style={{
+            fontSize: "0.875rem",
+            fontWeight: 600,
+            color: "var(--ei-offwhite)",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}>
             Nodes ({state.nodes.length})
           </h2>
           <AddNodeButton onAdd={addNode} />
         </div>
 
         {state.nodes.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border bg-card/50 p-8 text-center text-sm text-muted-foreground">
+          <div style={{
+            borderRadius: "0.5rem",
+            border: "1px dashed rgba(159,176,201,0.18)",
+            background: "rgba(159,176,201,0.04)",
+            padding: "2rem",
+            textAlign: "center",
+            fontSize: "0.875rem",
+            color: "var(--ei-text-soft)",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}>
             Add a <strong>Start</strong> node, then a <strong>Send buttons</strong>
             {" "}node, then a <strong>Handoff</strong> — that&apos;s the welcome-menu
             shape from the brief.
@@ -235,7 +246,7 @@ function KeywordsInput({
   }
 
   return (
-    <Input
+    <input
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
@@ -246,7 +257,17 @@ function KeywordsInput({
         }
       }}
       placeholder="support, help, hi"
-      className="bg-muted"
+      style={{
+        width: "100%",
+        background: "rgba(159,176,201,0.08)",
+        border: "1px solid rgba(159,176,201,0.22)",
+        borderRadius: "0.375rem",
+        padding: "0.375rem 0.75rem",
+        fontSize: "0.875rem",
+        color: "var(--ei-offwhite)",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        outline: "none",
+      }}
     />
   );
 }
@@ -265,11 +286,32 @@ function TriggerPanel({
   triggerIssues: ValidationIssue[];
 }) {
   return (
-    <section className="rounded-lg border border-border bg-card p-4">
-      <h2 className="mb-3 text-sm font-semibold text-foreground">Trigger</h2>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <section style={{
+      borderRadius: "0.5rem",
+      border: "1px solid rgba(159,176,201,0.18)",
+      background: "rgba(159,176,201,0.04)",
+      padding: "1rem",
+    }}>
+      <h2 style={{
+        marginBottom: "0.75rem",
+        fontSize: "0.875rem",
+        fontWeight: 600,
+        color: "var(--ei-offwhite)",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+      }}>Trigger</h2>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+        gap: "0.75rem",
+      }}>
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">When…</label>
+          <label style={{
+            display: "block",
+            marginBottom: "0.25rem",
+            fontSize: "0.75rem",
+            color: "var(--ei-text-soft)",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}>When…</label>
           <Select
             value={state.trigger_type}
             onValueChange={(v) =>
@@ -281,7 +323,7 @@ function TriggerPanel({
               }))
             }
           >
-            <SelectTrigger className="bg-muted">
+            <SelectTrigger style={{ background: "rgba(159,176,201,0.08)", border: "1px solid rgba(159,176,201,0.22)" }}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -299,7 +341,13 @@ function TriggerPanel({
         </div>
         {state.trigger_type === "keyword" && (
           <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
+            <label style={{
+              display: "block",
+              marginBottom: "0.25rem",
+              fontSize: "0.75rem",
+              color: "var(--ei-text-soft)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}>
               Keywords (comma-separated)
             </label>
             <KeywordsInput
@@ -319,7 +367,7 @@ function TriggerPanel({
         )}
       </div>
       {triggerIssues.length > 0 && (
-        <div className="mt-3 flex flex-col gap-1">
+        <div style={{ marginTop: "0.75rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
           {triggerIssues.map((i, ix) => (
             <IssueLine key={ix} issue={i} />
           ))}
@@ -342,9 +390,17 @@ function EntryPicker({
 }) {
   if (state.nodes.length === 0) return null;
   return (
-    <section className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
-      <CornerDownRight className="h-4 w-4 shrink-0 text-primary" />
-      <span className="text-xs text-muted-foreground">Entry node:</span>
+    <section style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+      borderRadius: "0.5rem",
+      border: "1px solid rgba(159,176,201,0.18)",
+      background: "rgba(159,176,201,0.04)",
+      padding: "0.75rem",
+    }}>
+      <CornerDownRight style={{ height: "1rem", width: "1rem", flexShrink: 0, color: "var(--ei-cobalt)" }} />
+      <span style={{ fontSize: "0.75rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Entry node:</span>
       <NodeKeySelect
         value={state.entry_node_id}
         nodes={state.nodes}
@@ -392,86 +448,187 @@ function NodeCard({
   const meta = NODE_META[node.node_type];
   const hasError = issues.some((i) => i.severity === "error");
   const preview = summarizeNode(node);
+
+  const borderColor = hasError
+    ? "rgba(239,68,68,0.4)"
+    : isEntry
+      ? "rgba(43,111,219,0.5)"
+      : "rgba(159,176,201,0.18)";
+
+  const boxShadow = isFlashed
+    ? "0 0 0 2px var(--ei-cobalt), 0 0 0 4px var(--ei-abyssal)"
+    : undefined;
+
   return (
     <div
       ref={cardRef}
-      className={cn(
-        "rounded-lg border bg-card transition-shadow duration-500",
-        hasError
-          ? "border-red-500/40"
-          : isEntry
-            ? "border-primary/50"
-            : "border-border",
-        isFlashed &&
-          "ring-2 ring-primary ring-offset-2 ring-offset-background",
-      )}
+      style={{
+        borderRadius: "0.5rem",
+        border: `1px solid ${borderColor}`,
+        background: "rgba(159,176,201,0.04)",
+        transition: "box-shadow 0.5s",
+        boxShadow,
+      }}
     >
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left"
+        style={{
+          display: "flex",
+          width: "100%",
+          alignItems: "center",
+          gap: "0.75rem",
+          padding: "0.75rem 1rem",
+          textAlign: "left",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+        }}
       >
-        <meta.icon className={cn("h-4 w-4 shrink-0", meta.color)} />
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="truncate text-sm font-medium text-foreground">
+        <meta.icon className={meta.color} style={{ height: "1rem", width: "1rem", flexShrink: 0 }} />
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              color: "var(--ei-offwhite)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}>
               {meta.label}
             </span>
-            <code className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+            <code style={{
+              borderRadius: "0.25rem",
+              background: "rgba(159,176,201,0.08)",
+              padding: "0.125rem 0.375rem",
+              fontSize: "0.625rem",
+              color: "var(--ei-text-soft)",
+              fontFamily: "'JetBrains Mono', monospace",
+            }}>
               {node.node_key}
             </code>
             {isEntry && (
               <Badge
                 variant="outline"
-                className="border-primary/40 bg-primary/10 text-[10px] text-primary"
+                style={{
+                  borderColor: "rgba(43,111,219,0.4)",
+                  background: "rgba(43,111,219,0.1)",
+                  fontSize: "0.625rem",
+                  color: "var(--ei-cobalt)",
+                }}
               >
                 Entry
               </Badge>
             )}
           </div>
           {!expanded && preview && (
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">
+            <p style={{
+              marginTop: "0.125rem",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              fontSize: "0.75rem",
+              color: "var(--ei-text-soft)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}>
               {preview}
             </p>
           )}
         </div>
         {hasError && (
-          <CircleAlert className="h-3.5 w-3.5 shrink-0 text-red-400" />
+          <CircleAlert style={{ height: "0.875rem", width: "0.875rem", flexShrink: 0, color: "rgb(248,113,113)" }} />
         )}
         {expanded ? (
-          <ChevronUp className="h-4 w-4 text-muted-foreground" />
+          <ChevronUp style={{ height: "1rem", width: "1rem", color: "var(--ei-text-soft)" }} />
         ) : (
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          <ChevronDown style={{ height: "1rem", width: "1rem", color: "var(--ei-text-soft)" }} />
         )}
       </button>
       {expanded && (
-        <div className="border-t border-border px-4 py-4">
+        <div style={{ borderTop: "1px solid rgba(159,176,201,0.18)", padding: "1rem" }}>
           <NodeConfigWithAdvanced
             node={node}
             allNodes={allNodes}
             onUpdate={onUpdate}
             onUpdateConfig={onUpdateConfig}
           />
-          <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
-            <div className="flex items-center gap-2">
+          <div style={{
+            marginTop: "1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderTop: "1px solid rgba(159,176,201,0.18)",
+            paddingTop: "0.75rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               {!isEntry && (
-                <Button variant="ghost" size="sm" onClick={onSetEntry}>
+                <button
+                  type="button"
+                  onClick={onSetEntry}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(159,176,201,0.14)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    borderRadius: "0.375rem",
+                    padding: "0.25rem 0.5rem",
+                    fontSize: "0.75rem",
+                    color: "var(--ei-text-soft)",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    cursor: "pointer",
+                    transition: "background 0.15s",
+                  }}
+                >
                   Set as entry
-                </Button>
+                </button>
               )}
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
+              type="button"
               onClick={onRemove}
-              className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(239,68,68,0.1)";
+                e.currentTarget.style.color = "rgb(252,165,165)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "rgb(248,113,113)";
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.25rem",
+                background: "transparent",
+                border: "none",
+                borderRadius: "0.375rem",
+                padding: "0.25rem 0.5rem",
+                fontSize: "0.75rem",
+                color: "rgb(248,113,113)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                cursor: "pointer",
+                transition: "background 0.15s, color 0.15s",
+              }}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 style={{ height: "0.875rem", width: "0.875rem" }} />
               Remove node
-            </Button>
+            </button>
           </div>
           {issues.length > 0 && (
-            <div className="mt-3 flex flex-col gap-1 rounded-md bg-red-500/5 p-2">
+            <div style={{
+              marginTop: "0.75rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.25rem",
+              borderRadius: "0.375rem",
+              background: "rgba(239,68,68,0.05)",
+              padding: "0.5rem",
+            }}>
               {issues.map((i, ix) => (
                 <IssueLine key={ix} issue={i} />
               ))}
@@ -504,42 +661,74 @@ function NodeConfigWithAdvanced({
   const hasReplyIds =
     node.node_type === "send_buttons" || node.node_type === "send_list";
   return (
-    <div className="flex flex-col gap-3">
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       <NodeConfigForm
         node={node}
         allNodes={allNodes}
         showAdvanced={showAdvanced}
         onUpdateConfig={onUpdateConfig}
       />
-      <div className="border-t border-border pt-3">
+      <div style={{ borderTop: "1px solid rgba(159,176,201,0.18)", paddingTop: "0.75rem" }}>
         <button
           type="button"
           onClick={() => setShowAdvanced((v) => !v)}
-          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.25rem",
+            fontSize: "0.75rem",
+            color: "var(--ei-text-soft)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ei-offwhite)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ei-text-soft)"; }}
         >
           {showAdvanced ? (
-            <ChevronUp className="h-3 w-3" />
+            <ChevronUp style={{ height: "0.75rem", width: "0.75rem" }} />
           ) : (
-            <ChevronDown className="h-3 w-3" />
+            <ChevronDown style={{ height: "0.75rem", width: "0.75rem" }} />
           )}
           {showAdvanced ? "Hide" : "Show"} advanced
         </button>
         {showAdvanced && (
-          <div className="mt-3 flex flex-col gap-3">
+          <div style={{ marginTop: "0.75rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <div>
-              <label className="mb-1 block text-xs text-muted-foreground">
+              <label style={{
+                display: "block",
+                marginBottom: "0.25rem",
+                fontSize: "0.75rem",
+                color: "var(--ei-text-soft)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}>
                 Node key (internal identifier — keep stable for analytics)
               </label>
-              <Input
+              <input
                 value={node.node_key}
                 onChange={(e) =>
                   onUpdate({ node_key: slugify(e.target.value, node.node_key) })
                 }
-                className="bg-muted font-mono text-xs"
+                style={{
+                  width: "100%",
+                  background: "rgba(159,176,201,0.08)",
+                  border: "1px solid rgba(159,176,201,0.22)",
+                  borderRadius: "0.375rem",
+                  padding: "0.375rem 0.75rem",
+                  fontSize: "0.75rem",
+                  color: "var(--ei-offwhite)",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  outline: "none",
+                }}
               />
             </div>
             {hasReplyIds && (
-              <p className="text-[10px] text-muted-foreground">
+              <p style={{
+                fontSize: "0.625rem",
+                color: "var(--ei-text-soft)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}>
                 Reply IDs for each option are shown inline above. They&apos;re
                 returned by WhatsApp when a customer taps; you usually don&apos;t
                 need to touch them.
@@ -573,18 +762,40 @@ function AddNodeButton({ onAdd }: { onAdd: (type: NodeType) => void }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(159,176,201,0.14)"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(159,176,201,0.04)"; }}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.375rem",
+          borderRadius: "0.375rem",
+          border: "1px solid rgba(159,176,201,0.18)",
+          background: "rgba(159,176,201,0.04)",
+          padding: "0.375rem 0.75rem",
+          fontSize: "0.75rem",
+          fontWeight: 500,
+          color: "var(--ei-offwhite)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          cursor: "pointer",
+          transition: "background 0.15s",
+        }}
         aria-label="Add node"
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus style={{ height: "0.875rem", width: "0.875rem" }} />
         Add node
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="border-border bg-popover">
+      <DropdownMenuContent
+        align="end"
+        style={{
+          border: "1px solid rgba(159,176,201,0.18)",
+          background: "var(--ei-surface-card, #0E1C32)",
+        }}
+      >
         {types.map((t) => {
           const meta = NODE_META[t];
           return (
             <DropdownMenuItem key={t} onClick={() => onAdd(t)}>
-              <meta.icon className={cn("h-3.5 w-3.5", meta.color)} />
+              <meta.icon className={meta.color} style={{ height: "0.875rem", width: "0.875rem" }} />
               {meta.label}
             </DropdownMenuItem>
           );
@@ -593,4 +804,3 @@ function AddNodeButton({ onAdd }: { onAdd: (type: NodeType) => void }) {
     </DropdownMenu>
   );
 }
-

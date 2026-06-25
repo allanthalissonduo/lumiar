@@ -39,10 +39,10 @@ export const chartColors = {
     text: "text-amber-500",
   },
   gray: {
-    bg: "bg-muted",
-    stroke: "stroke-muted-foreground",
-    fill: "fill-muted-foreground",
-    text: "text-muted-foreground",
+    bg: "bg-slate-500",
+    stroke: "stroke-slate-400",
+    fill: "fill-slate-400",
+    text: "text-slate-400",
   },
   cyan: {
     bg: "bg-cyan-500",
@@ -96,10 +96,10 @@ export const getColorClassName = (
   type: ColorUtility,
 ): string => {
   const fallbackColor = {
-    bg: "bg-muted",
-    stroke: "stroke-muted-foreground",
-    fill: "fill-muted-foreground",
-    text: "text-muted-foreground",
+    bg: "bg-slate-500",
+    stroke: "stroke-slate-400",
+    fill: "fill-slate-400",
+    text: "text-slate-400",
   }
   return chartColors[color]?.[type] ?? fallbackColor[type]
 }

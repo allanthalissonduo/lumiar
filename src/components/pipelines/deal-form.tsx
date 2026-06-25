@@ -19,10 +19,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Check,
   X,
@@ -32,6 +28,14 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+
+const inputStyle: React.CSSProperties = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  outline: "none",
+};
 
 interface DealFormProps {
   open: boolean;
@@ -247,32 +251,45 @@ export function DealForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="bg-popover border-border text-popover-foreground sm:max-w-lg w-full p-0"
+        style={{
+          backgroundColor: "var(--ei-abyssal)",
+          borderLeft: "1px solid rgba(159,176,201,0.18)",
+          color: "var(--ei-offwhite)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          maxWidth: "32rem",
+          width: "100%",
+          padding: 0,
+        }}
       >
-        <div className="flex h-full flex-col">
-          <SheetHeader className="border-b border-border/50 p-4">
-            <SheetTitle className="text-popover-foreground">
+        <div style={{ display: "flex", height: "100%", flexDirection: "column" }}>
+          <SheetHeader
+            style={{
+              borderBottom: "1px solid rgba(159,176,201,0.12)",
+              padding: "1rem",
+            }}
+          >
+            <SheetTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {deal ? "Edit Deal" : "New Deal"}
             </SheetTitle>
           </SheetHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Title</Label>
-              <Input
+          <div style={{ flex: 1, overflowY: "auto", padding: "1rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <div style={{ display: "grid", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Title</label>
+              <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Deal title"
-                className="border-border bg-muted text-foreground"
+                style={{ ...inputStyle, height: "2.25rem", borderRadius: "0.5rem", padding: "0 0.625rem", fontSize: "0.875rem", width: "100%" }}
               />
             </div>
 
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Contact</Label>
+            <div style={{ display: "grid", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Contact</label>
               <select
                 value={contactId}
                 onChange={(e) => setContactId(e.target.value)}
-                className="h-9 w-full rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                style={{ ...inputStyle, height: "2.25rem", borderRadius: "0.5rem", padding: "0 0.625rem", fontSize: "0.875rem", width: "100%" }}
               >
                 <option value="">Select a contact</option>
                 {contacts.map((c) => (
@@ -285,34 +302,48 @@ export function DealForm({
               {linkedConversation && (
                 <Link
                   href="/inbox"
-                  className="mt-1 inline-flex items-center gap-1.5 self-start rounded-md bg-primary/10 px-2 py-1 text-xs text-primary hover:bg-primary/20"
+                  style={{
+                    marginTop: "0.25rem",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
+                    alignSelf: "flex-start",
+                    borderRadius: "0.375rem",
+                    backgroundColor: "rgba(43,111,219,0.12)",
+                    padding: "0.25rem 0.5rem",
+                    fontSize: "0.75rem",
+                    color: "var(--ei-cobalt)",
+                    textDecoration: "none",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(43,111,219,0.2)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "rgba(43,111,219,0.12)"; }}
                 >
-                  <MessageSquare className="h-3 w-3" />
+                  <MessageSquare style={{ height: "0.75rem", width: "0.75rem" }} />
                   Link to Conversation
                 </Link>
               )}
             </div>
 
-            <div className="grid grid-cols-[1fr_110px] gap-3">
-              <div className="grid gap-2">
-                <Label className="text-muted-foreground">Value</Label>
-                <div className="relative">
-                  <DollarSign className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                  <Input
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", gap: "0.75rem" }}>
+              <div style={{ display: "grid", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Value</label>
+                <div style={{ position: "relative" }}>
+                  <DollarSign style={{ position: "absolute", left: "0.5rem", top: "50%", height: "0.875rem", width: "0.875rem", transform: "translateY(-50%)", color: "var(--ei-text-soft)" }} />
+                  <input
                     type="number"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     placeholder="0"
-                    className="border-border bg-muted pl-7 text-foreground"
+                    style={{ ...inputStyle, height: "2.25rem", borderRadius: "0.5rem", paddingLeft: "1.75rem", paddingRight: "0.625rem", fontSize: "0.875rem", width: "100%" }}
                   />
                 </div>
               </div>
-              <div className="grid gap-2">
-                <Label className="text-muted-foreground">Currency</Label>
+              <div style={{ display: "grid", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Currency</label>
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary"
+                  style={{ ...inputStyle, height: "2.25rem", borderRadius: "0.5rem", padding: "0 0.625rem", fontSize: "0.875rem", width: "100%" }}
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -323,22 +354,22 @@ export function DealForm({
               </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Expected Close Date</Label>
-              <Input
+            <div style={{ display: "grid", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Expected Close Date</label>
+              <input
                 type="date"
                 value={expectedCloseDate}
                 onChange={(e) => setExpectedCloseDate(e.target.value)}
-                className="border-border bg-muted text-foreground"
+                style={{ ...inputStyle, height: "2.25rem", borderRadius: "0.5rem", padding: "0 0.625rem", fontSize: "0.875rem", width: "100%" }}
               />
             </div>
 
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Stage</Label>
+            <div style={{ display: "grid", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Stage</label>
               <select
                 value={stageId}
                 onChange={(e) => setStageId(e.target.value)}
-                className="h-9 w-full rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary"
+                style={{ ...inputStyle, height: "2.25rem", borderRadius: "0.5rem", padding: "0 0.625rem", fontSize: "0.875rem", width: "100%" }}
               >
                 {stages.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -348,12 +379,12 @@ export function DealForm({
               </select>
             </div>
 
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Assigned To</Label>
+            <div style={{ display: "grid", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Assigned To</label>
               <select
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
-                className="h-9 w-full rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary"
+                style={{ ...inputStyle, height: "2.25rem", borderRadius: "0.5rem", padding: "0 0.625rem", fontSize: "0.875rem", width: "100%" }}
               >
                 <option value="">Unassigned</option>
                 {profiles.map((p) => (
@@ -364,96 +395,178 @@ export function DealForm({
               </select>
             </div>
 
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Notes</Label>
-              <Textarea
+            <div style={{ display: "grid", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.875rem", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Notes</label>
+              <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add notes..."
-                className="min-h-[100px] border-border bg-muted text-foreground"
+                style={{ ...inputStyle, minHeight: "6.25rem", borderRadius: "0.5rem", padding: "0.5rem 0.625rem", fontSize: "0.875rem", width: "100%", resize: "vertical" }}
               />
             </div>
 
             {deal && (
-              <div className="space-y-2 rounded-lg border border-border bg-muted/50 p-3">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", borderRadius: "0.5rem", border: "1px solid rgba(159,176,201,0.18)", backgroundColor: "rgba(159,176,201,0.04)", padding: "0.75rem" }}>
+                <p style={{ fontSize: "0.75rem", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--ei-text-soft)" }}>
                   Status
                 </p>
-                <div className="flex gap-2">
-                  <Button
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <button
                     type="button"
                     onClick={() => handleStatusChange("won")}
                     disabled={!!statusAction || deal.status === "won"}
-                    className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                    style={{
+                      flex: 1,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.25rem",
+                      height: "2.25rem",
+                      borderRadius: "0.5rem",
+                      border: "none",
+                      backgroundColor: "var(--ei-cobalt)",
+                      color: "var(--ei-offwhite)",
+                      fontSize: "0.875rem",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      cursor: "pointer",
+                      opacity: (!!statusAction || deal.status === "won") ? 0.5 : 1,
+                    }}
+                    onMouseEnter={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "var(--ei-royal)"; }}
+                    onMouseLeave={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "var(--ei-cobalt)"; }}
                   >
                     {statusAction === "won" ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 style={{ height: "1rem", width: "1rem" }} className="animate-spin" />
                     ) : (
                       <>
-                        <Check className="mr-1 h-4 w-4" />
+                        <Check style={{ marginRight: "0.25rem", height: "1rem", width: "1rem" }} />
                         Mark as Won
                       </>
                     )}
-                  </Button>
-                  <Button
+                  </button>
+                  <button
                     type="button"
                     onClick={() => handleStatusChange("lost")}
                     disabled={!!statusAction || deal.status === "lost"}
-                    className="flex-1 bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                    style={{
+                      flex: 1,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.25rem",
+                      height: "2.25rem",
+                      borderRadius: "0.5rem",
+                      border: "none",
+                      backgroundColor: "#dc2626",
+                      color: "#fff",
+                      fontSize: "0.875rem",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      cursor: "pointer",
+                      opacity: (!!statusAction || deal.status === "lost") ? 0.5 : 1,
+                    }}
+                    onMouseEnter={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "#b91c1c"; }}
+                    onMouseLeave={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "#dc2626"; }}
                   >
                     {statusAction === "lost" ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 style={{ height: "1rem", width: "1rem" }} className="animate-spin" />
                     ) : (
                       <>
-                        <X className="mr-1 h-4 w-4" />
+                        <X style={{ marginRight: "0.25rem", height: "1rem", width: "1rem" }} />
                         Mark as Lost
                       </>
                     )}
-                  </Button>
+                  </button>
                 </div>
                 {deal.status && deal.status !== "open" && (
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
                     onClick={() => handleStatusChange("open")}
                     disabled={!!statusAction}
-                    className="w-full text-muted-foreground hover:text-foreground"
+                    style={{
+                      width: "100%",
+                      height: "2.25rem",
+                      borderRadius: "0.5rem",
+                      border: "none",
+                      backgroundColor: "transparent",
+                      color: "var(--ei-text-soft)",
+                      fontSize: "0.875rem",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ei-offwhite)"; e.currentTarget.style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ei-text-soft)"; e.currentTarget.style.backgroundColor = "transparent"; }}
                   >
                     Reopen deal
-                  </Button>
+                  </button>
                 )}
               </div>
             )}
           </div>
 
-          <div className="border-t border-border/50 bg-popover/80 p-4">
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
+          <div style={{ borderTop: "1px solid rgba(159,176,201,0.12)", backgroundColor: "rgba(10,22,40,0.8)", padding: "1rem" }}>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button
+                type="button"
                 onClick={() => onOpenChange(false)}
-                className="flex-1 border-border bg-transparent text-muted-foreground hover:bg-muted"
+                style={{
+                  flex: 1,
+                  height: "2.25rem",
+                  borderRadius: "0.5rem",
+                  border: "1px solid rgba(159,176,201,0.22)",
+                  backgroundColor: "transparent",
+                  color: "var(--ei-text-soft)",
+                  fontSize: "0.875rem",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
               >
                 Cancel
-              </Button>
-              <Button
+              </button>
+              <button
+                type="button"
                 onClick={handleSave}
                 disabled={saving || !title.trim() || !contactId || !stageId}
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                style={{
+                  flex: 1,
+                  height: "2.25rem",
+                  borderRadius: "0.5rem",
+                  border: "none",
+                  backgroundColor: "var(--ei-cobalt)",
+                  color: "var(--ei-offwhite)",
+                  fontSize: "0.875rem",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  cursor: "pointer",
+                  opacity: (saving || !title.trim() || !contactId || !stageId) ? 0.5 : 1,
+                }}
+                onMouseEnter={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "var(--ei-royal)"; }}
+                onMouseLeave={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "var(--ei-cobalt)"; }}
               >
                 {saving ? "Saving..." : deal ? "Save Changes" : "Create Deal"}
-              </Button>
+              </button>
             </div>
 
             {deal &&
               (confirmDelete ? (
-                <div className="mt-3 flex items-center justify-between gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs">
-                  <span className="text-red-300">Delete this deal?</span>
-                  <div className="flex gap-1">
+                <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", borderRadius: "0.375rem", border: "1px solid rgba(239,68,68,0.3)", backgroundColor: "rgba(239,68,68,0.1)", padding: "0.5rem 0.75rem", fontSize: "0.75rem" }}>
+                  <span style={{ color: "#fca5a5" }}>Delete this deal?</span>
+                  <div style={{ display: "flex", gap: "0.25rem" }}>
                     <button
                       type="button"
                       onClick={() => setConfirmDelete(false)}
                       disabled={deleting}
-                      className="rounded px-2 py-1 text-muted-foreground hover:bg-muted"
+                      style={{
+                        borderRadius: "0.25rem",
+                        padding: "0.25rem 0.5rem",
+                        border: "none",
+                        backgroundColor: "transparent",
+                        color: "var(--ei-text-soft)",
+                        fontSize: "0.75rem",
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
                     >
                       Cancel
                     </button>
@@ -461,7 +574,20 @@ export function DealForm({
                       type="button"
                       onClick={handleDelete}
                       disabled={deleting}
-                      className="rounded bg-red-600 px-2 py-1 font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                      style={{
+                        borderRadius: "0.25rem",
+                        padding: "0.25rem 0.5rem",
+                        border: "none",
+                        backgroundColor: "#dc2626",
+                        color: "#fff",
+                        fontSize: "0.75rem",
+                        fontWeight: 500,
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        cursor: "pointer",
+                        opacity: deleting ? 0.5 : 1,
+                      }}
+                      onMouseEnter={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "#b91c1c"; }}
+                      onMouseLeave={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "#dc2626"; }}
                     >
                       {deleting ? "Deleting..." : "Confirm"}
                     </button>
@@ -471,9 +597,24 @@ export function DealForm({
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(true)}
-                  className="mt-3 flex w-full items-center justify-center gap-1 text-xs text-red-400 hover:text-red-300"
+                  style={{
+                    marginTop: "0.75rem",
+                    display: "flex",
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.25rem",
+                    border: "none",
+                    backgroundColor: "transparent",
+                    fontSize: "0.75rem",
+                    color: "#f87171",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = "#fca5a5"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = "#f87171"; }}
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <Trash2 style={{ height: "0.75rem", width: "0.75rem" }} />
                   Delete Deal
                 </button>
               ))}

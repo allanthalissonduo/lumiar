@@ -1,20 +1,5 @@
 "use client";
 
-/**
- * Editor header — flow name / description, status badge, dirty
- * indicator, and the action buttons (Save, Activate/Pause, Delete,
- * View runs, Back).
- *
- * Lifted out of flow-builder.tsx so the same header renders above
- * both views in FlowEditorShell. Without this, canvas users had no
- * way to save without toggling to list view.
- *
- * Reads everything from the editor context (`useFlowEditor`) so it
- * stays in sync with whichever view is mutating state, and routes
- * router navigation locally (back to /flows, View runs to
- * /flows/[id]/runs) — those don't belong in the hook.
- */
-
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -28,9 +13,6 @@ import {
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import {
   useFlowEditor,
   type BuilderState,
@@ -52,122 +34,169 @@ export function EditorHeader() {
   } = useFlowEditor();
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "var(--ei-text-soft)" }}>
         <button
           type="button"
           onClick={() => router.push("/flows")}
-          className="inline-flex items-center gap-1 hover:text-foreground"
+          style={{ display: "inline-flex", alignItems: "center", gap: "4px", background: "none", border: "none", cursor: "pointer", color: "inherit", padding: 0, fontFamily: "Plus Jakarta Sans, sans-serif" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--ei-offwhite)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--ei-text-soft)"; }}
         >
-          <ArrowLeft className="h-3 w-3" />
+          <ArrowLeft style={{ width: "12px", height: "12px" }} />
           Flows
         </button>
       </div>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <Workflow className="h-5 w-5 shrink-0 text-primary" />
-          <Input
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
+        <div style={{ display: "flex", minWidth: 0, flex: 1, alignItems: "center", gap: "12px" }}>
+          <Workflow style={{ width: "20px", height: "20px", flexShrink: 0, color: "var(--ei-cobalt)" }} />
+          <input
             value={state.name}
             onChange={(e) =>
               setState((s) => ({ ...s, name: e.target.value }))
             }
             placeholder="Flow name"
-            className="max-w-md bg-card text-lg font-semibold"
+            style={{
+              maxWidth: "448px",
+              background: "var(--ei-surface-card)",
+              border: "1px solid rgba(159,176,201,0.22)",
+              borderRadius: "6px",
+              padding: "6px 10px",
+              fontSize: "18px",
+              fontWeight: 600,
+              color: "var(--ei-offwhite)",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
+              outline: "none",
+              width: "100%",
+            }}
           />
           <StatusBadge status={state.status} />
           {dirty && (
             <span
-              className="inline-flex shrink-0 items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-amber-300"
+              style={{ display: "inline-flex", flexShrink: 0, alignItems: "center", gap: "4px", fontSize: "10px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "#fcd34d" }}
               title="Unsaved changes — hit Save to persist"
               aria-live="polite"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+              <span style={{ width: "6px", height: "6px", borderRadius: "9999px", background: "#fbbf24" }} />
               Edited
             </span>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px" }}>
+          <button
+            type="button"
             onClick={() => router.push(`/flows/${flow.id}/runs`)}
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", color: "var(--ei-text-soft)", padding: "4px 10px", borderRadius: "6px", fontSize: "13px", fontFamily: "Plus Jakarta Sans, sans-serif" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(159,176,201,0.08)"; e.currentTarget.style.color = "var(--ei-offwhite)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "var(--ei-text-soft)"; }}
           >
-            <History className="h-3.5 w-3.5" />
+            <History style={{ width: "14px", height: "14px" }} />
             Runs
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
+          </button>
+          <button
+            type="button"
             onClick={() => void deleteFlow()}
-            className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", color: "#f87171", padding: "4px 10px", borderRadius: "6px", fontSize: "13px", fontFamily: "Plus Jakarta Sans, sans-serif" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(239,68,68,0.10)"; e.currentTarget.style.color = "#fca5a5"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#f87171"; }}
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 style={{ width: "14px", height: "14px" }} />
             Delete
-          </Button>
+          </button>
           {state.status === "active" ? (
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={() => void setStatus("draft")}
               disabled={activating}
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "none", border: "1px solid rgba(159,176,201,0.22)", cursor: activating ? "not-allowed" : "pointer", color: "var(--ei-offwhite)", padding: "4px 10px", borderRadius: "6px", fontSize: "13px", fontFamily: "Plus Jakarta Sans, sans-serif", opacity: activating ? 0.5 : 1 }}
+              onMouseEnter={(e) => { if (!activating) e.currentTarget.style.background = "rgba(159,176,201,0.08)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
             >
               {activating ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />
               ) : (
-                <PauseCircle className="h-3.5 w-3.5" />
+                <PauseCircle style={{ width: "14px", height: "14px" }} />
               )}
               Pause
-            </Button>
+            </button>
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={() => void setStatus("active")}
               disabled={activating || !canActivate}
-              title={
-                !canActivate
-                  ? "Fix the issues below before activating"
-                  : undefined
-              }
+              title={!canActivate ? "Fix the issues below before activating" : undefined}
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "none", border: "1px solid rgba(159,176,201,0.22)", cursor: (activating || !canActivate) ? "not-allowed" : "pointer", color: "var(--ei-offwhite)", padding: "4px 10px", borderRadius: "6px", fontSize: "13px", fontFamily: "Plus Jakarta Sans, sans-serif", opacity: (activating || !canActivate) ? 0.5 : 1 }}
+              onMouseEnter={(e) => { if (!activating && canActivate) e.currentTarget.style.background = "rgba(159,176,201,0.08)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
             >
               {activating ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />
               ) : (
-                <PlayCircle className="h-3.5 w-3.5" />
+                <PlayCircle style={{ width: "14px", height: "14px" }} />
               )}
               Activate
-            </Button>
+            </button>
           )}
-          <Button onClick={() => void save()} disabled={saving} size="sm">
+          <button
+            type="button"
+            onClick={() => void save()}
+            disabled={saving}
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "var(--ei-cobalt)", border: "none", cursor: saving ? "not-allowed" : "pointer", color: "#fff", padding: "4px 12px", borderRadius: "6px", fontSize: "13px", fontFamily: "Plus Jakarta Sans, sans-serif", opacity: saving ? 0.7 : 1 }}
+            onMouseEnter={(e) => { if (!saving) e.currentTarget.style.background = "var(--ei-royal)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "var(--ei-cobalt)"; }}
+          >
             {saving ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} />
             ) : (
-              <Save className="h-3.5 w-3.5" />
+              <Save style={{ width: "14px", height: "14px" }} />
             )}
             Save
-          </Button>
+          </button>
         </div>
       </div>
-      <Input
+      <input
         value={state.description}
         onChange={(e) =>
           setState((s) => ({ ...s, description: e.target.value }))
         }
         placeholder="Optional description (internal — customers don't see this)"
-        className="bg-card text-sm"
+        style={{
+          background: "var(--ei-surface-card)",
+          border: "1px solid rgba(159,176,201,0.22)",
+          borderRadius: "6px",
+          padding: "6px 10px",
+          fontSize: "14px",
+          color: "var(--ei-offwhite)",
+          fontFamily: "Plus Jakarta Sans, sans-serif",
+          outline: "none",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
       />
     </div>
   );
 }
 
 function StatusBadge({ status }: { status: BuilderState["status"] }) {
-  const cls = {
-    draft: "border-border bg-muted text-muted-foreground",
-    active: "border-emerald-600/40 bg-emerald-500/10 text-emerald-300",
-    archived: "border-border bg-muted/50 text-muted-foreground",
-  }[status];
+  const styles: Record<BuilderState["status"], React.CSSProperties> = {
+    draft: {
+      border: "1px solid rgba(159,176,201,0.18)",
+      background: "rgba(159,176,201,0.04)",
+      color: "var(--ei-text-soft)",
+    },
+    active: {
+      border: "1px solid rgba(52,211,153,0.40)",
+      background: "rgba(52,211,153,0.10)",
+      color: "#6ee7b7",
+    },
+    archived: {
+      border: "1px solid rgba(159,176,201,0.18)",
+      background: "rgba(159,176,201,0.04)",
+      color: "var(--ei-text-soft)",
+    },
+  };
   return (
-    <Badge variant="outline" className={cn("shrink-0", cls)}>
+    <Badge variant="outline" style={{ flexShrink: 0, ...styles[status] }}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </Badge>
   );

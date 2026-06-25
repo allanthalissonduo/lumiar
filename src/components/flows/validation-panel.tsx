@@ -18,7 +18,6 @@
  */
 
 import { CircleAlert, CircleCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { ValidationIssue } from "@/lib/flows/validate";
 import { useFlowEditor } from "./flow-editor-state";
 
@@ -26,12 +25,21 @@ export function ValidationPanel() {
   const { issues, requestFlash } = useFlowEditor();
 
   if (issues.length === 0) {
-    // Slate-950 base + emerald accents so the panel stays readable when
-    // sticky-positioned over scrolled-behind node cards (a translucent
-    // bg-emerald-500/10 would bleed through ugly).
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-emerald-600/50 bg-background p-3 text-sm font-medium text-emerald-300">
-        <CircleCheck className="h-4 w-4 shrink-0" />
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        borderRadius: "0.5rem",
+        border: "1px solid rgba(22,163,74,0.5)",
+        background: "var(--ei-abyssal, #0A1628)",
+        padding: "0.75rem",
+        fontSize: "0.875rem",
+        fontWeight: 500,
+        color: "#6ee7b7",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+      }}>
+        <CircleCheck style={{ width: "1rem", height: "1rem", flexShrink: 0 }} />
         No issues. Ready to activate.
       </div>
     );
@@ -39,22 +47,23 @@ export function ValidationPanel() {
   const errors = issues.filter((i) => i.severity === "error");
   const warnings = issues.filter((i) => i.severity === "warning");
   return (
-    <div
-      className={cn(
-        "rounded-lg border bg-background p-3",
-        errors.length > 0 ? "border-red-500/40" : "border-amber-500/40",
-      )}
-    >
-      <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
+    <div style={{
+      borderRadius: "0.5rem",
+      border: `1px solid ${errors.length > 0 ? "rgba(239,68,68,0.4)" : "rgba(245,158,11,0.4)"}`,
+      background: "var(--ei-abyssal, #0A1628)",
+      padding: "0.75rem",
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+    }}>
+      <div style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", color: "var(--ei-text-soft)" }}>
         {errors.length > 0 ? (
-          <CircleAlert className="h-4 w-4 text-red-400" />
+          <CircleAlert style={{ width: "1rem", height: "1rem", color: "#f87171" }} />
         ) : (
-          <CircleAlert className="h-4 w-4 text-amber-400" />
+          <CircleAlert style={{ width: "1rem", height: "1rem", color: "#fbbf24" }} />
         )}
         {errors.length} error{errors.length === 1 ? "" : "s"},{" "}
         {warnings.length} warning{warnings.length === 1 ? "" : "s"}
       </div>
-      <div className="flex flex-col gap-1">
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
         {issues.map((i, ix) => (
           <IssueLine key={ix} issue={i} onJump={requestFlash} />
         ))}
@@ -76,16 +85,23 @@ export function IssueLine({
   issue: ValidationIssue;
   onJump?: (key: string) => void;
 }) {
-  const tone =
-    issue.severity === "error" ? "text-red-300" : "text-amber-300";
-  const iconTone =
-    issue.severity === "error" ? "text-red-400" : "text-amber-400";
+  const color = issue.severity === "error" ? "#fca5a5" : "#fcd34d";
+  const iconColor = issue.severity === "error" ? "#f87171" : "#fbbf24";
+
   const body = (
     <>
-      <CircleAlert className={cn("mt-0.5 h-3 w-3 shrink-0", iconTone)} />
-      <span className="min-w-0 flex-1">
+      <CircleAlert style={{ marginTop: "0.125rem", width: "0.75rem", height: "0.75rem", flexShrink: 0, color: iconColor }} />
+      <span style={{ minWidth: 0, flex: 1 }}>
         {issue.node_key && (
-          <code className="mr-1 rounded bg-muted px-1 py-0.5 text-[10px] text-muted-foreground">
+          <code style={{
+            marginRight: "0.25rem",
+            borderRadius: "0.25rem",
+            background: "rgba(159,176,201,0.08)",
+            padding: "0.125rem 0.25rem",
+            fontSize: "0.625rem",
+            color: "var(--ei-text-soft)",
+            fontFamily: "'JetBrains Mono', monospace",
+          }}>
             {issue.node_key}
           </code>
         )}
@@ -94,18 +110,29 @@ export function IssueLine({
     </>
   );
 
-  // Only node-scoped issues can jump; trigger-scoped issues have no
-  // destination (the trigger panel is list-only and already at the
-  // top of that view).
   if (issue.node_key && onJump) {
     return (
       <button
         type="button"
         onClick={() => onJump(issue.node_key!)}
-        className={cn(
-          "flex w-full items-start gap-2 rounded-md px-2 py-1 text-left text-xs transition-colors hover:bg-muted/60",
-          tone,
-        )}
+        style={{
+          display: "flex",
+          width: "100%",
+          alignItems: "flex-start",
+          gap: "0.5rem",
+          borderRadius: "0.375rem",
+          padding: "0.25rem 0.5rem",
+          textAlign: "left",
+          fontSize: "0.75rem",
+          border: "none",
+          cursor: "pointer",
+          background: "transparent",
+          color,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          transition: "background 0.15s",
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(159,176,201,0.06)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
         aria-label={`Jump to node ${issue.node_key}`}
       >
         {body}
@@ -113,12 +140,16 @@ export function IssueLine({
     );
   }
   return (
-    <div
-      className={cn(
-        "flex items-start gap-2 rounded-md px-2 py-1 text-xs",
-        tone,
-      )}
-    >
+    <div style={{
+      display: "flex",
+      alignItems: "flex-start",
+      gap: "0.5rem",
+      borderRadius: "0.375rem",
+      padding: "0.25rem 0.5rem",
+      fontSize: "0.75rem",
+      color,
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+    }}>
       {body}
     </div>
   );

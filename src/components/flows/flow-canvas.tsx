@@ -58,8 +58,6 @@ import {
 import "@xyflow/react/dist/style.css";
 import { Plus, Trash2 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -125,66 +123,157 @@ function FlowNodeCard({ data, selected }: NodeProps) {
   // send_list) render slot rows inline so each handle visually sits
   // next to the slot it represents.
   const isMultiSlot = slots.length > 1;
+
+  const borderColor = isFlashed
+    ? "#f59e0b"
+    : selected
+      ? "var(--ei-cobalt, #2B6FDB)"
+      : "rgba(159,176,201,0.18)";
+  const boxShadow = isFlashed
+    ? "0 0 0 2px rgba(245,158,11,0.6), 0 4px 16px rgba(0,0,0,0.4)"
+    : selected
+      ? "0 0 0 1px rgba(43,111,219,0.4), 0 4px 16px rgba(0,0,0,0.4)"
+      : "0 4px 16px rgba(0,0,0,0.4)";
+
   return (
     <div
-      className={cn(
-        "relative min-w-[220px] max-w-[260px] rounded-lg border bg-card/95 px-3 py-2 text-left shadow-lg backdrop-blur transition-colors",
-        selected
-          ? "border-primary ring-1 ring-primary/40"
-          : "border-border hover:border-border",
-        // Flash overrides hover/selected colors briefly. Tailwind's
-        // built-in `animate-pulse` is too gentle; a ring with the
-        // amber accent matches the list view's flash semantics.
-        isFlashed && "!border-amber-400 ring-2 ring-amber-400/60",
-      )}
+      style={{
+        position: "relative",
+        minWidth: 220,
+        maxWidth: 260,
+        borderRadius: 8,
+        border: `1px solid ${borderColor}`,
+        background: "rgba(159,176,201,0.04)",
+        backdropFilter: "blur(8px)",
+        padding: "8px 12px",
+        textAlign: "left",
+        boxShadow,
+        transition: "border-color 0.15s, box-shadow 0.15s",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+      }}
     >
       {hasTarget && (
         <Handle
           type="target"
           position={Position.Left}
-          className="!h-2.5 !w-2.5 !border-border !bg-muted"
+          style={{
+            width: 10,
+            height: 10,
+            border: "1px solid rgba(159,176,201,0.18)",
+            background: "rgba(159,176,201,0.08)",
+          }}
         />
       )}
 
-      <div className="flex items-center gap-2">
-        <Icon className={cn("h-3.5 w-3.5 shrink-0", meta.color)} />
-        <span className="truncate text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <Icon className={`h-3.5 w-3.5 shrink-0 ${meta.color}`} style={{ width: 14, height: 14, flexShrink: 0 }} />
+        <span
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            fontSize: 11,
+            fontWeight: 500,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            color: "var(--ei-text-soft, rgba(159,176,201,0.7))",
+          }}
+        >
           {meta.label}
         </span>
         {isEntry && (
-          <span className="ml-auto rounded bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-emerald-300">
+          <span
+            style={{
+              marginLeft: "auto",
+              borderRadius: 4,
+              background: "rgba(16,185,129,0.15)",
+              padding: "2px 6px",
+              fontSize: 9,
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              color: "#6ee7b7",
+            }}
+          >
             Entry
           </span>
         )}
       </div>
-      <div className="mt-1 truncate font-mono text-[11px] text-muted-foreground">
+      <div
+        style={{
+          marginTop: 4,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 11,
+          color: "var(--ei-text-soft, rgba(159,176,201,0.7))",
+        }}
+      >
         {node.node_key}
       </div>
       {summary && (
-        <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+        <div
+          style={{
+            marginTop: 4,
+            fontSize: 12,
+            color: "var(--ei-text-soft, rgba(159,176,201,0.7))",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
           {summary}
         </div>
       )}
 
       {isMultiSlot && (
-        <div className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
+        <div
+          style={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            borderTop: "1px solid rgba(159,176,201,0.18)",
+            paddingTop: 8,
+          }}
+        >
           {slots.map((slot) => (
             <div
               key={slot.id}
-              className="relative flex items-center justify-between gap-2 rounded px-1 py-0.5 text-[11px] text-muted-foreground"
+              style={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+                borderRadius: 4,
+                padding: "2px 4px",
+                fontSize: 11,
+                color: "var(--ei-text-soft, rgba(159,176,201,0.7))",
+              }}
             >
-              <span className="truncate" title={slot.label}>
+              <span
+                style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                title={slot.label}
+              >
                 {slot.label}
               </span>
               <Handle
                 type="source"
                 id={slot.id}
                 position={Position.Right}
-                // Override default absolute positioning so the handle
-                // sits flush with the right edge of the card instead
-                // of floating at vertical center. The negative offset
-                // matches the card's px-3 + the handle's own radius.
-                className="!relative !right-auto !top-auto !h-2.5 !w-2.5 !translate-x-[12px] !transform-none !border-border !bg-muted"
+                style={{
+                  position: "relative",
+                  right: "auto",
+                  top: "auto",
+                  width: 10,
+                  height: 10,
+                  transform: "translateX(12px)",
+                  border: "1px solid rgba(159,176,201,0.18)",
+                  background: "rgba(159,176,201,0.08)",
+                }}
               />
             </div>
           ))}
@@ -196,7 +285,12 @@ function FlowNodeCard({ data, selected }: NodeProps) {
           type="source"
           id={slots[0].id}
           position={Position.Right}
-          className="!h-2.5 !w-2.5 !border-border !bg-muted"
+          style={{
+            width: 10,
+            height: 10,
+            border: "1px solid rgba(159,176,201,0.18)",
+            background: "rgba(159,176,201,0.08)",
+          }}
         />
       )}
     </div>
@@ -319,12 +413,11 @@ function FlowCanvasInner() {
       target: e.target,
       sourceHandle: e.sourceHandle,
       label: e.label,
-      // Mode-aware via CSS tokens so edge chrome flips with light/dark.
-      labelStyle: { fill: "var(--muted-foreground)", fontSize: 11 },
-      labelBgStyle: { fill: "var(--card)" },
+      labelStyle: { fill: "var(--ei-text-soft, rgba(159,176,201,0.7))", fontSize: 11 },
+      labelBgStyle: { fill: "var(--ei-surface-card, #0E1C32)" },
       labelBgPadding: [4, 2] as [number, number],
       labelBgBorderRadius: 4,
-      style: { stroke: "var(--border)", strokeWidth: 1.5 },
+      style: { stroke: "rgba(159,176,201,0.18)", strokeWidth: 1.5 },
     }));
 
     return rfEdges;
@@ -457,7 +550,22 @@ function FlowCanvasInner() {
 
   if (rfNodes.length === 0) {
     return (
-      <div className="flex h-[60vh] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-background text-sm text-muted-foreground">
+      <div
+        style={{
+          display: "flex",
+          height: "60vh",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 12,
+          borderRadius: 8,
+          border: "1px dashed rgba(159,176,201,0.18)",
+          background: "var(--ei-abyssal, #0A1628)",
+          fontSize: 14,
+          color: "var(--ei-text-soft, rgba(159,176,201,0.7))",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}
+      >
         <p>No nodes yet.</p>
         <CanvasAddNodeButton />
       </div>
@@ -466,7 +574,16 @@ function FlowCanvasInner() {
 
   return (
     <>
-      <div className="h-[70vh] w-full overflow-hidden rounded-lg border border-border bg-background">
+      <div
+        style={{
+          height: "70vh",
+          width: "100%",
+          overflow: "hidden",
+          borderRadius: 8,
+          border: "1px solid rgba(159,176,201,0.18)",
+          background: "var(--ei-abyssal, #0A1628)",
+        }}
+      >
         <ReactFlow
           nodes={rfNodes}
           edges={rfEdges}
@@ -492,17 +609,24 @@ function FlowCanvasInner() {
           minZoom={0.2}
           maxZoom={1.5}
         >
-          <Background gap={24} size={1} color="var(--border)" />
+          <Background gap={24} size={1} color="rgba(159,176,201,0.18)" />
           <Controls
-            className="!border-border !bg-card [&_button]:!border-border [&_button]:!bg-card [&_button:hover]:!bg-muted [&_button_svg]:!fill-foreground"
+            className="!border-[rgba(159,176,201,0.18)] [&_button]:!border-[rgba(159,176,201,0.18)] [&_button_svg]:!fill-[rgba(159,176,201,0.7)]"
+            style={{
+              background: "var(--ei-surface-card, #0E1C32)",
+              border: "1px solid rgba(159,176,201,0.18)",
+            }}
             showInteractive={false}
           />
           <MiniMap
             pannable
             zoomable
-            nodeColor="var(--muted-foreground)"
-            maskColor="color-mix(in oklch, var(--background) 70%, transparent)"
-            className="!border !border-border !bg-card"
+            nodeColor="rgba(159,176,201,0.4)"
+            maskColor="rgba(10,22,40,0.7)"
+            style={{
+              background: "var(--ei-surface-card, #0E1C32)",
+              border: "1px solid rgba(159,176,201,0.18)",
+            }}
           />
           <Panel position="bottom-right" className="!bottom-4 !right-4">
             <CanvasAddNodeButton />
@@ -562,24 +686,67 @@ function NodeEditSheet({
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 border-l border-border bg-popover p-0 sm:max-w-md"
+        className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
+        style={{
+          borderLeft: "1px solid rgba(159,176,201,0.18)",
+          background: "rgba(159,176,201,0.04)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}
       >
-        <SheetHeader className="border-b border-border px-5 py-4">
-          <SheetTitle className="flex items-center gap-2 text-popover-foreground">
-            <Icon className={cn("h-4 w-4 shrink-0", meta.color)} />
+        <SheetHeader
+          style={{
+            borderBottom: "1px solid rgba(159,176,201,0.18)",
+            padding: "16px 20px",
+          }}
+        >
+          <SheetTitle
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              color: "var(--ei-offwhite, #F0F4FA)",
+            }}
+          >
+            <Icon className={`h-4 w-4 shrink-0 ${meta.color}`} style={{ width: 16, height: 16, flexShrink: 0 }} />
             <span>{meta.label}</span>
             {isEntry && (
-              <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+              <span
+                style={{
+                  borderRadius: 4,
+                  background: "rgba(16,185,129,0.15)",
+                  padding: "2px 6px",
+                  fontSize: 10,
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "#6ee7b7",
+                }}
+              >
                 Entry
               </span>
             )}
           </SheetTitle>
-          <SheetDescription className="font-mono text-[11px] text-muted-foreground">
+          <SheetDescription
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 11,
+              color: "var(--ei-text-soft, rgba(159,176,201,0.7))",
+            }}
+          >
             {node.node_key}
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-5 py-4">
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            flexDirection: "column",
+            gap: 12,
+            overflowY: "auto",
+            padding: "16px 20px",
+          }}
+        >
           <NodeConfigForm
             node={node}
             allNodes={allNodes}
@@ -588,23 +755,74 @@ function NodeEditSheet({
           />
         </div>
 
-        <SheetFooter className="border-t border-border px-5 py-3 sm:flex-row sm:justify-between">
+        <SheetFooter
+          style={{
+            borderTop: "1px solid rgba(159,176,201,0.18)",
+            padding: "12px 20px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
           {!isEntry ? (
-            <Button variant="ghost" size="sm" onClick={onSetEntry}>
+            <button
+              onClick={onSetEntry}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(159,176,201,0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "4px 10px",
+                borderRadius: 6,
+                border: "none",
+                background: "transparent",
+                color: "var(--ei-offwhite, #F0F4FA)",
+                fontSize: 13,
+                fontWeight: 500,
+                cursor: "pointer",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                transition: "background 0.15s",
+              }}
+            >
               Set as entry
-            </Button>
+            </button>
           ) : (
             <span />
           )}
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={onDelete}
-            className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(239,68,68,0.1)";
+              e.currentTarget.style.color = "#fca5a5";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.color = "#f87171";
+            }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "4px 10px",
+              borderRadius: 6,
+              border: "none",
+              background: "transparent",
+              color: "#f87171",
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: "pointer",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              transition: "background 0.15s, color 0.15s",
+            }}
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 style={{ width: 14, height: 14 }} />
             Delete node
-          </Button>
+          </button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
@@ -658,19 +876,47 @@ function CanvasAddNodeButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-lg transition-colors hover:bg-muted"
         aria-label="Add node"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(159,176,201,0.14)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "var(--ei-surface-card, #0E1C32)";
+        }}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          borderRadius: 6,
+          border: "1px solid rgba(159,176,201,0.18)",
+          background: "var(--ei-surface-card, #0E1C32)",
+          padding: "6px 12px",
+          fontSize: 12,
+          fontWeight: 500,
+          color: "var(--ei-offwhite, #F0F4FA)",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
+          cursor: "pointer",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          transition: "background 0.15s",
+        }}
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus style={{ width: 14, height: 14 }} />
         Add node
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="border-border bg-popover">
+      <DropdownMenuContent
+        align="end"
+        style={{
+          border: "1px solid rgba(159,176,201,0.18)",
+          background: "rgba(159,176,201,0.04)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}
+      >
         {ADD_NODE_TYPES.map((t) => {
           const meta = NODE_META[t];
           const Icon = meta.icon;
           return (
             <DropdownMenuItem key={t} onClick={() => handleAdd(t)}>
-              <Icon className={cn("h-3.5 w-3.5", meta.color)} />
+              <Icon className={`h-3.5 w-3.5 ${meta.color}`} style={{ width: 14, height: 14 }} />
               {meta.label}
             </DropdownMenuItem>
           );

@@ -24,7 +24,6 @@ import { FlowCanvas } from "./flow-canvas";
 import { FlowEditorProvider } from "./flow-editor-state";
 import { EditorHeader } from "./header";
 import { ValidationPanel } from "./validation-panel";
-import { cn } from "@/lib/utils";
 import type { FlowRow, FlowNodeRow } from "@/lib/flows/types";
 
 /**
@@ -78,25 +77,35 @@ export function FlowEditorShell({ initialFlow, initialNodes }: Props) {
 
   return (
     <FlowEditorProvider initialFlow={initialFlow} initialNodes={initialNodes}>
-      <div className="mx-auto flex h-full max-w-4xl flex-col gap-6 p-6">
+      <div style={{ maxWidth: "56rem", margin: "0 auto", display: "flex", height: "100%", flexDirection: "column", gap: "1.5rem", padding: "1.5rem" }}>
         <EditorHeader />
         {!isMobile && (
-          <div className="flex items-center justify-end">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
             <div
               role="group"
               aria-label="Editor view"
-              className="inline-flex items-center gap-1 rounded-md border border-border bg-card p-0.5 text-xs"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.25rem",
+                borderRadius: "0.375rem",
+                border: "1px solid rgba(159,176,201,0.18)",
+                background: "var(--ei-surface-card, #0E1C32)",
+                padding: "0.125rem",
+                fontSize: "0.75rem",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
             >
               <ToggleButton
                 active={effectiveView === "canvas"}
                 onClick={() => choose("canvas")}
-                icon={<LayoutGrid className="h-3 w-3" />}
+                icon={<LayoutGrid style={{ width: "0.75rem", height: "0.75rem" }} />}
                 label="Canvas"
               />
               <ToggleButton
                 active={effectiveView === "list"}
                 onClick={() => choose("list")}
-                icon={<ListTree className="h-3 w-3" />}
+                icon={<ListTree style={{ width: "0.75rem", height: "0.75rem" }} />}
                 label="List"
               />
             </div>
@@ -108,7 +117,7 @@ export function FlowEditorShell({ initialFlow, initialNodes }: Props) {
         {/* Sticky-bottom validation panel mirrors the placement used
             when this lived inside FlowBuilder — the activate-readiness
             status follows the user as they scroll, in either view. */}
-        <div className="sticky bottom-4 z-10 shadow-xl shadow-background/60">
+        <div style={{ position: "sticky", bottom: "1rem", zIndex: 10, boxShadow: "0 20px 25px -5px rgba(10,22,40,0.6), 0 8px 10px -6px rgba(10,22,40,0.6)" }}>
           <ValidationPanel />
         </div>
       </div>
@@ -154,12 +163,32 @@ function ToggleButton({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded px-2 py-1 transition-colors",
-        active
-          ? "bg-secondary text-secondary-foreground"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground",
-      )}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.375rem",
+        borderRadius: "0.25rem",
+        padding: "0.25rem 0.5rem",
+        border: "none",
+        cursor: "pointer",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontSize: "0.75rem",
+        transition: "background 0.15s, color 0.15s",
+        background: active ? "rgba(159,176,201,0.14)" : "transparent",
+        color: active ? "var(--ei-offwhite)" : "var(--ei-text-soft)",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = "rgba(159,176,201,0.08)";
+          e.currentTarget.style.color = "var(--ei-offwhite)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = "transparent";
+          e.currentTarget.style.color = "var(--ei-text-soft)";
+        }
+      }}
     >
       {icon}
       {label}

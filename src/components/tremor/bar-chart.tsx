@@ -37,7 +37,9 @@ import {
 } from "recharts"
 import type { AxisDomain } from "recharts/types/util/types"
 
-import { cn as cx } from "@/lib/utils"
+// cx is kept as a lightweight alias so callers inside this file remain readable
+const cx = (...classes: (string | boolean | undefined | null)[]) =>
+  classes.filter(Boolean).join(" ")
 import {
   AvailableChartColors,
   type AvailableChartColorsKeys,
@@ -128,7 +130,7 @@ const LegendItem = ({
       className={cx(
         "group inline-flex flex-nowrap items-center gap-1.5 rounded-sm px-2 py-1 whitespace-nowrap transition",
         hasOnValueChange
-          ? "cursor-pointer hover:bg-muted"
+          ? "cursor-pointer hover:bg-slate-800"
           : "cursor-default",
       )}
       onClick={(e) => {
@@ -147,9 +149,9 @@ const LegendItem = ({
       <p
         className={cx(
           "truncate text-xs whitespace-nowrap",
-          "text-muted-foreground",
+          "text-slate-400",
           hasOnValueChange &&
-            "group-hover:text-foreground",
+            "group-hover:text-slate-100",
           activeLegend && activeLegend !== name ? "opacity-40" : "opacity-100",
         )}
       >
@@ -194,8 +196,8 @@ const ScrollButton = ({ icon, onClick, disabled }: ScrollButtonProps) => {
       className={cx(
         "group inline-flex size-5 items-center truncate rounded-sm transition",
         disabled
-          ? "cursor-not-allowed text-muted-foreground"
-          : "cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground",
+          ? "cursor-not-allowed text-slate-400"
+          : "cursor-pointer text-slate-400 hover:bg-slate-800 hover:text-slate-100",
       )}
       disabled={disabled}
       onClick={(e) => {
@@ -358,7 +360,7 @@ const Legend = React.forwardRef<HTMLOListElement, LegendProps>((props, ref) => {
             ref={scrollButtonsRef}
             className={cx(
               "absolute top-0 right-0 bottom-0 flex h-full items-center justify-center pr-1",
-              "bg-background",
+              "bg-[#0A1628]",
             )}
           >
             <ScrollButton
@@ -470,13 +472,13 @@ const ChartTooltip = ({
       <div
         className={cx(
           "rounded-md border text-sm shadow-md",
-          "border-border",
-          "bg-popover",
+          "border-slate-700",
+          "bg-slate-900",
         )}
       >
         <div className={cx("border-b border-inherit px-4 py-2")}>
           <p
-            className={cx("font-medium", "text-popover-foreground")}
+            className="font-medium text-slate-100"
           >
             {label}
           </p>
@@ -498,7 +500,7 @@ const ChartTooltip = ({
                 <p
                   className={cx(
                     "text-right whitespace-nowrap",
-                    "text-muted-foreground",
+                    "text-slate-400",
                   )}
                 >
                   {category}
@@ -507,7 +509,7 @@ const ChartTooltip = ({
               <p
                 className={cx(
                   "text-right font-medium whitespace-nowrap tabular-nums",
-                  "text-popover-foreground",
+                  "text-slate-100",
                 )}
               >
                 {valueFormatter(value)}
@@ -685,7 +687,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
           >
             {showGridLines ? (
               <CartesianGrid
-                className={cx("stroke-border stroke-1")}
+                className={cx("stroke-slate-700 stroke-1")}
                 horizontal={layout !== "vertical"}
                 vertical={layout === "vertical"}
               />
@@ -700,7 +702,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
               stroke=""
               className={cx(
                 "text-xs",
-                "fill-muted-foreground",
+                "fill-slate-400",
                 { "mt-4": layout !== "vertical" },
               )}
               tickLine={false}
@@ -730,7 +732,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                 <Label
                   position="insideBottom"
                   offset={-20}
-                  className="fill-foreground text-sm font-medium"
+                  className="fill-slate-100 text-sm font-medium"
                 >
                   {xAxisLabel}
                 </Label>
@@ -745,7 +747,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
               stroke=""
               className={cx(
                 "text-xs",
-                "fill-muted-foreground",
+                "fill-slate-400",
               )}
               tick={{
                 transform:
@@ -776,7 +778,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                   style={{ textAnchor: "middle" }}
                   angle={-90}
                   offset={-15}
-                  className="fill-foreground text-sm font-medium"
+                  className="fill-slate-100 text-sm font-medium"
                 >
                   {yAxisLabel}
                 </Label>

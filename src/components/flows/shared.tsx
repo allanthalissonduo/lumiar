@@ -78,7 +78,7 @@ export const NODE_META: Record<
   send_buttons: {
     label: "Send buttons",
     icon: ListChecks,
-    color: "text-primary",
+    color: "var(--ei-cobalt)",
   },
   send_list: {
     label: "Send list",
@@ -110,7 +110,7 @@ export const NODE_META: Record<
     icon: UserPlus,
     color: "text-amber-400",
   },
-  end: { label: "End", icon: Flag, color: "text-muted-foreground" },
+  end: { label: "End", icon: Flag, color: "var(--ei-text-soft)" },
 };
 
 // ============================================================

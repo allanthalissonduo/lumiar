@@ -18,8 +18,7 @@
  * (introduced in this PR) mount the exact same form components.
  */
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import React from "react";
 import {
   Select,
   SelectContent,
@@ -27,8 +26,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import { NODE_META, type BuilderNode } from "../shared";
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "6px 10px",
+  borderRadius: "6px",
+  border: "1px solid rgba(159,176,201,0.22)",
+  background: "rgba(159,176,201,0.08)",
+  color: "var(--ei-offwhite)",
+  fontSize: "12px",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  outline: "none",
+  boxSizing: "border-box",
+};
 
 export function TextRow({
   label,
@@ -43,19 +54,29 @@ export function TextRow({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs text-muted-foreground">{label}</label>
+      <label
+        style={{
+          display: "block",
+          marginBottom: "4px",
+          fontSize: "11px",
+          color: "var(--ei-text-soft)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}
+      >
+        {label}
+      </label>
       {rows > 1 ? (
-        <Textarea
+        <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={rows}
-          className="bg-muted"
+          style={{ ...inputStyle, resize: "vertical" }}
         />
       ) : (
-        <Input
+        <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="bg-muted"
+          style={inputStyle}
         />
       )}
     </div>
@@ -77,7 +98,17 @@ export function NextNodeRow({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs text-muted-foreground">{label}</label>
+      <label
+        style={{
+          display: "block",
+          marginBottom: "4px",
+          fontSize: "11px",
+          color: "var(--ei-text-soft)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}
+      >
+        {label}
+      </label>
       <NodeKeySelect
         value={value || null}
         nodes={allNodes}
@@ -110,18 +141,35 @@ export function NodeKeySelect({
       value={value ?? "__none__"}
       onValueChange={(v) => onChange(v === "__none__" ? null : v)}
     >
-      <SelectTrigger className={cn("bg-muted", className)}>
+      <SelectTrigger
+        className={className}
+        style={{
+          background: "rgba(159,176,201,0.08)",
+          border: "1px solid rgba(159,176,201,0.22)",
+          color: "var(--ei-offwhite)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontSize: "12px",
+        }}
+      >
         <SelectValue placeholder={placeholder ?? "—"} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent
+        style={{
+          background: "var(--ei-surface-card, #0E1C32)",
+          border: "1px solid rgba(159,176,201,0.18)",
+          color: "var(--ei-offwhite)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}
+      >
         <SelectItem value="__none__">— None —</SelectItem>
         {options.map((n) => {
           const Icon = NODE_META[n.node_type].icon;
           return (
             <SelectItem key={n.node_key} value={n.node_key}>
-              <span className="inline-flex items-center gap-1.5">
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
                 <Icon
-                  className={cn("h-3 w-3", NODE_META[n.node_type].color)}
+                  className={NODE_META[n.node_type].color}
+                  style={{ width: "12px", height: "12px" }}
                 />
                 {n.node_key}
               </span>
