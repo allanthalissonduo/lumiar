@@ -32,9 +32,8 @@ import {
   ArrowUp,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+
+
 import { Switch } from "@/components/ui/switch"
 import {
   DropdownMenu,
@@ -52,7 +51,7 @@ import type {
   Tag as TagRecord,
 } from "@/types"
 import { createClient } from "@/lib/supabase/client"
-import { cn } from "@/lib/utils"
+
 
 // ------------------------------------------------------------
 // Types (builder-local — mirror the flattened rows we POST)
@@ -88,17 +87,17 @@ interface StepMeta {
 }
 
 const STEP_META: Record<AutomationStepType, StepMeta> = {
-  send_message: { label: "Send Message", icon: MessageSquare, border: "border-l-primary" },
-  send_template: { label: "Send Template", icon: FileText, border: "border-l-primary" },
-  add_tag: { label: "Add Tag", icon: Tag, border: "border-l-primary" },
-  remove_tag: { label: "Remove Tag", icon: TagIcon, border: "border-l-primary" },
-  assign_conversation: { label: "Assign Conversation", icon: UserCheck, border: "border-l-primary" },
-  update_contact_field: { label: "Update Contact Field", icon: PencilLine, border: "border-l-primary" },
-  create_deal: { label: "Create Deal", icon: Briefcase, border: "border-l-primary" },
-  wait: { label: "Wait", icon: Hourglass, border: "border-l-border" },
-  condition: { label: "Condition (If/Else)", icon: GitBranch, border: "border-l-amber-500" },
-  send_webhook: { label: "Send Webhook", icon: Webhook, border: "border-l-primary" },
-  close_conversation: { label: "Close Conversation", icon: CircleSlash, border: "border-l-primary" },
+  send_message: { label: "Enviar Mensagem", icon: MessageSquare, border: "border-l-primary" },
+  send_template: { label: "Enviar Template", icon: FileText, border: "border-l-primary" },
+  add_tag: { label: "Adicionar Tag", icon: Tag, border: "border-l-primary" },
+  remove_tag: { label: "Remover Tag", icon: TagIcon, border: "border-l-primary" },
+  assign_conversation: { label: "Atribuir Conversa", icon: UserCheck, border: "border-l-primary" },
+  update_contact_field: { label: "Atualizar Campo do Contato", icon: PencilLine, border: "border-l-primary" },
+  create_deal: { label: "Criar Negócio", icon: Briefcase, border: "border-l-primary" },
+  wait: { label: "Aguardar", icon: Hourglass, border: "border-l-border" },
+  condition: { label: "Condição (Se/Senão)", icon: GitBranch, border: "border-l-amber-500" },
+  send_webhook: { label: "Enviar Webhook", icon: Webhook, border: "border-l-primary" },
+  close_conversation: { label: "Fechar Conversa", icon: CircleSlash, border: "border-l-primary" },
 }
 
 const ADDABLE_STEPS: AutomationStepType[] = [
@@ -250,8 +249,23 @@ function ResourcesProvider({ children }: { children: ReactNode }) {
   )
 }
 
-const SELECT_CLASS =
-  "w-full rounded-md border border-border bg-muted px-2 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none"
+const SELECT_STYLE: React.CSSProperties = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  outline: "none",
+}
+
+const INPUT_STYLE: React.CSSProperties = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  outline: "none",
+}
+
+const SELECT_CLASS = "w-full rounded-md px-2 py-1.5 text-sm"
 
 /** Tag dropdown by name + color, storing the tag's id. Falls back to a
  *  raw id input when no tags exist yet. */
@@ -265,11 +279,12 @@ function TagSelect({
   const { tags } = useResources()
   if (tags.length === 0) {
     return (
-      <Input
+      <input
         placeholder="Tag id"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-muted text-foreground"
+        className="h-9 w-full rounded-md px-2.5 text-sm"
+        style={INPUT_STYLE}
       />
     )
   }
@@ -277,14 +292,14 @@ function TagSelect({
   return (
     <div className="flex items-center gap-2">
       <span
-        className="h-3 w-3 shrink-0 rounded-full border border-border"
-        style={{ backgroundColor: selected?.color ?? "transparent" }}
+        className="h-3 w-3 shrink-0 rounded-full"
+        style={{ backgroundColor: selected?.color ?? "transparent", border: "1px solid rgba(159,176,201,0.22)" }}
         aria-hidden
       />
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={SELECT_CLASS}
+        className={SELECT_CLASS} style={SELECT_STYLE}
       >
         <option value="">Select a tag…</option>
         {tags.map((t) => (
@@ -321,7 +336,7 @@ function ContactFieldSelect({
     <select
       value={value || "name"}
       onChange={(e) => onChange(e.target.value)}
-      className={SELECT_CLASS}
+      className={SELECT_CLASS} style={SELECT_STYLE}
     >
       <option value="name">Name</option>
       <option value="email">Email</option>
@@ -354,11 +369,12 @@ function AgentSelect({
   const { members } = useResources()
   if (members.length === 0) {
     return (
-      <Input
+      <input
         placeholder="Agent id"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-muted text-foreground"
+        className="h-9 w-full rounded-md px-2.5 text-sm"
+        style={INPUT_STYLE}
       />
     )
   }
@@ -367,7 +383,7 @@ function AgentSelect({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={SELECT_CLASS}
+      className={SELECT_CLASS} style={SELECT_STYLE}
     >
       <option value="">Select an agent…</option>
       {members.map((m) => (
@@ -399,22 +415,20 @@ function SendTemplateFields({
   if (templates.length === 0) {
     return (
       <>
-        <FieldBlock label="Template name">
-          <Input
+        <FieldBlock label="Nome do template">
+          <input
             value={templateName}
-            onChange={(e) =>
-              onChange({ template_name: e.target.value, language })
-            }
-            className="bg-muted text-foreground"
+            onChange={(e) => onChange({ template_name: e.target.value, language })}
+            className="h-9 w-full rounded-md px-2.5 text-sm"
+            style={INPUT_STYLE}
           />
         </FieldBlock>
-        <FieldBlock label="Language">
-          <Input
+        <FieldBlock label="Idioma">
+          <input
             value={language}
-            onChange={(e) =>
-              onChange({ template_name: templateName, language: e.target.value })
-            }
-            className="bg-muted text-foreground"
+            onChange={(e) => onChange({ template_name: templateName, language: e.target.value })}
+            className="h-9 w-full rounded-md px-2.5 text-sm"
+            style={INPUT_STYLE}
           />
         </FieldBlock>
       </>
@@ -437,7 +451,7 @@ function SendTemplateFields({
           const [name, lang] = e.target.value.split("::")
           onChange({ template_name: name ?? "", language: lang ?? "" })
         }}
-        className={SELECT_CLASS}
+        className={SELECT_CLASS} style={SELECT_STYLE}
       >
         <option value="">Select a template…</option>
         {templates.map((t) => {
@@ -548,46 +562,56 @@ export function AutomationBuilder({ initial }: { initial: BuilderInitial }) {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-background">
-      {/* Top bar. At sub-sm widths the "Active" label is hidden and the
-          switch moves to the right of the save button, so the name input
-          gets maximum width. */}
-      <header className="flex flex-shrink-0 items-center gap-2 border-b border-border bg-card/80 px-3 py-3 sm:gap-3 sm:px-4">
+    <div className="fixed inset-0 flex flex-col" style={{ backgroundColor: "var(--ei-abyssal)" }}>
+      <header
+        className="flex flex-shrink-0 items-center gap-2 px-3 py-3 sm:gap-3 sm:px-4"
+        style={{ borderBottom: "1px solid rgba(159,176,201,0.14)", backgroundColor: "rgba(14,28,50,0.85)" }}
+      >
         <button
           type="button"
           onClick={() => router.push("/automations")}
-          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          aria-label="Back to automations"
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md transition-colors"
+          style={{ color: "var(--ei-text-soft)" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
+          aria-label="Voltar para automações"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
         <input
           value={state.name}
           onChange={(e) => patchTop("name", e.target.value)}
-          placeholder="Untitled automation"
-          className="min-w-0 flex-1 rounded-md bg-transparent px-2 py-1 text-sm font-semibold text-foreground placeholder:text-muted-foreground focus:bg-muted focus:outline-none sm:text-base"
+          placeholder="Automação sem título"
+          className="min-w-0 flex-1 rounded-md px-2 py-1 text-sm font-semibold sm:text-base"
+          style={{ backgroundColor: "transparent", border: "none", color: "var(--ei-offwhite)", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          onFocus={(e) => { e.currentTarget.style.backgroundColor = "rgba(159,176,201,0.06)"; }}
+          onBlur={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
         />
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="hidden sm:inline">Active</span>
+        <div className="flex items-center gap-2 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <span className="hidden sm:inline">Ativo</span>
           <Switch
             checked={state.is_active}
             onCheckedChange={(v) => patchTop("is_active", !!v)}
-            aria-label="Active"
+            aria-label="Ativo"
           />
         </div>
-        <Button
+        <button
+          type="button"
           onClick={save}
           disabled={saving}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+          style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          onMouseEnter={(e) => { if (!saving) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          {isEditing ? "Save" : "Save Draft"}
-        </Button>
+          {isEditing ? "Salvar" : "Salvar rascunho"}
+        </button>
       </header>
 
       {/* Canvas */}
       <div className="relative flex-1 overflow-y-auto">
-        <div className="absolute inset-0 bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle,rgba(159,176,201,0.15) 1px,transparent 1px)", backgroundSize: "20px 20px" }} />
         <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-0 px-4 py-10">
           <ResourcesProvider>
             <TriggerCard
@@ -633,43 +657,43 @@ function TriggerCard({
     // Card width: full on mobile, fixed 320px on sm+. The canvas wrapper
     // (max-w-2xl + px-4) keeps this tidy on tablet/desktop.
     <div className="z-10 w-full max-w-[320px] sm:w-80">
-      <div className="rounded-lg border border-border border-l-4 border-l-blue-500 bg-card shadow-lg">
+      <div className="rounded-lg border-l-4 shadow-lg" style={{ border: "1px solid rgba(43,111,219,0.35)", borderLeftColor: "#3b82f6", backgroundColor: "var(--ei-surface-card)" }}>
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
           className="flex w-full items-center gap-3 px-4 py-3 text-left"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-500/10 text-blue-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md" style={{ backgroundColor: "rgba(59,130,246,0.12)", color: "#60a5fa" }}>
             <Zap className="h-4 w-4" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-[11px] uppercase tracking-wide text-blue-300">Trigger</div>
-            <div className="truncate text-sm font-medium text-foreground">
+            <div className="text-[11px] uppercase tracking-wide" style={{ color: "#93c5fd" }}>Gatilho</div>
+            <div className="truncate text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {TRIGGER_OPTIONS.find((o) => o.value === type)?.label ?? type}
             </div>
           </div>
           <ChevronDown
-            className={cn("h-4 w-4 text-muted-foreground transition-transform", open && "rotate-180")}
+            className={`h-4 w-4 transition-transform${open ? " rotate-180" : ""}`}
+            style={{ color: "var(--ei-text-soft)" }}
           />
         </button>
         {open && (
-          <div className="space-y-3 border-t border-border px-4 py-3">
+          <div className="space-y-3 px-4 py-3" style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
             <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                Trigger type
+              <label className="mb-1 block text-xs font-medium" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Tipo de gatilho
               </label>
               <select
                 value={type}
                 onChange={(e) => onTypeChange(e.target.value as AutomationTriggerType)}
-                className="w-full rounded-md border border-border bg-muted px-2 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                className={SELECT_CLASS}
+                style={SELECT_STYLE}
               >
                 {TRIGGER_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
+                  <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
-              <p className="mt-1 text-[11px] text-muted-foreground">
+              <p className="mt-1 text-[11px]" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 {TRIGGER_OPTIONS.find((o) => o.value === type)?.hint}
               </p>
             </div>
@@ -681,7 +705,7 @@ function TriggerCard({
             )}
             {type === "tag_added" && (
               <div>
-                <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                <label className="mb-1 block text-xs font-medium" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   Tag
                 </label>
                 <TagSelect
@@ -691,13 +715,12 @@ function TriggerCard({
               </div>
             )}
             {type === "time_based" && (
-              <Input
-                placeholder="Cron expression or HH:mm"
+              <input
+                placeholder="Expressão cron ou HH:mm"
                 value={(config.schedule as string) ?? ""}
-                onChange={(e) =>
-                  onConfigChange({ ...config, schedule: e.target.value })
-                }
-                className="bg-muted text-foreground"
+                onChange={(e) => onConfigChange({ ...config, schedule: e.target.value })}
+                className="h-9 w-full rounded-md px-2.5 text-sm"
+                style={INPUT_STYLE}
               />
             )}
           </div>
@@ -747,10 +770,10 @@ function KeywordMatchConfig({
   return (
     <div className="space-y-2">
       <div>
-        <label className="mb-1 block text-xs font-medium text-muted-foreground">
-          Keywords (comma-separated)
+        <label className="mb-1 block text-xs font-medium" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Palavras-chave (separadas por vírgula)
         </label>
-        <Input
+        <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={commit}
@@ -760,21 +783,23 @@ function KeywordMatchConfig({
               commit()
             }
           }}
-          placeholder="e.g. pricing, demo request, talk to sales"
-          className="bg-muted text-foreground"
+          placeholder="ex: preço, demo, falar com vendas"
+          className="h-9 w-full rounded-md px-2.5 text-sm"
+          style={INPUT_STYLE}
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-muted-foreground">
-          Match type
+        <label className="mb-1 block text-xs font-medium" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Tipo de correspondência
         </label>
         <select
           value={config?.match_type ?? "contains"}
           onChange={(e) => onChange({ ...config, match_type: e.target.value as "exact" | "contains" })}
-          className="w-full rounded-md border border-border bg-muted px-2 py-1.5 text-sm text-foreground focus:outline-none"
+          className={SELECT_CLASS}
+          style={SELECT_STYLE}
         >
-          <option value="contains">Contains</option>
-          <option value="exact">Exact</option>
+          <option value="contains">Contém</option>
+          <option value="exact">Exato</option>
         </select>
       </div>
     </div>
@@ -867,68 +892,80 @@ function StepRenderer({
 
   return (
     <>
-      <div className={cn("z-10 flex flex-col", width)}>
+      <div className={`z-10 flex flex-col ${width}`}>
         <div
-          className={cn(
-            "rounded-lg border border-border border-l-4 bg-card shadow-lg",
-            meta.border,
-          )}
+          className="rounded-lg border-l-4 shadow-lg"
+          style={{
+            border: "1px solid rgba(159,176,201,0.18)",
+            borderLeftColor: step.step_type === "condition" ? "#f59e0b" : step.step_type === "wait" ? "rgba(159,176,201,0.35)" : "var(--ei-cobalt)",
+            backgroundColor: "var(--ei-surface-card)",
+          }}
         >
           <button
             type="button"
             onClick={() => props.setExpandedId(expanded ? null : step.cid)}
             className="flex w-full items-center gap-3 px-4 py-3 text-left"
           >
-            <GripVertical className="h-4 w-4 flex-shrink-0 text-muted-foreground" aria-hidden />
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
+            <GripVertical className="h-4 w-4 flex-shrink-0" style={{ color: "var(--ei-text-soft)" }} aria-hidden />
+            <div className="flex h-8 w-8 items-center justify-center rounded-md" style={{ backgroundColor: "rgba(159,176,201,0.08)", color: "var(--ei-text-soft)" }}>
               <Icon className="h-4 w-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                {isCondition ? "Condition" : step.step_type === "wait" ? "Wait" : "Action"}
+              <div className="text-[11px] uppercase tracking-wide" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                {isCondition ? "Condição" : step.step_type === "wait" ? "Espera" : "Ação"}
               </div>
-              <div className="truncate text-sm font-medium text-foreground">{meta.label}</div>
-              <div className="truncate text-[11px] text-muted-foreground">{previewFor(step)}</div>
+              <div className="truncate text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{meta.label}</div>
+              <div className="truncate text-[11px]" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{previewFor(step)}</div>
             </div>
             <ChevronDown
-              className={cn("h-4 w-4 text-muted-foreground transition-transform", expanded && "rotate-180")}
+              className={`h-4 w-4 transition-transform${expanded ? " rotate-180" : ""}`}
+              style={{ color: "var(--ei-text-soft)" }}
             />
           </button>
           {expanded && (
-            <div className="border-t border-border px-4 py-3">
+            <div className="px-4 py-3" style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
               <StepEditor
                 step={step}
                 onChange={(next) => props.updateStep(path, () => next)}
               />
-              <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
+              <div className="mt-3 flex items-center justify-between gap-2 pt-3" style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
                 <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                  <button
+                    type="button"
                     disabled={index === 0}
-                    aria-label="Move up"
+                    aria-label="Mover para cima"
                     onClick={() => props.moveStepAt(path, -1)}
+                    className="flex h-8 w-8 items-center justify-center rounded-md transition-colors disabled:opacity-40"
+                    style={{ color: "var(--ei-text-soft)" }}
+                    onMouseEnter={(e) => { if (index !== 0) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
                   >
                     <ArrowUp className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                  </button>
+                  <button
+                    type="button"
                     disabled={index === total - 1}
-                    aria-label="Move down"
+                    aria-label="Mover para baixo"
                     onClick={() => props.moveStepAt(path, 1)}
+                    className="flex h-8 w-8 items-center justify-center rounded-md transition-colors disabled:opacity-40"
+                    style={{ color: "var(--ei-text-soft)" }}
+                    onMouseEnter={(e) => { if (index !== total - 1) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
                   >
                     <ArrowDown className="h-4 w-4" />
-                  </Button>
+                  </button>
                 </div>
-                <Button
-                  variant="destructive"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={() => props.deleteStepAt(path)}
+                  className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
+                  style={{ backgroundColor: "rgba(248,113,113,0.10)", border: "1px solid rgba(248,113,113,0.30)", color: "#f87171", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(248,113,113,0.18)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(248,113,113,0.10)"; }}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  Delete
-                </Button>
+                  Excluir
+                </button>
               </div>
             </div>
           )}
@@ -977,10 +1014,10 @@ function ConditionBranches({
     // cram each branch to ~170px which is too narrow for the nested
     // cards. Two-column grid returns on sm+.
     <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <BranchColumn label="Yes" color="text-primary">
+      <BranchColumn label="Sim" color="var(--ei-cobalt)">
         <StepList {...props} steps={yes} parentPath={yesPath} />
       </BranchColumn>
-      <BranchColumn label="No" color="text-rose-400">
+      <BranchColumn label="Não" color="#fb7185">
         <StepList {...props} steps={no} parentPath={noPath} />
       </BranchColumn>
     </div>
@@ -998,7 +1035,7 @@ function BranchColumn({
 }) {
   return (
     <div className="flex flex-col items-center">
-      <div className={cn("mb-2 text-[11px] font-semibold uppercase", color)}>{label}</div>
+      <div className="mb-2 text-[11px] font-semibold uppercase" style={{ color, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{label}</div>
       {children}
     </div>
   )
@@ -1007,17 +1044,19 @@ function BranchColumn({
 function AddButton({ onPick }: { onPick: (t: AutomationStepType) => void }) {
   return (
     <div className="relative flex flex-col items-center">
-      <div className="h-4 w-[2px] bg-border" aria-hidden />
+      <div className="h-4 w-[2px]" style={{ backgroundColor: "rgba(159,176,201,0.22)" }} aria-hidden />
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-border bg-background text-muted-foreground transition-colors hover:border-primary hover:bg-primary/10 hover:text-primary data-[popup-open]:border-primary data-[popup-open]:bg-primary/20 data-[popup-open]:text-primary"
-          aria-label="Add step"
+          className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed transition-colors"
+          style={{ borderColor: "rgba(159,176,201,0.30)", backgroundColor: "var(--ei-abyssal)", color: "var(--ei-text-soft)" }}
+          aria-label="Adicionar etapa"
         >
           <Plus className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
-          className="max-h-80 min-w-56 overflow-y-auto border-border bg-popover"
+          className="max-h-80 min-w-56 overflow-y-auto"
+          style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" } as React.CSSProperties}
         >
           {ADDABLE_STEPS.map((t) => {
             const Icon = STEP_META[t].icon
@@ -1030,7 +1069,7 @@ function AddButton({ onPick }: { onPick: (t: AutomationStepType) => void }) {
           })}
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="h-4 w-[2px] bg-border" aria-hidden />
+      <div className="h-4 w-[2px]" style={{ backgroundColor: "rgba(159,176,201,0.22)" }} aria-hidden />
     </div>
   )
 }
@@ -1053,12 +1092,13 @@ function StepEditor({
   switch (step.step_type) {
     case "send_message":
       return (
-        <FieldBlock label="Message text">
-          <Textarea
+        <FieldBlock label="Texto da mensagem">
+          <textarea
             value={(cfg.text as string) ?? ""}
             onChange={(e) => set({ text: e.target.value })}
-            placeholder="Hi! Thanks for reaching out…"
-            className="min-h-24 bg-muted text-foreground"
+            placeholder="Olá! Como posso ajudar…"
+            className="min-h-24 w-full rounded-md px-2.5 py-2 text-sm"
+            style={INPUT_STYLE}
           />
         </FieldBlock>
       )
@@ -1083,18 +1123,19 @@ function StepEditor({
     case "assign_conversation":
       return (
         <>
-          <FieldBlock label="Mode">
+          <FieldBlock label="Modo">
             <select
               value={(cfg.mode as string) ?? "round_robin"}
               onChange={(e) => set({ mode: e.target.value })}
-              className="w-full rounded-md border border-border bg-muted px-2 py-1.5 text-sm text-foreground"
+              className={SELECT_CLASS}
+              style={SELECT_STYLE}
             >
               <option value="round_robin">Round-robin</option>
-              <option value="specific">Specific agent</option>
+              <option value="specific">Agente específico</option>
             </select>
           </FieldBlock>
           {cfg.mode === "specific" && (
-            <FieldBlock label="Agent">
+            <FieldBlock label="Agente">
               <AgentSelect
                 value={(cfg.agent_id as string) ?? ""}
                 onChange={(v) => set({ agent_id: v })}
@@ -1106,18 +1147,19 @@ function StepEditor({
     case "update_contact_field":
       return (
         <>
-          <FieldBlock label="Field">
+          <FieldBlock label="Campo">
             <ContactFieldSelect
               value={(cfg.field as string) ?? "name"}
               onChange={(v) => set({ field: v })}
             />
           </FieldBlock>
-          <FieldBlock label="Value">
-            <Input
+          <FieldBlock label="Valor">
+            <input
               value={(cfg.value as string) ?? ""}
               onChange={(e) => set({ value: e.target.value })}
-              placeholder="Text or {{ vars.x }} / {{ message.text }}"
-              className="bg-muted text-foreground"
+              placeholder="Texto ou {{ vars.x }} / {{ message.text }}"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
         </>
@@ -1125,33 +1167,37 @@ function StepEditor({
     case "create_deal":
       return (
         <>
-          <FieldBlock label="Pipeline id">
-            <Input
+          <FieldBlock label="ID do Pipeline">
+            <input
               value={(cfg.pipeline_id as string) ?? ""}
               onChange={(e) => set({ pipeline_id: e.target.value })}
-              className="bg-muted text-foreground"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
-          <FieldBlock label="Stage id">
-            <Input
+          <FieldBlock label="ID da Etapa">
+            <input
               value={(cfg.stage_id as string) ?? ""}
               onChange={(e) => set({ stage_id: e.target.value })}
-              className="bg-muted text-foreground"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
-          <FieldBlock label="Title">
-            <Input
+          <FieldBlock label="Título">
+            <input
               value={(cfg.title as string) ?? ""}
               onChange={(e) => set({ title: e.target.value })}
-              className="bg-muted text-foreground"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
-          <FieldBlock label="Value">
-            <Input
+          <FieldBlock label="Valor">
+            <input
               type="number"
               value={(cfg.value as number) ?? 0}
               onChange={(e) => set({ value: Number(e.target.value) })}
-              className="bg-muted text-foreground"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
         </>
@@ -1159,24 +1205,26 @@ function StepEditor({
     case "wait":
       return (
         <div className="grid grid-cols-2 gap-2">
-          <FieldBlock label="Amount">
-            <Input
+          <FieldBlock label="Quantidade">
+            <input
               type="number"
               min={1}
               value={(cfg.amount as number) ?? 1}
               onChange={(e) => set({ amount: Math.max(1, Number(e.target.value)) })}
-              className="bg-muted text-foreground"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
-          <FieldBlock label="Unit">
+          <FieldBlock label="Unidade">
             <select
               value={(cfg.unit as string) ?? "hours"}
               onChange={(e) => set({ unit: e.target.value })}
-              className="w-full rounded-md border border-border bg-muted px-2 py-1.5 text-sm text-foreground"
+              className={SELECT_CLASS}
+              style={SELECT_STYLE}
             >
-              <option value="minutes">Minutes</option>
-              <option value="hours">Hours</option>
-              <option value="days">Days</option>
+              <option value="minutes">Minutos</option>
+              <option value="hours">Horas</option>
+              <option value="days">Dias</option>
             </select>
           </FieldBlock>
         </div>
@@ -1184,40 +1232,43 @@ function StepEditor({
     case "condition":
       return (
         <>
-          <FieldBlock label="Subject">
+          <FieldBlock label="Sujeito">
             <select
               value={(cfg.subject as string) ?? "tag_presence"}
               onChange={(e) => set({ subject: e.target.value })}
-              className="w-full rounded-md border border-border bg-muted px-2 py-1.5 text-sm text-foreground"
+              className={SELECT_CLASS}
+              style={SELECT_STYLE}
             >
-              <option value="tag_presence">Tag presence</option>
-              <option value="contact_field">Contact field</option>
-              <option value="message_content">Message content</option>
-              <option value="time_of_day">Time of day</option>
+              <option value="tag_presence">Presença de tag</option>
+              <option value="contact_field">Campo do contato</option>
+              <option value="message_content">Conteúdo da mensagem</option>
+              <option value="time_of_day">Horário do dia</option>
             </select>
           </FieldBlock>
-          <FieldBlock label="Operand">
-            <Input
+          <FieldBlock label="Operando">
+            <input
               placeholder={
                 cfg.subject === "time_of_day"
                   ? "HH:mm-HH:mm"
                   : cfg.subject === "contact_field"
                   ? "name / email / company"
                   : cfg.subject === "tag_presence"
-                  ? "tag id"
+                  ? "id da tag"
                   : ""
               }
               value={(cfg.operand as string) ?? ""}
               onChange={(e) => set({ operand: e.target.value })}
-              className="bg-muted text-foreground"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
           {(cfg.subject === "contact_field" || cfg.subject === "message_content") && (
-            <FieldBlock label="Value">
-              <Input
+            <FieldBlock label="Valor">
+              <input
                 value={(cfg.value as string) ?? ""}
                 onChange={(e) => set({ value: e.target.value })}
-                className="bg-muted text-foreground"
+                className="h-9 w-full rounded-md px-2.5 text-sm"
+                style={INPUT_STYLE}
               />
             </FieldBlock>
           )}
@@ -1227,25 +1278,27 @@ function StepEditor({
       return (
         <>
           <FieldBlock label="URL">
-            <Input
+            <input
               value={(cfg.url as string) ?? ""}
               onChange={(e) => set({ url: e.target.value })}
-              className="bg-muted text-foreground"
+              className="h-9 w-full rounded-md px-2.5 text-sm"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
-          <FieldBlock label="Body template (JSON)">
-            <Textarea
+          <FieldBlock label="Template do corpo (JSON)">
+            <textarea
               value={(cfg.body_template as string) ?? ""}
               onChange={(e) => set({ body_template: e.target.value })}
-              className="min-h-20 bg-muted font-mono text-xs text-foreground"
+              className="min-h-20 w-full rounded-md px-2.5 py-2 font-mono text-xs"
+              style={INPUT_STYLE}
             />
           </FieldBlock>
         </>
       )
     case "close_conversation":
       return (
-        <p className="text-xs text-muted-foreground">
-          Sets the conversation status to &quot;closed&quot;. No configuration needed.
+        <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Define o status da conversa como &quot;fechada&quot;. Nenhuma configuração necessária.
         </p>
       )
     default:
@@ -1262,7 +1315,7 @@ function FieldBlock({
 }) {
   return (
     <div className="mb-2 last:mb-0">
-      <label className="mb-1 block text-xs font-medium text-muted-foreground">{label}</label>
+      <label className="mb-1 block text-xs font-medium" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{label}</label>
       {children}
     </div>
   )
