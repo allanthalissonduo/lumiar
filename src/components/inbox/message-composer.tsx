@@ -622,7 +622,7 @@ function MediaDraftPreview({
   onSend: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-muted/40 p-3">
+    <div className="rounded-xl p-3" style={{ backgroundColor: "rgba(159,176,201,0.05)", border: "1px solid rgba(159,176,201,0.16)" }}>
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           {draft.kind === "image" && (
@@ -640,8 +640,8 @@ function MediaDraftPreview({
             <audio src={draft.mediaUrl} controls className="w-full" />
           )}
           {draft.kind === "document" && (
-            <div className="flex items-center gap-2 text-sm text-foreground">
-              <FileText className="h-5 w-5 shrink-0 text-muted-foreground" />
+            <div className="flex items-center gap-2 text-sm" style={{ color: "var(--ei-offwhite)" }}>
+              <FileText className="h-5 w-5 shrink-0" style={{ color: "var(--ei-text-soft)" }} />
               <span className="truncate">{draft.filename}</span>
             </div>
           )}
@@ -650,7 +650,7 @@ function MediaDraftPreview({
           type="button"
           onClick={onDiscard}
           aria-label="Remove attachment"
-          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="rounded p-1 transition-colors" style={{ color: "var(--ei-text-soft)" }}
         >
           <X className="h-4 w-4" />
         </button>
@@ -669,7 +669,7 @@ function MediaDraftPreview({
               }
             }}
             placeholder="Add a caption…"
-            className="flex-1 rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-colors focus:border-primary/50"
+            className="flex-1 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors" style={{ backgroundColor: "rgba(159,176,201,0.06)", border: "1px solid rgba(159,176,201,0.18)", color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           />
         )}
         <GatedButton
@@ -679,7 +679,7 @@ function MediaDraftPreview({
           disabled={busy}
           onClick={onSend}
           className={cn(
-            "h-9 w-9 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40",
+            "h-9 w-9 shrink-0 rounded-lg p-0 disabled:opacity-40",
             draft.kind === "audio" && "ml-auto",
           )}
         >
