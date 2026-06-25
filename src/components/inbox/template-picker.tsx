@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { MessageTemplate } from "@/types";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -14,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft,
   ChevronRight,
@@ -72,6 +70,13 @@ function collectVariableSlots(template: MessageTemplate): {
   });
   return { bodyVars, headerVarCount, urlButtonSlots };
 }
+
+const inputStyle = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+};
 
 export function TemplatePicker({
   open,
@@ -183,16 +188,16 @@ export function TemplatePicker({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="border-border bg-popover sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg" style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-popover-foreground">
-            <LayoutTemplate className="h-4 w-4 text-primary" />
-            {selected ? selected.name : "Send template"}
+          <DialogTitle className="flex items-center gap-2" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            <LayoutTemplate className="h-4 w-4" style={{ color: "var(--ei-cobalt)" }} />
+            {selected ? selected.name : "Enviar template"}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             {selected
-              ? "Fill in the placeholders to render this template. Meta requires every variable to be set."
-              : "Pick an approved WhatsApp template to send to this contact."}
+              ? "Preencha os campos para enviar este template. A Meta exige que todas as variáveis sejam preenchidas."
+              : "Escolha um template WhatsApp aprovado para enviar a este contato."}
           </DialogDescription>
         </DialogHeader>
 
@@ -200,14 +205,13 @@ export function TemplatePicker({
           <div className="max-h-[60vh] space-y-2 overflow-y-auto">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <Loader2 className="h-5 w-5 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
               </div>
             ) : templates.length === 0 ? (
-              <div className="rounded-md border border-border bg-background/50 p-6 text-center">
-                <p className="text-sm text-popover-foreground">No approved templates</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Approve a template in Meta WhatsApp Manager, then sync it
-                  from Settings → Templates.
+              <div className="rounded-md p-6 text-center" style={{ border: "1px solid rgba(159,176,201,0.16)", backgroundColor: "rgba(159,176,201,0.04)" }}>
+                <p className="text-sm" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Nenhum template aprovado</p>
+                <p className="mt-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Aprove um template no Meta WhatsApp Manager e sincronize em Configurações → Templates.
                 </p>
               </div>
             ) : (
@@ -216,28 +220,40 @@ export function TemplatePicker({
                   key={t.id}
                   type="button"
                   onClick={() => pickTemplate(t)}
-                  className="w-full rounded-md border border-border bg-background/50 p-3 text-left transition-colors hover:border-primary/40 hover:bg-popover"
+                  className="w-full rounded-md p-3 text-left transition-colors"
+                  style={{ border: "1px solid rgba(159,176,201,0.16)", backgroundColor: "rgba(159,176,201,0.04)" }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(43,111,219,0.40)";
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(43,111,219,0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(159,176,201,0.16)";
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.04)";
+                  }}
                 >
                   <div className="flex items-start gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="truncate text-sm font-medium text-popover-foreground">
+                        <p className="truncate text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                           {t.name}
                         </p>
-                        <Badge className="border border-primary/30 bg-primary/20 text-[10px] text-primary">
+                        <span
+                          className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
+                          style={{ border: "1px solid rgba(43,111,219,0.30)", backgroundColor: "rgba(43,111,219,0.15)", color: "var(--ei-cobalt)" }}
+                        >
                           {t.category}
-                        </Badge>
+                        </span>
                         {t.language && (
-                          <span className="text-[10px] uppercase text-muted-foreground">
+                          <span className="text-[10px] uppercase" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                             {t.language}
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                      <p className="mt-1 line-clamp-2 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                         {t.body_text}
                       </p>
                     </div>
-                    <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                    <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: "var(--ei-text-soft)" }} />
                   </div>
                 </button>
               ))
@@ -245,33 +261,33 @@ export function TemplatePicker({
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="rounded-md border border-border bg-background/50 p-3">
-              <p className="mb-1 text-xs text-muted-foreground">Preview</p>
-              <p className="whitespace-pre-wrap text-sm text-popover-foreground">
+            <div className="rounded-md p-3" style={{ border: "1px solid rgba(159,176,201,0.16)", backgroundColor: "rgba(159,176,201,0.04)" }}>
+              <p className="mb-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Pré-visualização</p>
+              <p className="whitespace-pre-wrap text-sm" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 {renderBodyPreview(selected.body_text, params)}
               </p>
               {selected.footer_text && (
-                <p className="mt-2 text-xs italic text-muted-foreground">
+                <p className="mt-2 text-xs italic" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   {selected.footer_text}
                 </p>
               )}
             </div>
             {slots && slots.headerVarCount > 0 && (
               <div className="space-y-1">
-                <Label className="text-xs text-popover-foreground">
-                  {`Header {{1}}`}
+                <Label className="text-xs" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  {`Cabeçalho {{1}}`}
                 </Label>
                 <Input
                   value={headerText}
                   onChange={(e) => setHeaderText(e.target.value)}
-                  placeholder="Value for the header variable"
-                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
+                  placeholder="Valor para a variável do cabeçalho"
+                  style={inputStyle}
                 />
               </div>
             )}
             {slots?.bodyVars.map((v, i) => (
               <div key={v} className="space-y-1">
-                <Label className="text-xs text-popover-foreground">{`Body {{${v}}}`}</Label>
+                <Label className="text-xs" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{`Corpo {{${v}}}`}</Label>
                 <Input
                   value={params[i] ?? ""}
                   onChange={(e) => {
@@ -279,15 +295,15 @@ export function TemplatePicker({
                     next[i] = e.target.value;
                     setParams(next);
                   }}
-                  placeholder={`Value for {{${v}}}`}
-                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
+                  placeholder={`Valor para {{${v}}}`}
+                  style={inputStyle}
                 />
               </div>
             ))}
             {slots?.urlButtonSlots.map((slot) => (
               <div key={slot.index} className="space-y-1">
-                <Label className="text-xs text-popover-foreground">
-                  {`URL button "${slot.text}" — value for `}{`{{1}}`}
+                <Label className="text-xs" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  {`Botão URL "${slot.text}" — valor para `}{`{{1}}`}
                 </Label>
                 <Input
                   value={buttonParams[slot.index] ?? ""}
@@ -297,11 +313,11 @@ export function TemplatePicker({
                       [slot.index]: e.target.value,
                     }))
                   }
-                  placeholder="URL suffix value"
-                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
+                  placeholder="Sufixo da URL"
+                  style={inputStyle}
                 />
-                <p className="text-[10px] text-muted-foreground break-all">
-                  Final URL: {slot.url.replace(/\{\{1\}\}/g, buttonParams[slot.index] || "{{1}}")}
+                <p className="break-all text-[10px]" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  URL final: {slot.url.replace(/\{\{1\}\}/g, buttonParams[slot.index] || "{{1}}")}
                 </p>
               </div>
             ))}
@@ -311,30 +327,40 @@ export function TemplatePicker({
         <DialogFooter className="gap-2">
           {selected ? (
             <>
-              <Button
-                variant="outline"
+              <button
+                type="button"
                 onClick={resetSelection}
-                className="border-border text-popover-foreground hover:bg-muted"
+                className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back
-              </Button>
-              <Button
+                Voltar
+              </button>
+              <button
+                type="button"
                 disabled={!canConfirm}
                 onClick={confirm}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+                style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { if (canConfirm) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
               >
-                Send template
-              </Button>
+                Enviar template
+              </button>
             </>
           ) : (
-            <Button
-              variant="outline"
+            <button
+              type="button"
               onClick={() => handleOpenChange(false)}
-              className="border-border text-popover-foreground hover:bg-muted"
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+              style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
             >
-              Cancel
-            </Button>
+              Cancelar
+            </button>
           )}
         </DialogFooter>
       </DialogContent>
