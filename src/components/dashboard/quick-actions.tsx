@@ -12,14 +12,15 @@ interface Action {
   label: string
   href: string
   icon: ComponentType<{ className?: string }>
-  tint: string
+  color: string
+  bg: string
 }
 
 const ACTIONS: Action[] = [
-  { label: 'New Contact', href: '/contacts', icon: UserPlus, tint: 'text-primary' },
-  { label: 'New Deal', href: '/pipelines', icon: Briefcase, tint: 'text-blue-400' },
-  { label: 'New Broadcast', href: '/broadcasts/new', icon: Radio, tint: 'text-amber-400' },
-  { label: 'New Automation', href: '/automations/new', icon: Zap, tint: 'text-primary' },
+  { label: 'Novo Contato',     href: '/contacts',       icon: UserPlus, color: "var(--ei-iris)",   bg: "rgba(26,184,160,0.10)" },
+  { label: 'Novo Negócio',     href: '/pipelines',      icon: Briefcase, color: "#3b82f6",         bg: "rgba(59,130,246,0.10)" },
+  { label: 'Novo Broadcast',   href: '/broadcasts/new', icon: Radio,    color: "#EAA40D",          bg: "rgba(234,164,13,0.10)" },
+  { label: 'Nova Automação',   href: '/automations/new',icon: Zap,      color: "var(--ei-cobalt)", bg: "rgba(43,111,219,0.10)" },
 ]
 
 export function QuickActions() {
@@ -46,8 +47,8 @@ export function QuickActions() {
             }}
           >
             <div
-              className={`flex h-9 w-9 items-center justify-center rounded-lg ${a.tint}`}
-              style={{ backgroundColor: "rgba(43,111,219,0.10)" }}
+              className="flex h-9 w-9 items-center justify-center rounded-lg"
+              style={{ backgroundColor: a.bg, color: a.color }}
             >
               <Icon className="h-4 w-4" />
             </div>

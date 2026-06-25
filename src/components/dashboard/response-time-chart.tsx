@@ -44,33 +44,32 @@ export function ResponseTimeChart({
     })) ?? []
 
   return (
-    <section className="rounded-xl border border-border bg-card">
-      <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+    <section className="rounded-xl" style={{ backgroundColor: "var(--ei-surface-card)", border: "1px solid rgba(159,176,201,0.18)" }}>
+      <header className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderBottom: "1px solid rgba(159,176,201,0.12)" }}>
         <div>
-          <h2 className="text-sm font-semibold text-foreground">
-            Average First Response Time
+          <h2 className="text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Tempo médio de primeira resposta
           </h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Minutes to reply to a customer&apos;s first unreplied message, by
-            weekday
+          <p className="mt-0.5 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Minutos para responder a primeira mensagem do cliente, por dia da semana
           </p>
         </div>
-        <div className="flex items-center gap-3 text-right text-xs">
+        <div className="flex items-center gap-3 text-right text-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
           {thresholdMinutes > 0 && (
-            <span className="rounded-full border border-rose-500/40 bg-rose-500/10 px-2 py-0.5 font-medium text-rose-300 tabular-nums">
-              target {thresholdMinutes}m
+            <span className="rounded-full px-2 py-0.5 font-medium tabular-nums" style={{ backgroundColor: "rgba(248,113,113,0.10)", border: "1px solid rgba(248,113,113,0.35)", color: "#fca5a5" }}>
+              meta {thresholdMinutes}m
             </span>
           )}
           {data && (data.thisWeekAvg != null || data.lastWeekAvg != null) && (
             <div>
-              <div className="text-muted-foreground">
-                This week:{' '}
-                <span className="font-medium text-foreground tabular-nums">
+              <div style={{ color: "var(--ei-text-soft)" }}>
+                Esta semana:{' '}
+                <span className="font-medium tabular-nums" style={{ color: "var(--ei-offwhite)" }}>
                   {fmt(data.thisWeekAvg)}
                 </span>
               </div>
-              <div className="text-muted-foreground">
-                Last week:{' '}
+              <div style={{ color: "var(--ei-text-soft)" }}>
+                Semana passada:{' '}
                 <span className="tabular-nums">{fmt(data.lastWeekAvg)}</span>
               </div>
             </div>

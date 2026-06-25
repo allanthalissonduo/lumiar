@@ -21,16 +21,14 @@ export function EmptyState({
 }) {
   return (
     <div
-      className={cn(
-        'flex h-full min-h-40 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-card/40 px-4 py-6 text-center',
-        className,
-      )}
+      className={cn('flex h-full min-h-40 flex-col items-center justify-center gap-2 rounded-lg px-4 py-6 text-center', className)}
+      style={{ border: "1px dashed rgba(159,176,201,0.22)" }}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
+      <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(43,111,219,0.10)", color: "var(--ei-text-soft)" }}>
         <Icon className="h-5 w-5" />
       </div>
-      <p className="text-sm font-medium text-muted-foreground">{title}</p>
-      {hint && <p className="max-w-xs text-xs text-muted-foreground">{hint}</p>}
+      <p className="text-sm font-medium" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{title}</p>
+      {hint && <p className="max-w-xs text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif", opacity: 0.7 }}>{hint}</p>}
     </div>
   )
 }

@@ -12,7 +12,6 @@ import {
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { ActivityItem, ActivityKind } from '@/lib/dashboard/types'
-import { cn } from '@/lib/utils'
 import { EmptyState } from './empty-state'
 import { Skeleton } from './skeleton'
 
@@ -26,16 +25,16 @@ type PageSize = (typeof PAGE_SIZES)[number]
 
 interface KindTheme {
   icon: ComponentType<{ className?: string }>
-  /** Tailwind classes for the round icon badge + label color. */
-  badge: string
+  color: string
+  bg: string
 }
 
 const KIND_THEME: Record<ActivityKind, KindTheme> = {
-  message: { icon: MessageSquare, badge: 'bg-blue-500/10 text-blue-400' },
-  contact: { icon: UserPlus, badge: 'bg-primary/10 text-primary' },
-  deal: { icon: Briefcase, badge: 'bg-primary/10 text-primary' },
-  broadcast: { icon: Radio, badge: 'bg-amber-500/10 text-amber-400' },
-  automation: { icon: Zap, badge: 'bg-rose-500/10 text-rose-400' },
+  message:    { icon: MessageSquare, color: "#3b82f6",          bg: "rgba(59,130,246,0.10)" },
+  contact:    { icon: UserPlus,      color: "var(--ei-iris)",   bg: "rgba(26,184,160,0.10)" },
+  deal:       { icon: Briefcase,     color: "var(--ei-cobalt)", bg: "rgba(43,111,219,0.10)" },
+  broadcast:  { icon: Radio,         color: "#EAA40D",          bg: "rgba(234,164,13,0.10)" },
+  automation: { icon: Zap,           color: "#f87171",          bg: "rgba(248,113,113,0.10)" },
 }
 
 export function ActivityFeed({ items, loading }: ActivityFeedProps) {
@@ -73,9 +72,10 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
         </h2>
         <Link
           href="/inbox"
-          className="text-xs font-medium text-primary hover:text-primary/80"
+          className="text-xs font-medium"
+          style={{ color: "var(--ei-cobalt)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
-          View all →
+          Ver tudo →
         </Link>
       </header>
 
@@ -95,34 +95,28 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
         </div>
       ) : (
         <>
-          <ul className="divide-y divide-border">
+          <ul>
             {visible.map((it, i) => {
               const theme = KIND_THEME[it.kind]
               const Icon = theme.icon
-              // Alternating row background for scanability. bg-muted/40
-              // keeps the stripe visible in both light and dark modes
-              // (bg-card/40 vanishes against a white card surface in light).
-              const stripe = i % 2 === 0 ? 'bg-transparent' : 'bg-muted/40'
               const row = (
                 <div className="flex items-center gap-3 px-5 py-2.5">
                   <span
-                    className={cn(
-                      'flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full',
-                      theme.badge,
-                    )}
+                    className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full"
+                    style={{ backgroundColor: theme.bg, color: theme.color }}
                   >
                     <Icon className="h-3.5 w-3.5" />
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                  <span className="min-w-0 flex-1 truncate text-sm" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {it.text}
                   </span>
-                  <span className="flex-shrink-0 text-xs text-muted-foreground tabular-nums">
+                  <span className="flex-shrink-0 text-xs tabular-nums" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
                     {relativeTime(it.at)}
                   </span>
                 </div>
               )
               return (
-                <li key={it.id} className={cn(stripe, 'transition-colors hover:bg-muted/40')}>
+                <li key={it.id} style={{ borderBottom: i < visible.length - 1 ? "1px solid rgba(159,176,201,0.07)" : "none" }}>
                   {it.href ? (
                     <Link href={it.href} className="block">
                       {row}
@@ -134,13 +128,12 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
               )
             })}
           </ul>
-          <footer className="flex items-center justify-between border-t border-border px-5 py-3 text-xs">
-            <span className="text-muted-foreground tabular-nums">
-              Showing {visible.length} of {totalLoaded}
-              {totalLoaded === 50 ? '+' : ''}
+          <footer className="flex items-center justify-between px-5 py-3 text-xs" style={{ borderTop: "1px solid rgba(159,176,201,0.12)" }}>
+            <span className="tabular-nums" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
+              {visible.length} de {totalLoaded}{totalLoaded === 50 ? '+' : ''}
             </span>
             <div className="flex items-center gap-1">
-              <span className="mr-1 text-muted-foreground">Show</span>
+              <span className="mr-1" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Exibir</span>
               {PAGE_SIZES.map((size, i) => {
                 const disabled = !isSizeUseful(size, i)
                 return (
@@ -149,13 +142,14 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
                     type="button"
                     onClick={() => setPageSize(size)}
                     disabled={disabled}
-                    className={cn(
-                      'rounded-md px-2 py-1 font-medium tabular-nums transition-colors',
-                      pageSize === size
-                        ? 'bg-secondary text-secondary-foreground'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                      disabled && 'cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground',
-                    )}
+                    className="rounded-md px-2 py-1 font-medium tabular-nums transition-colors"
+                    style={{
+                      backgroundColor: pageSize === size ? "var(--ei-cobalt)" : "transparent",
+                      color: pageSize === size ? "#fff" : "var(--ei-text-soft)",
+                      opacity: disabled ? 0.35 : 1,
+                      cursor: disabled ? "not-allowed" : "pointer",
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}
                   >
                     {size}
                   </button>

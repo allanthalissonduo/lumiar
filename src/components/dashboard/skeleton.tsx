@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
  * its data fetches.
  */
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-md bg-muted', className)} />
+  return <div className={cn('animate-pulse rounded-md', className)} style={{ backgroundColor: "rgba(159,176,201,0.10)" }} />
 }
 
 export function SkeletonCard({ className }: { className?: string }) {

@@ -46,26 +46,26 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
   }, [data])
 
   return (
-    <section className="flex h-full flex-col rounded-xl border border-border bg-card">
-      <header className="flex items-center justify-between border-b border-border px-5 py-4">
+    <section className="flex h-full flex-col rounded-xl" style={{ backgroundColor: "var(--ei-surface-card)", border: "1px solid rgba(159,176,201,0.18)" }}>
+      <header className="flex items-center justify-between px-5 py-4" style={{ borderBottom: "1px solid rgba(159,176,201,0.12)" }}>
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Conversations Over Time</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Daily message volume by direction</p>
+          <h2 className="text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Conversas ao longo do tempo</h2>
+          <p className="mt-0.5 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Volume diário de mensagens por direção</p>
         </div>
-        <div className="flex items-center gap-1 rounded-lg bg-muted/60 p-1">
+        <div className="flex items-center gap-1 rounded-lg p-1" style={{ backgroundColor: "rgba(159,176,201,0.06)", border: "1px solid rgba(159,176,201,0.14)" }}>
           {[7, 30, 90].map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => onRangeChange(r as RangeDays)}
-              className={cn(
-                'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
-                range === r
-                  ? 'bg-secondary text-secondary-foreground'
-                  : 'text-muted-foreground hover:text-foreground',
-              )}
+              className="rounded-md px-2.5 py-1 text-xs font-medium transition-colors"
+              style={{
+                backgroundColor: range === r ? "var(--ei-cobalt)" : "transparent",
+                color: range === r ? "#fff" : "var(--ei-text-soft)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
             >
-              {r} days
+              {r}d
             </button>
           ))}
         </div>
@@ -85,7 +85,7 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
         )}
       </div>
 
-      <footer className="flex items-center gap-4 border-t border-border px-5 py-3 text-xs text-muted-foreground">
+      <footer className="flex items-center gap-4 px-5 py-3 text-xs" style={{ borderTop: "1px solid rgba(159,176,201,0.12)", color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
         <LegendDot color="#3b82f6" label="Incoming" />
         <LegendDot color="#7c3aed" label="Outgoing" />
       </footer>
@@ -207,7 +207,7 @@ function LineSvg({
                 x2={VB_W - PADDING.right}
                 y1={y}
                 y2={y}
-                stroke="var(--border)"
+                stroke="rgba(159,176,201,0.15)"
                 strokeDasharray="3 3"
               />
               <text
@@ -215,7 +215,7 @@ function LineSvg({
                 y={y}
                 textAnchor="end"
                 dominantBaseline="middle"
-                className="fill-muted-foreground text-[10px]"
+                fill="rgba(159,176,201,0.55)" fontSize="10"
               >
                 {t}
               </text>
@@ -265,7 +265,7 @@ function LineSvg({
               x2={hoverX}
               y1={PADDING.top}
               y2={PADDING.top + chartH}
-              stroke="var(--muted-foreground)"
+              stroke="rgba(159,176,201,0.40)"
               strokeDasharray="3 3"
             />
             <circle cx={hoverX} cy={yFor(data[hover.idx].incoming)} r={3.5} fill="#3b82f6" />
@@ -280,18 +280,18 @@ function LineSvg({
           letterboxed viewBox percentage. */}
       {hovered && hover !== null && (
         <div
-          className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 rounded-md border border-border bg-popover px-2.5 py-1.5 text-[11px] shadow-lg"
-          style={{ left: `${hover.tooltipLeftPx}px` }}
+          className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 rounded-md px-2.5 py-1.5 text-[11px]"
+          style={{ left: `${hover.tooltipLeftPx}px`, backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.35)", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}
         >
-          <div className="font-medium text-popover-foreground">{longDayLabel(hovered.day)}</div>
-          <div className="mt-1 flex flex-col gap-0.5">
-            <span className="flex items-center gap-1.5 text-blue-300">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
-              {hovered.incoming} incoming
+          <div className="font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{longDayLabel(hovered.day)}</div>
+          <div className="mt-1 flex flex-col gap-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            <span className="flex items-center gap-1.5" style={{ color: "#3b82f6" }}>
+              <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "#3b82f6" }} />
+              {hovered.incoming} entrada
             </span>
-            <span className="flex items-center gap-1.5 text-primary">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-              {hovered.outgoing} outgoing
+            <span className="flex items-center gap-1.5" style={{ color: "var(--ei-cobalt)" }}>
+              <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--ei-cobalt)" }} />
+              {hovered.outgoing} saída
             </span>
           </div>
         </div>

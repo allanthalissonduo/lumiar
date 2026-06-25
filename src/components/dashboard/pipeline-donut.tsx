@@ -15,11 +15,11 @@ interface PipelineDonutProps {
 
 export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
   return (
-    <section className="flex h-full flex-col rounded-xl border border-border bg-card">
-      <header className="border-b border-border px-5 py-4">
-        <h2 className="text-sm font-semibold text-foreground">Pipeline Value</h2>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Open deals by stage
+    <section className="flex h-full flex-col rounded-xl" style={{ backgroundColor: "var(--ei-surface-card)", border: "1px solid rgba(159,176,201,0.18)" }}>
+      <header className="px-5 py-4" style={{ borderBottom: "1px solid rgba(159,176,201,0.12)" }}>
+        <h2 className="text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Valor do Pipeline</h2>
+        <p className="mt-0.5 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Negócios abertos por etapa
         </p>
       </header>
 
@@ -43,11 +43,11 @@ export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
                     style={{ background: s.color }}
                     aria-hidden
                   />
-                  <span className="flex-1 truncate text-muted-foreground">{s.name}</span>
-                  <span className="text-muted-foreground tabular-nums">
-                    {s.dealCount} deal{s.dealCount === 1 ? '' : 's'}
+                  <span className="flex-1 truncate" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{s.name}</span>
+                  <span className="tabular-nums" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
+                    {s.dealCount} negócio{s.dealCount === 1 ? '' : 's'}
                   </span>
-                  <span className="w-20 text-right text-muted-foreground tabular-nums">
+                  <span className="w-20 text-right tabular-nums" style={{ color: "var(--ei-offwhite)", fontFamily: "'JetBrains Mono', monospace" }}>
                     {formatCurrencyShort(s.totalValue, currency)}
                   </span>
                 </li>
@@ -98,7 +98,7 @@ function Donut({ data, currency }: { data: PipelineDonutData; currency: string }
     <div className="flex items-center justify-center">
       <svg viewBox={`0 0 ${size} ${size}`} className="h-48 w-48" role="img" aria-label="Pipeline value by stage">
         {/* background ring */}
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--muted)" strokeWidth={ringWidth} />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(159,176,201,0.10)" strokeWidth={ringWidth} />
         {segments.map((seg) => (
           <path
             key={seg.id}
@@ -114,7 +114,7 @@ function Donut({ data, currency }: { data: PipelineDonutData; currency: string }
           x={cx}
           y={cy - 6}
           textAnchor="middle"
-          className="fill-muted-foreground text-[11px]"
+          fill="rgba(159,176,201,0.55)" fontSize="11"
         >
           Total
         </text>
@@ -122,7 +122,7 @@ function Donut({ data, currency }: { data: PipelineDonutData; currency: string }
           x={cx}
           y={cy + 14}
           textAnchor="middle"
-          className="fill-foreground text-[18px] font-semibold tabular-nums"
+          fill="var(--ei-offwhite)" fontSize="18" fontWeight="600"
         >
           {formatCurrencyShort(data.totalValue, currency)}
         </text>
