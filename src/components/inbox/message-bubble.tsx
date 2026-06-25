@@ -30,11 +30,11 @@ interface MessageBubbleProps {
 function StatusIcon({ status }: { status: Message["status"] }) {
   switch (status) {
     case "sending":
-      return <Clock className="h-3 w-3 text-muted-foreground" />;
+      return <Clock className="h-3 w-3" style={{ color: "var(--ei-text-soft)" }} />;
     case "sent":
-      return <Check className="h-3 w-3 text-muted-foreground" />;
+      return <Check className="h-3 w-3" style={{ color: "var(--ei-text-soft)" }} />;
     case "delivered":
-      return <CheckCheck className="h-3 w-3 text-muted-foreground" />;
+      return <CheckCheck className="h-3 w-3" style={{ color: "var(--ei-text-soft)" }} />;
     case "read":
       return <CheckCheck className="h-3 w-3 text-blue-400" />;
     case "failed":
@@ -46,8 +46,8 @@ function StatusIcon({ status }: { status: Message["status"] }) {
 
 function MediaUnavailable({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-      <ImageOff className="h-4 w-4 shrink-0 text-muted-foreground" />
+    <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs" style={{ backgroundColor: "rgba(159,176,201,0.08)", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      <ImageOff className="h-4 w-4 shrink-0" style={{ color: "var(--ei-text-soft)" }} />
       <span>{label} unavailable</span>
     </div>
   );
@@ -92,8 +92,8 @@ function MediaImage({ url, alt }: { url: string; alt: string }) {
 
   if (error) {
     return (
-      <div className="flex h-40 w-60 items-center justify-center rounded-lg bg-muted">
-        <ImageOff className="h-8 w-8 text-muted-foreground" />
+      <div className="flex h-40 w-60 items-center justify-center rounded-lg" style={{ backgroundColor: "rgba(159,176,201,0.10)" }}>
+        <ImageOff className="h-8 w-8" style={{ color: "var(--ei-text-soft)" }} />
       </div>
     );
   }
@@ -181,9 +181,12 @@ function MessageContent({ message }: { message: Message }) {
           href={message.media_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 text-sm hover:bg-muted"
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+          style={{ backgroundColor: "rgba(159,176,201,0.08)" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(159,176,201,0.14)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
         >
-          <FileText className="h-5 w-5 shrink-0 text-muted-foreground" />
+          <FileText className="h-5 w-5 shrink-0" style={{ color: "var(--ei-text-soft)" }} />
           <span className="truncate">
             {message.content_text || "Document"}
           </span>
@@ -193,7 +196,7 @@ function MessageContent({ message }: { message: Message }) {
     case "template":
       return (
         <div>
-          <span className="mb-1 inline-flex items-center gap-1 rounded bg-primary/20 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+          <span className="mb-1 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium" style={{ backgroundColor: "rgba(43,111,219,0.18)", color: "var(--ei-cobalt)" }}>
             <LayoutTemplate className="h-3 w-3" />
             Template
           </span>
@@ -208,7 +211,7 @@ function MessageContent({ message }: { message: Message }) {
     case "location":
       return (
         <div className="flex items-center gap-2 text-sm">
-          <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <MapPin className="h-4 w-4 shrink-0" style={{ color: "var(--ei-text-soft)" }} />
           <span>{message.content_text || "Location shared"}</span>
         </div>
       );
@@ -221,7 +224,7 @@ function MessageContent({ message }: { message: Message }) {
       // tap rather than the customer typing the same words.
       return (
         <div className="flex flex-col gap-0.5">
-          <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+          <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
             <CornerDownLeft className="h-3 w-3" />
             Button reply
           </span>

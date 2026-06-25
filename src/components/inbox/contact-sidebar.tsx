@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { cn } from "@/lib/utils";
 import type { Contact, Deal, ContactNote, Tag } from "@/types";
 import {
   Phone,
@@ -117,8 +116,8 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
 
   if (!contact) {
     return (
-      <div className="flex h-full w-70 items-center justify-center border-l border-border bg-card">
-        <p className="text-sm text-muted-foreground">Select a conversation</p>
+      <div className="flex h-full w-70 items-center justify-center" style={{ borderLeft: "1px solid rgba(159,176,201,0.18)", backgroundColor: "var(--ei-surface-card)" }}>
+        <p className="text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Selecione uma conversa</p>
       </div>
     );
   }
@@ -126,76 +125,69 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
   const displayName = contact.name || contact.phone;
   const initials = displayName.charAt(0).toUpperCase();
 
+  const divider = <div className="my-4" style={{ borderTop: "1px solid rgba(159,176,201,0.12)" }} />;
+  const sectionLabel = (icon: React.ReactNode, label: string) => (
+    <div className="flex items-center gap-2 px-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
+      {icon}{label}
+    </div>
+  );
+
   return (
-    <div className="flex h-full w-70 flex-col border-l border-border bg-card">
+    <div className="flex h-full w-70 flex-col" style={{ borderLeft: "1px solid rgba(159,176,201,0.18)", backgroundColor: "var(--ei-surface-card)" }}>
       <ScrollArea className="flex-1">
         <div className="p-4">
           {/* Contact Info */}
           <div className="flex flex-col items-center text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted text-lg font-semibold text-foreground">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full text-lg font-semibold" style={{ backgroundColor: "rgba(43,111,219,0.14)", color: "var(--ei-cobalt)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {contact.avatar_url ? (
-                <img
-                  src={contact.avatar_url}
-                  alt={displayName}
-                  className="h-16 w-16 rounded-full object-cover"
-                />
+                <img src={contact.avatar_url} alt={displayName} className="h-16 w-16 rounded-full object-cover" />
               ) : (
                 initials
               )}
             </div>
-            <h3 className="mt-3 text-sm font-semibold text-foreground">
+            <h3 className="mt-3 text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {displayName}
             </h3>
             {contact.company && (
-              <p className="text-xs text-muted-foreground">{contact.company}</p>
+              <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{contact.company}</p>
             )}
           </div>
 
           {/* Phone */}
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 space-y-1">
             <button
               onClick={handleCopyPhone}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
+              style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.06)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
             >
-              <Phone className="h-4 w-4 text-muted-foreground" />
+              <Phone className="h-4 w-4 shrink-0" style={{ color: "var(--ei-text-soft)" }} />
               <span className="flex-1 text-left">{contact.phone}</span>
-              {copied ? (
-                <Check className="h-3 w-3 text-primary" />
-              ) : (
-                <Copy className="h-3 w-3 text-muted-foreground" />
-              )}
+              {copied
+                ? <Check className="h-3 w-3" style={{ color: "var(--ei-iris)" }} />
+                : <Copy className="h-3 w-3" style={{ color: "var(--ei-text-soft)" }} />}
             </button>
 
             {contact.email && (
-              <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground">
-                <Mail className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                <Mail className="h-4 w-4 shrink-0" style={{ color: "var(--ei-text-soft)" }} />
                 <span className="truncate">{contact.email}</span>
               </div>
             )}
           </div>
 
-          {/* Divider */}
-          <div className="my-4 border-t border-border" />
+          {divider}
 
           {/* Tags */}
           <div>
-            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <TagIcon className="h-3 w-3" />
-              Tags
-            </div>
+            {sectionLabel(<TagIcon className="h-3 w-3" />, "Tags")}
             <div className="mt-2 flex flex-wrap gap-1">
               {tags.length === 0 ? (
-                <p className="px-1 text-xs text-muted-foreground">No tags</p>
+                <p className="px-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sem tags</p>
               ) : (
                 tags.map((tag) => (
-                  <span
-                    key={tag.contact_tag_id}
-                    className="rounded-full px-2 py-0.5 text-[10px] font-medium"
-                    style={{
-                      backgroundColor: `${tag.color}20`,
-                      color: tag.color,
-                    }}
-                  >
+                  <span key={tag.contact_tag_id} className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: `${tag.color}20`, color: tag.color }}>
                     {tag.name}
                   </span>
                 ))
@@ -203,40 +195,24 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="my-4 border-t border-border" />
+          {divider}
 
           {/* Active Deals */}
           <div>
-            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <DollarSign className="h-3 w-3" />
-              Active Deals
-            </div>
+            {sectionLabel(<DollarSign className="h-3 w-3" />, "Negócios")}
             <div className="mt-2 space-y-2">
               {deals.length === 0 ? (
-                <p className="px-1 text-xs text-muted-foreground">No deals</p>
+                <p className="px-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Sem negócios</p>
               ) : (
                 deals.map((deal) => (
-                  <div
-                    key={deal.id}
-                    className="rounded-lg bg-muted px-3 py-2"
-                  >
-                    <p className="text-sm font-medium text-foreground">
+                  <div key={deal.id} className="rounded-lg px-3 py-2" style={{ backgroundColor: "rgba(159,176,201,0.06)", border: "1px solid rgba(159,176,201,0.12)" }}>
+                    <p className="text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       {deal.title}
                     </p>
-                    <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
-                      <span>
-                        {deal.currency ?? "$"}
-                        {deal.value.toLocaleString()}
-                      </span>
+                    <div className="mt-1 flex items-center justify-between text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
+                      <span>{deal.currency ?? "R$"}{deal.value.toLocaleString()}</span>
                       {deal.stage && (
-                        <span
-                          className="rounded-full px-1.5 py-0.5 text-[10px]"
-                          style={{
-                            backgroundColor: `${deal.stage.color}20`,
-                            color: deal.stage.color,
-                          }}
-                        >
+                        <span className="rounded-full px-1.5 py-0.5 text-[10px]" style={{ backgroundColor: `${deal.stage.color}20`, color: deal.stage.color }}>
                           {deal.stage.name}
                         </span>
                       )}
@@ -247,27 +223,30 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="my-4 border-t border-border" />
+          {divider}
 
           {/* Notes */}
           <div>
-            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <StickyNote className="h-3 w-3" />
-              Notes
-            </div>
+            {sectionLabel(<StickyNote className="h-3 w-3" />, "Notas")}
             <div className="mt-2">
               <div className="flex gap-2">
                 <textarea
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
-                  placeholder="Add a note..."
+                  placeholder="Adicionar nota…"
                   rows={2}
-                  className="flex-1 resize-none rounded-lg border border-border bg-muted px-3 py-2 text-xs text-foreground placeholder-muted-foreground outline-none focus:border-primary/50"
+                  className="flex-1 resize-none rounded-lg px-3 py-2 text-xs outline-none"
+                  style={{
+                    backgroundColor: "rgba(159,176,201,0.06)",
+                    border: "1px solid rgba(159,176,201,0.18)",
+                    color: "var(--ei-offwhite)",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  }}
                 />
                 <Button
                   size="sm"
-                  className="h-auto bg-primary px-2 hover:bg-primary/90"
+                  className="h-auto px-2"
+                  style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff" } as React.CSSProperties}
                   onClick={handleAddNote}
                   disabled={!newNote.trim() || addingNote}
                 >
@@ -277,15 +256,12 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
 
               <div className="mt-2 space-y-2">
                 {notes.map((note) => (
-                  <div
-                    key={note.id}
-                    className="rounded-lg bg-muted px-3 py-2"
-                  >
-                    <p className="whitespace-pre-wrap text-xs text-muted-foreground">
+                  <div key={note.id} className="rounded-lg px-3 py-2" style={{ backgroundColor: "rgba(159,176,201,0.06)", border: "1px solid rgba(159,176,201,0.10)" }}>
+                    <p className="whitespace-pre-wrap text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       {note.note_text}
                     </p>
-                    <p className="mt-1 text-[10px] text-muted-foreground">
-                      {format(new Date(note.created_at), "MMM d, yyyy HH:mm")}
+                    <p className="mt-1 text-[10px]" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace", opacity: 0.7 }}>
+                      {format(new Date(note.created_at), "dd/MM/yyyy HH:mm")}
                     </p>
                   </div>
                 ))}
