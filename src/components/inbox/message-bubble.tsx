@@ -261,12 +261,14 @@ export function MessageBubble({
       )}
     >
       <div
-        className={cn(
-          "relative rounded-2xl px-3 py-2",
-          isAgent
-            ? "rounded-br-md bg-primary text-primary-foreground"
-            : "rounded-bl-md bg-muted text-foreground",
-        )}
+        className="relative px-3 py-2"
+        style={{
+          borderRadius: isAgent ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+          backgroundColor: isAgent ? "var(--ei-royal)" : "var(--ei-surface-card)",
+          color: "var(--ei-offwhite)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          border: isAgent ? "none" : "1px solid rgba(159,176,201,0.18)",
+        }}
       >
         {reply && (
           <ReplyQuote
@@ -283,14 +285,11 @@ export function MessageBubble({
           )}
         >
           <span
-            className={cn(
-              "text-[10px]",
-              // Outbound bubbles sit on the primary fill, so the
-              // timestamp must read against that (not the neutral
-              // foreground) — otherwise it goes low-contrast in light
-              // mode. Inbound bubbles use the muted surface.
-              isAgent ? "text-primary-foreground/70" : "text-muted-foreground",
-            )}
+            className="text-[10px]"
+            style={{
+              color: isAgent ? "rgba(245,243,238,0.55)" : "var(--ei-text-soft)",
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
           >
             {time}
           </span>

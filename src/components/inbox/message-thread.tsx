@@ -141,14 +141,14 @@ const STATUS_OPTIONS: { label: string; value: ConversationStatus; color: string 
 /**
  * WhatsApp-style doodle background applied to the chat area (both the
  * active thread and the empty state). The SVG tile lives at
- * `/public/inbox-doodle.svg`; the slate-950 colour sits underneath so
+ * `/public/inbox-doodle.svg`; the Abyssal colour sits underneath so
  * the doodles read as a subtle pattern rather than a stark grid.
  *
  * Defined once at module scope so the two render paths can't drift —
  * if we ever switch the asset, both spots update together.
  */
 const DOODLE_BG_CLASSES =
-  "bg-background bg-[url('/inbox-doodle.svg')] bg-repeat";
+  "bg-[url('/inbox-doodle.svg')] bg-repeat";
 
 export function MessageThread({
   conversation,
@@ -778,19 +778,31 @@ export function MessageThread({
     [conversation, onAssignChange],
   );
 
-  // Empty state — same WhatsApp-style doodle background as the active
+  // Empty state — same Abyssal doodle background as the active
   // thread below, so swapping between empty/selected doesn't change the
   // pattern under the user's eye.
   if (!conversation || !contact) {
     return (
-      <div className={cn("flex flex-1 flex-col items-center justify-center", DOODLE_BG_CLASSES)}>
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-          <MessageSquare className="h-8 w-8 text-muted-foreground" />
+      <div
+        className={cn("flex flex-1 flex-col items-center justify-center", DOODLE_BG_CLASSES)}
+        style={{ backgroundColor: "var(--ei-abyssal)" }}
+      >
+        <div
+          className="flex h-16 w-16 items-center justify-center rounded-full"
+          style={{ backgroundColor: "rgba(43,111,219,0.15)" }}
+        >
+          <MessageSquare className="h-8 w-8" style={{ color: "var(--ei-cobalt)" }} />
         </div>
-        <h3 className="mt-4 text-sm font-medium text-muted-foreground">
+        <h3
+          className="mt-4 text-sm font-semibold"
+          style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
           Select a conversation
         </h3>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p
+          className="mt-1 text-xs"
+          style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
           Choose a conversation from the left to start messaging
         </p>
       </div>
@@ -817,10 +829,19 @@ export function MessageThread({
     // clipped and the hover toolbar overlaps the Tags panel. Letting the
     // root shrink lets the bubbles' break-words / max-w caps apply.
     // Issue #257.
-    <div className={cn("flex min-w-0 flex-1 flex-col", DOODLE_BG_CLASSES)}>
+    <div
+      className={cn("flex min-w-0 flex-1 flex-col", DOODLE_BG_CLASSES)}
+      style={{ backgroundColor: "var(--ei-abyssal)" }}
+    >
       {/* Header — solid card surface sits on top of the doodle so the
           name/avatar/dropdowns stay legible. */}
-      <div className="flex items-center justify-between gap-2 border-b border-border bg-card px-3 py-3 sm:px-4">
+      <div
+        className="flex items-center justify-between gap-2 px-3 py-3 sm:px-4"
+        style={{
+          backgroundColor: "var(--ei-surface-card)",
+          borderBottom: "1px solid rgba(159,176,201,0.22)",
+        }}
+      >
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           {/* Back-to-list button — mobile only. Hidden on lg+ where the
               conversation list is always visible next to the thread. */}
@@ -829,26 +850,62 @@ export function MessageThread({
               type="button"
               onClick={onBack}
               aria-label="Back to conversations"
-              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md lg:hidden"
+              style={{ color: "var(--ei-text-soft)" }}
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
           )}
-          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-foreground">
+          <div
+            className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+            style={{
+              backgroundColor: "rgba(43,111,219,0.18)",
+              color: "var(--ei-cobalt)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          >
             {displayName.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-semibold text-foreground">{displayName}</h2>
-            <p className="truncate text-xs text-muted-foreground">{contact.phone}</p>
+            <div className="flex items-center gap-1.5">
+              <h2
+                className="truncate text-sm font-semibold"
+                style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                {displayName}
+              </h2>
+              {/* Online indicator */}
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ backgroundColor: "var(--ei-iris)" }}
+                title="Online"
+              />
+            </div>
+            <p
+              className="truncate text-xs"
+              style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}
+            >
+              {contact.phone}
+            </p>
           </div>
           {/* Session timer badge — hidden on the narrowest phones so
               the name + back arrow keep their room. */}
           <Badge
             variant="outline"
             className={cn(
-              "ml-1 hidden gap-1 border-border text-[10px] sm:inline-flex sm:ml-2",
-              sessionInfo.expired ? "text-red-400" : "text-primary"
+              "ml-1 hidden gap-1 text-[10px] sm:inline-flex sm:ml-2",
+              sessionInfo.expired ? "text-red-400" : ""
             )}
+            style={
+              !sessionInfo.expired
+                ? {
+                    color: "var(--ei-cobalt)",
+                    borderColor: "rgba(43,111,219,0.4)",
+                    backgroundColor: "rgba(43,111,219,0.08)",
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }
+                : { fontFamily: "'JetBrains Mono', monospace" }
+            }
           >
             <Clock className="h-3 w-3" />
             {sessionInfo.remaining}
@@ -856,11 +913,7 @@ export function MessageThread({
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Contact-panel toggle — desktop only. The contact sidebar
-              eats a chunk of horizontal width that crowds the thread on
-              smaller laptops; this lets agents reclaim it when they just
-              want to read and reply. Hidden on mobile, where the sidebar
-              never renders as a permanent panel anyway. Issue #258. */}
+          {/* Contact-panel toggle — desktop only. */}
           {onToggleContactPanel && (
             <button
               type="button"
@@ -870,10 +923,10 @@ export function MessageThread({
               }
               aria-pressed={contactPanelOpen}
               title={contactPanelOpen ? "Hide contact" : "Show contact"}
-              className={cn(
-                "hidden h-7 w-7 items-center justify-center rounded-md transition-colors hover:bg-muted hover:text-foreground lg:inline-flex",
-                contactPanelOpen ? "text-primary" : "text-muted-foreground",
-              )}
+              className="hidden h-7 w-7 items-center justify-center rounded-md transition-colors lg:inline-flex"
+              style={{
+                color: contactPanelOpen ? "var(--ei-cobalt)" : "var(--ei-text-soft)",
+              }}
             >
               {contactPanelOpen ? (
                 <PanelRightClose className="h-4 w-4" />
@@ -883,11 +936,7 @@ export function MessageThread({
             </button>
           )}
 
-          {/* Manual refresh — forces a refetch of the messages + the
-              conversation list (the parent bumps its resyncToken). Useful
-              when realtime missed an event or the agent just wants to be
-              sure nothing's stale. Only rendered when the parent wires
-              up `onRefresh`. */}
+          {/* Manual refresh */}
           {onRefresh && (
             <button
               type="button"
@@ -895,9 +944,8 @@ export function MessageThread({
               disabled={isRefreshing}
               aria-label="Refresh conversation"
               title="Refresh"
-              className={cn(
-                "inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-60",
-              )}
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:opacity-60"
+              style={{ color: "var(--ei-text-soft)" }}
             >
               <RefreshCw
                 className={cn("h-3.5 w-3.5", isRefreshing && "animate-spin")}
@@ -907,10 +955,10 @@ export function MessageThread({
 
           {/* Status dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger className={cn(
-                  "inline-flex items-center justify-center h-7 gap-1 px-2 text-xs rounded-md hover:bg-muted",
-                  currentStatus?.color ?? "text-muted-foreground"
-                )}>
+            <DropdownMenuTrigger
+              className="inline-flex items-center justify-center h-7 gap-1 px-2 text-xs rounded-md transition-colors"
+              style={{ color: "var(--ei-text-soft)" }}
+            >
                 {currentStatus?.label ?? "Status"}
                 <ChevronDown className="h-3 w-3" />
             </DropdownMenuTrigger>
@@ -933,10 +981,8 @@ export function MessageThread({
           {/* Assign dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger
-              className={cn(
-                "inline-flex items-center justify-center h-7 gap-1 px-2 text-xs rounded-md hover:bg-muted",
-                assignedAgentId ? "text-primary" : "text-muted-foreground"
-              )}
+              className="inline-flex items-center justify-center h-7 gap-1 px-2 text-xs rounded-md transition-colors"
+              style={{ color: assignedAgentId ? "var(--ei-cobalt)" : "var(--ei-text-soft)" }}
             >
               <UserPlus className="h-3 w-3" />
               <span className="hidden sm:inline">{assignLabel}</span>
@@ -1001,12 +1047,23 @@ export function MessageThread({
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <div
+              className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"
+              style={{ borderColor: "var(--ei-cobalt)", borderTopColor: "transparent" }}
+            />
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-sm text-muted-foreground">No messages yet</p>
-            <p className="text-xs text-muted-foreground">
+            <p
+              className="text-sm"
+              style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              No messages yet
+            </p>
+            <p
+              className="text-xs"
+              style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
               Send a template to start the conversation
             </p>
           </div>
@@ -1016,7 +1073,15 @@ export function MessageThread({
               <div key={group.date}>
                 {/* Date separator */}
                 <div className="mb-4 flex items-center justify-center">
-                  <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-medium text-muted-foreground">
+                  <span
+                    className="px-3 py-1 text-[10px] font-medium"
+                    style={{
+                      backgroundColor: "rgba(159,176,201,0.10)",
+                      color: "var(--ei-text-soft)",
+                      borderRadius: "var(--ei-r-pill)",
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}
+                  >
                     {formatDateSeparator(group.date)}
                   </span>
                 </div>

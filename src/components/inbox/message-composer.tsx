@@ -378,7 +378,13 @@ export function MessageComposer({
   // ---- Render --------------------------------------------------------
 
   return (
-    <div className="border-t border-border bg-card p-3">
+    <div
+      className="p-3"
+      style={{
+        borderTop: "1px solid rgba(159,176,201,0.22)",
+        backgroundColor: "var(--ei-surface-card)",
+      }}
+    >
       {replyTo && (
         <div className="mb-2">
           <ReplyQuote
@@ -448,23 +454,35 @@ export function MessageComposer({
         />
       ) : recording ? (
         // Recording bar — replaces the composer while the mic is live.
-        <div className="flex items-center gap-3 rounded-xl border border-border bg-muted px-4 py-2.5">
+        <div
+          className="flex items-center gap-3 px-4 py-2.5"
+          style={{
+            borderRadius: "var(--ei-r-pill)",
+            border: "1px solid rgba(159,176,201,0.22)",
+            backgroundColor: "rgba(159,176,201,0.06)",
+          }}
+        >
           <span className="flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-red-500" />
-          <span className="flex-1 text-sm text-foreground">
+          <span
+            className="flex-1 text-sm"
+            style={{ color: "var(--ei-offwhite)", fontFamily: "'JetBrains Mono', monospace" }}
+          >
             Recording… {formatDuration(recordSeconds)} /{" "}
             {formatDuration(MAX_RECORDING_SECONDS)}
           </span>
           <button
             type="button"
             onClick={cancelRecording}
-            className="rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-card hover:text-foreground"
+            className="rounded-md px-2 py-1 text-xs"
+            style={{ color: "var(--ei-text-soft)" }}
           >
             Cancel
           </button>
           <Button
             size="sm"
             onClick={stopRecording}
-            className="h-9 w-9 shrink-0 bg-primary p-0 hover:bg-primary/90"
+            className="h-9 w-9 shrink-0 p-0"
+            style={{ backgroundColor: "var(--ei-cobalt)" }}
             title="Stop and attach"
           >
             <Square className="h-4 w-4" />
@@ -483,7 +501,8 @@ export function MessageComposer({
                     ? undefined
                     : "Attach media"
               }
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md p-0 text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md p-0 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ color: "var(--ei-text-soft)" }}
             >
               {busy ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -517,7 +536,8 @@ export function MessageComposer({
             canAct={!readOnly}
             gateReason="send messages"
             title={readOnly ? undefined : "Send template"}
-            className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+            className="h-9 w-9 shrink-0 p-0"
+            style={{ color: "var(--ei-text-soft)" }}
             onClick={onOpenTemplates}
           >
             <LayoutTemplate className="h-4 w-4" />
@@ -533,18 +553,22 @@ export function MessageComposer({
                 ? "Read-only — viewers can browse but not reply"
                 : sessionExpired
                   ? "Session expired - use a template"
-                  : "Type a message... (Shift+Enter for new line)"
+                  : "Type a message… (Shift+Enter for new line)"
             }
             disabled={sessionExpired || readOnly}
             rows={1}
-            // Textarea keeps its own inline title — the GatedButton
-            // wrapping pattern doesn't apply to non-button inputs.
-            // The placeholder text also surfaces the read-only state.
             title={readOnly ? "Read-only — your role can't send messages" : undefined}
             className={cn(
-              "flex-1 resize-none rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-colors focus:border-primary/50",
+              "flex-1 resize-none px-4 py-2.5 text-sm outline-none transition-colors",
               (sessionExpired || readOnly) && "cursor-not-allowed opacity-50"
             )}
+            style={{
+              borderRadius: "var(--ei-r-pill)",
+              border: "1px solid rgba(159,176,201,0.22)",
+              backgroundColor: "rgba(159,176,201,0.07)",
+              color: "var(--ei-offwhite)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
           />
 
           <GatedButton
@@ -553,7 +577,8 @@ export function MessageComposer({
             gateReason="send messages"
             disabled={!text.trim() || sessionExpired || sending}
             onClick={handleSend}
-            className="h-9 w-9 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40"
+            className="h-9 w-9 shrink-0 p-0 disabled:opacity-40"
+            style={{ backgroundColor: "var(--ei-cobalt)", borderRadius: "var(--ei-r-pill)" }}
           >
             <Send className="h-4 w-4" />
           </GatedButton>
@@ -564,7 +589,10 @@ export function MessageComposer({
           `items-end` buttons below the textarea. Indented to line up
           under the textarea left edge. */}
       {!draft && !recording && (
-        <p className="mt-1 pl-[5.5rem] text-[10px] text-muted-foreground">
+        <p
+          className="mt-1 pl-[5.5rem] text-[10px]"
+          style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
           Type &apos;/&apos; for quick replies
         </p>
       )}

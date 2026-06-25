@@ -148,49 +148,132 @@ export function ConversationList({
 
   const activeFilter = FILTER_OPTIONS.find((o) => o.value === filter);
 
+  // Group conversations: pinned (unread > 0) first, rest below
+  const pinned = filtered.filter((c) => c.unread_count > 0);
+  const rest = filtered.filter((c) => c.unread_count === 0);
+
   return (
     // w-full on mobile so the list occupies the whole viewport when it's
     // the single pane showing; fixed 320px on desktop where it shares the
     // row with the thread + contact sidebar.
-    <div className="flex h-full w-full flex-col border-r border-border bg-card lg:w-80">
-      {/* Search + Filter */}
-      <div className="space-y-2 border-b border-border p-3">
+    <div
+      className="flex h-full w-full flex-col lg:w-80"
+      style={{
+        backgroundColor: "var(--ei-surface-card)",
+        borderRight: "1px solid rgba(159,176,201,0.22)",
+      }}
+    >
+      {/* Header */}
+      <div
+        className="px-4 pt-4 pb-3"
+        style={{ borderBottom: "1px solid rgba(159,176,201,0.22)" }}
+      >
+        <h1
+          className="mb-3 text-base font-semibold"
+          style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
+          Messages
+        </h1>
+        {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+            style={{ color: "var(--ei-text-soft)" }}
+          />
           <Input
             value={search}
             onChange={handleSearchChange}
-            placeholder="Search conversations..."
-            className="border-border bg-muted pl-9 text-sm text-foreground placeholder-muted-foreground focus:border-primary/50"
+            placeholder="Search conversations…"
+            className="pl-9 text-sm"
+            style={{
+              backgroundColor: "rgba(159,176,201,0.08)",
+              border: "1px solid rgba(159,176,201,0.22)",
+              color: "var(--ei-offwhite)",
+              borderRadius: "var(--ei-r-pill)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
           />
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center justify-center h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground rounded-md hover:bg-muted">
-              {activeFilter?.label ?? "All"}
-              <ChevronDown className="h-3 w-3" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="border-border bg-popover"
-          >
-            {FILTER_OPTIONS.map((opt) => (
-              <DropdownMenuItem
-                key={opt.value}
-                onClick={() => setFilter(opt.value)}
-                className={cn(
-                  "text-sm",
+        {/* Filter pill row */}
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {FILTER_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setFilter(opt.value)}
+              className="px-3 py-0.5 text-xs font-medium transition-colors"
+              style={{
+                borderRadius: "var(--ei-r-pill)",
+                backgroundColor:
                   filter === opt.value
-                    ? "text-primary"
-                    : "text-popover-foreground"
-                )}
-              >
-                {opt.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                    ? "var(--ei-cobalt)"
+                    : "rgba(159,176,201,0.10)",
+                color:
+                  filter === opt.value
+                    ? "#fff"
+                    : "var(--ei-text-soft)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Stories strip — active contacts (unread) as round avatars */}
+      {pinned.length > 0 && (
+        <div
+          className="overflow-x-auto px-4 py-3 flex gap-3"
+          style={{ borderBottom: "1px solid rgba(159,176,201,0.22)" }}
+        >
+          {pinned.map((conv) => {
+            const name =
+              conv.contact?.name || conv.contact?.phone || "?";
+            const initials = name.charAt(0).toUpperCase();
+            return (
+              <button
+                key={conv.id}
+                onClick={() => handleSelect(conv)}
+                className="flex flex-col items-center gap-1 shrink-0"
+              >
+                <div
+                  className="p-0.5 rounded-full"
+                  style={{
+                    background: "var(--ei-cobalt)",
+                    boxShadow: "var(--ei-glow-cobalt)",
+                  }}
+                >
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold"
+                    style={{
+                      backgroundColor: "var(--ei-abyssal)",
+                      color: "var(--ei-offwhite)",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    }}
+                  >
+                    {conv.contact?.avatar_url ? (
+                      <img
+                        src={conv.contact.avatar_url}
+                        alt={name}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      initials
+                    )}
+                  </div>
+                </div>
+                <span
+                  className="max-w-[3rem] truncate text-[10px]"
+                  style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  {name.split(" ")[0]}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Conversation Items.
           `min-h-0` is load-bearing: a flex child defaults to
@@ -201,15 +284,47 @@ export function ConversationList({
       <ScrollArea className="min-h-0 flex-1">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <div
+              className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent"
+              style={{ borderColor: "var(--ei-cobalt)", borderTopColor: "transparent" }}
+            />
           </div>
         ) : filtered.length === 0 ? (
           <div className="px-4 py-12 text-center">
-            <p className="text-sm text-muted-foreground">No conversations found</p>
+            <p
+              className="text-sm"
+              style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              No conversations found
+            </p>
           </div>
         ) : (
           <div className="flex flex-col">
-            {filtered.map((conv) => (
+            {pinned.length > 0 && (
+              <p
+                className="px-4 py-2 text-[10px] font-semibold uppercase tracking-widest"
+                style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                Pinned
+              </p>
+            )}
+            {pinned.map((conv) => (
+              <ConversationItem
+                key={conv.id}
+                conversation={conv}
+                isActive={conv.id === activeConversationId}
+                onSelect={handleSelect}
+              />
+            ))}
+            {rest.length > 0 && pinned.length > 0 && (
+              <p
+                className="px-4 py-2 text-[10px] font-semibold uppercase tracking-widest"
+                style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                All conversations
+              </p>
+            )}
+            {rest.map((conv) => (
               <ConversationItem
                 key={conv.id}
                 conversation={conv}
@@ -252,13 +367,35 @@ function ConversationItem({
   return (
     <button
       onClick={handleClick}
-      className={cn(
-        "flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-muted/50",
-        isActive && "border-l-2 border-primary bg-muted/70"
-      )}
+      className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors"
+      style={{
+        backgroundColor: isActive
+          ? "rgba(43,111,219,0.12)"
+          : "transparent",
+        borderLeft: isActive
+          ? "2px solid var(--ei-cobalt)"
+          : "2px solid transparent",
+      }}
+      onMouseEnter={(e) => {
+        if (!isActive)
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            "rgba(159,176,201,0.06)";
+      }}
+      onMouseLeave={(e) => {
+        if (!isActive)
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            "transparent";
+      }}
     >
       {/* Avatar */}
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-foreground">
+      <div
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+        style={{
+          backgroundColor: "rgba(43,111,219,0.18)",
+          color: "var(--ei-cobalt)",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+        }}
+      >
         {contact?.avatar_url ? (
           <img
             src={contact.avatar_url}
@@ -273,26 +410,48 @@ function ConversationItem({
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-sm font-medium text-foreground">
+          <span
+            className="truncate text-sm font-semibold"
+            style={{
+              color: "var(--ei-offwhite)",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          >
             {displayName}
           </span>
-          <span className="shrink-0 text-[10px] text-muted-foreground">{timeAgo}</span>
+          <span
+            className="shrink-0 text-[10px]"
+            style={{
+              color: "var(--ei-text-soft)",
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
+          >
+            {timeAgo}
+          </span>
         </div>
         <div className="mt-0.5 flex items-center justify-between gap-2">
-          <p className="truncate text-xs text-muted-foreground">
+          <p
+            className="truncate text-xs"
+            style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
             {conversation.last_message_text || "No messages yet"}
           </p>
           <div className="flex shrink-0 items-center gap-1.5">
             {conversation.unread_count > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+              <span
+                className="flex h-4 min-w-4 items-center justify-center px-1 text-[10px] font-bold"
+                style={{
+                  backgroundColor: "var(--ei-cobalt)",
+                  color: "#fff",
+                  borderRadius: "var(--ei-r-pill)",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                }}
+              >
                 {conversation.unread_count}
               </span>
             )}
             <span
-              className={cn(
-                "h-2 w-2 rounded-full",
-                STATUS_COLORS[conversation.status]
-              )}
+              className={cn("h-2 w-2 rounded-full", STATUS_COLORS[conversation.status])}
               title={conversation.status}
             />
           </div>
