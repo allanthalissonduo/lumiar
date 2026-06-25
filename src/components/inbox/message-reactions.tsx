@@ -1,14 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { cn } from "@/lib/utils";
 import type { MessageReaction } from "@/types";
 
 interface MessageReactionsProps {
   reactions: MessageReaction[];
   currentUserId: string | undefined;
-  /** Toggle the agent's reaction. If the agent already has this emoji →
-   *  caller should send empty to remove; otherwise swap/add. */
   onToggle: (emoji: string) => void;
 }
 
@@ -59,12 +56,10 @@ export function MessageReactions({
           type="button"
           onClick={() => onToggle(g.emoji)}
           aria-pressed={g.byCurrentUser}
-          className={cn(
-            "inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[11px] leading-none transition-colors",
-            g.byCurrentUser
-              ? "border-primary/60 bg-primary/15 text-primary hover:bg-primary/25"
-              : "border-border bg-muted/80 text-foreground hover:bg-muted",
-          )}
+          className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] leading-none transition-colors"
+          style={g.byCurrentUser
+            ? { border: "1px solid rgba(43,111,219,0.60)", backgroundColor: "rgba(43,111,219,0.15)", color: "var(--ei-cobalt)" }
+            : { border: "1px solid rgba(159,176,201,0.20)", backgroundColor: "rgba(159,176,201,0.08)", color: "var(--ei-offwhite)" }}
         >
           <span className="text-sm leading-none">{g.emoji}</span>
           {g.count > 1 && <span>{g.count}</span>}

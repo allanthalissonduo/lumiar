@@ -1,22 +1,13 @@
 "use client";
 
 import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { Message } from "@/types";
 
 interface ReplyQuoteProps {
-  /** Sender label of the quoted message: "You" for our own messages,
-   *  contact name for customer-sent messages. Caller resolves this — the
-   *  quote component doesn't see the parent Message. */
   authorLabel: string;
-  /** Compact text preview. Falls back to a placeholder for media types. */
   preview: string;
-  /** Present → renders the composer-chip variant with an X button. Absent →
-   *  renders the embedded-in-bubble variant. */
   onDismiss?: () => void;
-  /** True when embedded inside an outbound (primary-filled) bubble, so the
-   *  quote must read against the primary surface rather than the neutral
-   *  foreground — otherwise it goes low-contrast in light mode. */
+  /** True when embedded inside an outbound bubble */
   onPrimary?: boolean;
 }
 
@@ -29,33 +20,29 @@ export function ReplyQuote({
   const isChip = !!onDismiss;
   return (
     <div
-      className={cn(
-        "flex items-start gap-2 border-l-2 px-2 py-1",
-        onPrimary ? "border-primary-foreground/50" : "border-primary",
-        isChip
-          ? "rounded-md bg-muted/80"
+      className="flex items-start gap-2 border-l-2 px-2 py-1"
+      style={{
+        borderLeftColor: onPrimary ? "rgba(255,255,255,0.50)" : "var(--ei-cobalt)",
+        backgroundColor: isChip
+          ? "rgba(159,176,201,0.10)"
           : onPrimary
-            ? "mb-1.5 rounded-md bg-primary-foreground/15"
-            : "mb-1.5 rounded-md bg-background/20",
-      )}
+            ? "rgba(255,255,255,0.12)"
+            : "rgba(159,176,201,0.08)",
+        borderRadius: "6px",
+        marginBottom: isChip ? undefined : "6px",
+      }}
     >
       <div className="min-w-0 flex-1 overflow-hidden">
         <div
-          className={cn(
-            "truncate text-[11px] font-medium",
-            onPrimary ? "text-primary-foreground" : "text-primary",
-          )}
+          className="truncate text-[11px] font-medium"
+          style={{ color: onPrimary ? "rgba(255,255,255,0.90)" : "var(--ei-cobalt)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {authorLabel}
         </div>
-        {/* Wrap the preview instead of truncating to a single line.
-         *  `truncate` (white-space: nowrap) forced the quote onto one
-         *  impossibly-wide line and — because the parent flex chain
-         *  lacked `min-w-0` at every step — pushed the entire inbox
-         *  layout wider, shoving the contact sidebar off-screen.
-         *  `break-words` also wraps long URLs that have no whitespace
-         *  to break on. Issue #165. */}
-        <div className="whitespace-pre-wrap break-words text-xs text-foreground/80">
+        <div
+          className="whitespace-pre-wrap break-words text-xs"
+          style={{ color: onPrimary ? "rgba(255,255,255,0.75)" : "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+        >
           {preview}
         </div>
       </div>
@@ -63,8 +50,11 @@ export function ReplyQuote({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Cancel reply"
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          aria-label="Cancelar resposta"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded transition-colors"
+          style={{ color: "var(--ei-text-soft)" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.12)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -78,18 +68,18 @@ export function buildReplyPreview(message: Message): string {
   if (message.content_text) return message.content_text;
   switch (message.content_type) {
     case "image":
-      return "[Image]";
+      return "[Imagem]";
     case "video":
-      return "[Video]";
+      return "[Vídeo]";
     case "audio":
-      return "[Audio]";
+      return "[Áudio]";
     case "document":
-      return "[Document]";
+      return "[Documento]";
     case "location":
-      return "[Location]";
+      return "[Localização]";
     case "template":
       return "[Template]";
     default:
-      return "[Message]";
+      return "[Mensagem]";
   }
 }
