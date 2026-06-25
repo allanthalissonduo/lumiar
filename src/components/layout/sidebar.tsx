@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
@@ -47,12 +47,12 @@ const ROLE_CHIP: Record<
   agent: {
     icon: UserCog,
     label: "Agent",
-    className: "border-border bg-muted text-foreground",
+    className: "border-[rgba(159,176,201,0.25)] bg-[rgba(159,176,201,0.10)] text-[var(--ei-offwhite)]",
   },
   viewer: {
     icon: User,
     label: "Viewer",
-    className: "border-border bg-card text-muted-foreground",
+    className: "border-[rgba(159,176,201,0.18)] bg-[rgba(159,176,201,0.06)] text-[var(--ei-text-soft)]",
   },
 };
 
@@ -146,12 +146,13 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
       <li>
         <Link
           href={item.href}
-          className={cn(
-            "flex items-center gap-3 rounded px-3 py-2 text-sm font-medium transition-colors",
-            isActive
-              ? "bg-primary/12 text-primary"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground",
-          )}
+          className="flex items-center gap-3 rounded px-3 py-2 text-sm font-medium transition-colors"
+          style={{
+            backgroundColor: isActive ? "rgba(43,111,219,0.12)" : "transparent",
+            color: isActive ? "var(--ei-cobalt)" : "var(--ei-text-soft)",
+            borderLeft: isActive ? "2px solid var(--ei-cobalt)" : "2px solid transparent",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}
         >
           <item.icon className="h-4 w-4 shrink-0" />
           <span className="flex-1 truncate">{item.label}</span>
@@ -193,11 +194,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col border-r border-border bg-sidebar",
+          "fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col",
           "transition-transform duration-200 ease-out will-change-transform",
           open ? "translate-x-0" : "-translate-x-full",
           "lg:static lg:z-0 lg:w-56 lg:translate-x-0 lg:transition-none",
         )}
+        style={{ backgroundColor: "var(--ei-abyssal)", borderRight: "1px solid rgba(159,176,201,0.18)" }}
         aria-label="Navegação principal"
       >
         {/* Logo */}
@@ -214,7 +216,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               <polygon points="14,25.5 12.6,16 14,14 15.4,16" fill="var(--ei-royal)" />
               <polygon points="2.5,14 12,12.6 14,14 12,15.4" fill="var(--ei-text-soft)" opacity="0.5" />
             </svg>
-            <span className="text-sm font-semibold tracking-tight text-foreground">
+            <span className="text-sm font-semibold tracking-tight" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Lumiar
             </span>
           </Link>
@@ -222,7 +224,8 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             type="button"
             onClick={onClose}
             aria-label="Fechar menu"
-            className="flex h-9 w-9 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded transition-colors lg:hidden"
+            style={{ color: "var(--ei-text-soft)" }}
           >
             <X className="h-5 w-5" />
           </button>
@@ -239,8 +242,8 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
           {/* AI section */}
           <div className="my-3 px-3">
             <div className="flex items-center gap-2">
-              <div className="h-px flex-1 bg-border" />
-              <span className="font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+              <div className="h-px flex-1" style={{ backgroundColor: "rgba(159,176,201,0.14)" }} />
+              <span className="font-mono text-[9px] font-medium uppercase tracking-[0.14em]" style={{ color: "var(--ei-text-soft)" }}>
                 IA
               </span>
               <div className="h-px flex-1 bg-border" />
@@ -253,7 +256,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             ))}
           </ul>
 
-          <div className="my-3 border-t border-border" />
+          <div className="my-3" style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }} />
 
           <ul className="flex flex-col gap-0.5">
             {bottomNavItems.map((item) => {
@@ -262,12 +265,13 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 rounded px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/12 text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                    )}
+                    className="flex items-center gap-3 rounded px-3 py-2 text-sm font-medium transition-colors"
+                    style={{
+                      backgroundColor: isActive ? "rgba(43,111,219,0.12)" : "transparent",
+                      color: isActive ? "var(--ei-cobalt)" : "var(--ei-text-soft)",
+                      borderLeft: isActive ? "2px solid var(--ei-cobalt)" : "2px solid transparent",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    }}
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
@@ -281,7 +285,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         {/* User section */}
         <div className="shrink-0 border-t border-sidebar-border p-3">
           {showAccountStrip && account?.name ? (
-            <div className="mb-2 flex items-center gap-2 px-3 text-xs text-muted-foreground">
+            <div className="mb-2 flex items-center gap-2 px-3 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               <UsersRound className="size-3.5 shrink-0" />
               <span className="truncate" title={account.name}>
                 {account.name}
@@ -304,25 +308,22 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
           ) : null}
 
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded px-3 py-2 text-left transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none data-popup-open:bg-muted/60">
+            <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded px-3 py-2 text-left transition-colors focus:outline-none">
               <Avatar className="size-7 shrink-0">
                 {profile?.avatar_url ? (
-                  <AvatarImage
-                    src={profile.avatar_url}
-                    alt={profile.full_name ?? "Avatar"}
-                  />
+                  <AvatarImage src={profile.avatar_url} alt={profile.full_name ?? "Avatar"} />
                 ) : null}
-                <AvatarFallback className="bg-primary/12 text-xs font-semibold text-primary">
+                <AvatarFallback className="text-xs font-semibold" style={{ backgroundColor: "rgba(43,111,219,0.14)", color: "var(--ei-cobalt)" }}>
                   {profile?.full_name?.charAt(0)?.toUpperCase() ??
                     profile?.email?.charAt(0)?.toUpperCase() ??
                     "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-foreground">
+                <p className="truncate text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   {profile?.full_name ?? "Usuário"}
                 </p>
-                <p className="truncate text-xs text-muted-foreground">
+                <p className="truncate text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   {profile?.email ?? ""}
                 </p>
               </div>
@@ -331,36 +332,31 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               align="end"
               side="top"
               sideOffset={6}
-              className="min-w-52 bg-popover text-popover-foreground ring-border"
+              className="min-w-52"
+              style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" } as React.CSSProperties}
             >
               <DropdownMenuItem
                 render={
-                  <Link
-                    href="/settings?tab=profile"
-                    onClick={onClose}
-                    className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
-                  />
+                  <Link href="/settings?tab=profile" onClick={onClose} />
                 }
+                style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
               >
                 <User className="size-4" />
                 Perfil
               </DropdownMenuItem>
               <DropdownMenuItem
                 render={
-                  <Link
-                    href="/settings?tab=whatsapp"
-                    onClick={onClose}
-                    className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
-                  />
+                  <Link href="/settings?tab=whatsapp" onClick={onClose} />
                 }
+                style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
               >
                 <Settings className="size-4" />
                 Configurações
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuSeparator style={{ backgroundColor: "rgba(159,176,201,0.14)" }} />
               <DropdownMenuItem
                 onClick={signOut}
-                className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
+                style={{ color: "#f87171", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
               >
                 <LogOut className="size-4" />
                 Sair

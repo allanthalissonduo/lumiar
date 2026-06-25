@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
@@ -53,18 +54,21 @@ export function Header({ onOpenSidebar }: HeaderProps) {
     "U";
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4 lg:px-6">
+    <header className="flex h-14 shrink-0 items-center justify-between gap-3 px-4 lg:px-6" style={{ backgroundColor: "var(--ei-abyssal)", borderBottom: "1px solid rgba(159,176,201,0.18)" }}>
       <div className="flex min-w-0 items-center gap-2">
         {/* Hamburger — mobile only. 44×44 hit target per Apple HIG. */}
         <button
           type="button"
           onClick={onOpenSidebar}
           aria-label="Open menu"
-          className="flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-md transition-colors lg:hidden"
+          style={{ color: "var(--ei-text-soft)" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
         >
           <Menu className="h-5 w-5" />
         </button>
-        <h1 className="truncate text-base font-semibold text-foreground sm:text-lg">
+        <h1 className="truncate text-base font-semibold sm:text-lg" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {title}
         </h1>
       </div>
@@ -74,67 +78,63 @@ export function Header({ onOpenSidebar }: HeaderProps) {
 
         <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex items-center gap-2 rounded-md px-1 py-1 transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none data-popup-open:bg-muted/70 sm:gap-3 sm:pl-1 sm:pr-3"
+          className="flex items-center gap-2 rounded-md px-1 py-1 transition-colors focus:outline-none sm:gap-3 sm:pl-1 sm:pr-3"
           aria-label="Open account menu"
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
         >
           <Avatar className="size-8">
             {profile?.avatar_url ? (
-              <AvatarImage
-                src={profile.avatar_url}
-                alt={profile.full_name ?? "Avatar"}
-              />
+              <AvatarImage src={profile.avatar_url} alt={profile.full_name ?? "Avatar"} />
             ) : null}
-            <AvatarFallback className="bg-primary/10 text-sm font-medium text-primary">
+            <AvatarFallback className="text-sm font-medium" style={{ backgroundColor: "rgba(43,111,219,0.14)", color: "var(--ei-cobalt)" }}>
               {initial}
             </AvatarFallback>
           </Avatar>
-          <span className="hidden text-sm font-medium text-foreground sm:inline">
-            {profile?.full_name ?? "User"}
+          <span className="hidden text-sm font-medium sm:inline" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            {profile?.full_name ?? "Usuário"}
           </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
           sideOffset={6}
-          className="min-w-56 bg-popover text-popover-foreground ring-border"
+          className="min-w-56"
+          style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" } as React.CSSProperties}
         >
           <div className="px-2 py-1.5">
-            <p className="truncate text-sm font-medium text-foreground">
-              {profile?.full_name ?? "User"}
+            <p className="truncate text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              {profile?.full_name ?? "Usuário"}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="truncate text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {profile?.email ?? ""}
             </p>
           </div>
-          <DropdownMenuSeparator className="bg-border" />
+          <DropdownMenuSeparator style={{ backgroundColor: "rgba(159,176,201,0.14)" }} />
           <DropdownMenuItem
             render={
-              <Link
-                href="/settings?tab=profile"
-                className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
-              />
+              <Link href="/settings?tab=profile" />
             }
+            style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
           >
             <User className="size-4" />
-            Profile
+            Perfil
           </DropdownMenuItem>
           <DropdownMenuItem
             render={
-              <Link
-                href="/settings?tab=whatsapp"
-                className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
-              />
+              <Link href="/settings?tab=whatsapp" />
             }
+            style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
           >
             <SettingsIcon className="size-4" />
-            Settings
+            Configurações
           </DropdownMenuItem>
-          <DropdownMenuSeparator className="bg-border" />
+          <DropdownMenuSeparator style={{ backgroundColor: "rgba(159,176,201,0.14)" }} />
           <DropdownMenuItem
             onClick={signOut}
-            className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
+            style={{ color: "#f87171", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
           >
             <LogOut className="size-4" />
-            Sign out
+            Sair
           </DropdownMenuItem>
         </DropdownMenuContent>
         </DropdownMenu>
