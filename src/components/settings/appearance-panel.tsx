@@ -4,7 +4,6 @@ import { Check, Moon, Palette, SunMoon, Sun } from "lucide-react";
 
 import { useTheme } from "@/hooks/use-theme";
 import { MODES, THEMES, type Mode, type ThemeId } from "@/lib/themes";
-import { cn } from "@/lib/utils";
 import { SettingsPanelHead } from "./settings-panel-head";
 
 /**
@@ -29,9 +28,9 @@ export function AppearancePanel() {
       />
 
       <div className="space-y-4">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <SunMoon className="size-4 text-muted-foreground" />
-          Mode
+        <h3 className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <SunMoon className="size-4" style={{ color: "var(--ei-text-soft)" }} />
+          Modo
         </h3>
 
         <div
@@ -51,9 +50,9 @@ export function AppearancePanel() {
       </div>
 
       <div className="mt-8 space-y-4">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Palette className="size-4 text-muted-foreground" />
-          Accent color
+        <h3 className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <Palette className="size-4" style={{ color: "var(--ei-text-soft)" }} />
+          Cor de destaque
         </h3>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -92,26 +91,27 @@ function ModeCard({
       onClick={onPick}
       aria-checked={isActive}
       aria-label={`Use ${mode} mode`}
-      className={cn(
-        "flex items-center gap-3 rounded-lg border bg-card p-4 text-left transition-colors",
-        isActive
-          ? "border-primary/60 ring-2 ring-primary/40"
-          : "border-border hover:border-border hover:bg-muted/40",
-      )}
+      className="flex items-center gap-3 rounded-lg p-4 text-left transition-colors"
+      style={{
+        backgroundColor: "var(--ei-surface-card)",
+        border: isActive ? "1px solid rgba(43,111,219,0.55)" : "1px solid rgba(159,176,201,0.18)",
+        boxShadow: isActive ? "0 0 0 2px rgba(43,111,219,0.20)" : "none",
+      }}
     >
       <span
         aria-hidden
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+        style={{ backgroundColor: "rgba(159,176,201,0.10)", color: "var(--ei-offwhite)" }}
       >
         <Icon className="h-4 w-4" />
       </span>
-      <span className="flex-1 text-sm font-semibold capitalize text-foreground">
-        {mode}
+      <span className="flex-1 text-sm font-semibold capitalize" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        {mode === "light" ? "Claro" : "Escuro"}
       </span>
       {isActive && (
-        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">
+        <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: "rgba(26,184,160,0.12)", color: "var(--ei-iris)" }}>
           <Check className="h-3 w-3" />
-          Active
+          Ativo
         </span>
       )}
     </button>
@@ -139,43 +139,37 @@ function ThemeCard({
       onClick={onPick}
       aria-pressed={isActive}
       aria-label={`Use ${name} theme`}
-      className={cn(
-        "flex flex-col gap-3 rounded-lg border bg-card p-4 text-left transition-colors",
-        isActive
-          ? "border-primary/60 ring-2 ring-primary/40"
-          : "border-border hover:border-border hover:bg-muted/40",
-      )}
+      className="flex flex-col gap-3 rounded-lg p-4 text-left transition-colors"
+      style={{
+        backgroundColor: "var(--ei-surface-card)",
+        border: isActive ? "1px solid rgba(43,111,219,0.55)" : "1px solid rgba(159,176,201,0.18)",
+        boxShadow: isActive ? "0 0 0 2px rgba(43,111,219,0.20)" : "none",
+      }}
     >
       <div className="flex items-center justify-between">
         <span
           aria-hidden
           className="h-8 w-8 shrink-0 rounded-full"
-          style={{
-            background: swatch,
-            boxShadow: "inset 0 0 0 1px oklch(1 0 0 / 0.15)",
-          }}
+          style={{ background: swatch, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.15)" }}
         />
         {isActive && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">
+          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: "rgba(26,184,160,0.12)", color: "var(--ei-iris)" }}>
             <Check className="h-3 w-3" />
-            Active
+            Ativo
           </span>
         )}
       </div>
       <div>
-        <div className="text-sm font-semibold text-foreground">{name}</div>
-        <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
+        <div className="text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{name}</div>
+        <div className="mt-1 text-xs leading-relaxed" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {tagline}
         </div>
       </div>
-      <div
-        className="mt-1 flex h-2 overflow-hidden rounded-full"
-        aria-hidden
-      >
+      <div className="mt-1 flex h-2 overflow-hidden rounded-full" aria-hidden>
         <span className="flex-1" style={{ background: swatch }} />
-        <span className="w-3 bg-muted-foreground/60" />
-        <span className="w-3 bg-muted" />
-        <span className="w-3 bg-card" />
+        <span className="w-3" style={{ backgroundColor: "rgba(159,176,201,0.40)" }} />
+        <span className="w-3" style={{ backgroundColor: "rgba(159,176,201,0.15)" }} />
+        <span className="w-3" style={{ backgroundColor: "var(--ei-surface-card)" }} />
       </div>
       <span className="sr-only">Theme id: {id}</span>
     </button>

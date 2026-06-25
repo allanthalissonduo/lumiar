@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, type ReactNode } from 'react';
 
-import { cn } from '@/lib/utils';
 import {
   RAIL_GROUPS,
   SECTION_META,
@@ -47,11 +46,8 @@ export function SettingsRail({
   return (
     <nav
       aria-label="Settings sections"
-      className={cn(
-        'flex gap-1 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-        'border-b border-border',
-        'lg:sticky lg:top-0 lg:flex-col lg:overflow-visible lg:border-b-0 lg:pb-0',
-      )}
+      className="flex gap-1 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:sticky lg:top-0 lg:flex-col lg:overflow-visible lg:border-b-0 lg:pb-0"
+      style={{ borderBottom: "1px solid rgba(159,176,201,0.14)" }}
     >
       {RAIL_GROUPS.map(({ label, group }) => {
         const items = SETTINGS_SECTIONS.filter(
@@ -63,7 +59,7 @@ export function SettingsRail({
             className="flex shrink-0 gap-1 lg:flex-col lg:gap-0.5"
           >
             {label ? (
-              <div className="hidden px-3 pt-3.5 pb-1.5 text-[11px] font-semibold tracking-[0.09em] text-muted-foreground uppercase lg:block">
+              <div className="hidden px-3 pt-3.5 pb-1.5 text-[11px] font-semibold tracking-[0.09em] uppercase lg:block" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>
                 {label}
               </div>
             ) : null}
@@ -78,22 +74,20 @@ export function SettingsRail({
                   type="button"
                   onClick={() => onSelect(s)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={cn(
-                    'flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap transition-colors',
-                    'lg:w-full',
-                    isActive
-                      ? 'bg-primary-soft text-primary'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                  )}
+                  className="flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap transition-colors lg:w-full"
+                  style={{
+                    backgroundColor: isActive ? "rgba(43,111,219,0.12)" : "transparent",
+                    color: isActive ? "var(--ei-cobalt)" : "var(--ei-text-soft)",
+                    borderLeft: isActive ? "2px solid var(--ei-cobalt)" : "2px solid transparent",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  }}
                 >
                   <Icon className="size-4 shrink-0" />
                   <span className="flex-1">{meta.label}</span>
                   {hints?.[s] != null ? (
                     <span
-                      className={cn(
-                        'hidden items-center gap-1.5 text-xs lg:inline-flex',
-                        isActive ? 'text-primary' : 'text-muted-foreground',
-                      )}
+                      className="hidden items-center gap-1.5 text-xs lg:inline-flex"
+                      style={{ color: isActive ? "var(--ei-cobalt)" : "var(--ei-text-soft)" }}
                     >
                       {hints[s]}
                     </span>
