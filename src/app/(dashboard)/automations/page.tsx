@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import {
@@ -160,25 +160,26 @@ export default function AutomationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Automations</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Build workflows that react to WhatsApp® events automatically.
+          <h1 className="text-2xl font-bold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Automações</h1>
+          <p className="mt-1 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Crie workflows que reagem a eventos do WhatsApp® automaticamente.
           </p>
         </div>
         <GatedButton
           canAct={canCreate}
           gateReason="create automations"
           onClick={() => router.push("/automations/new")}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium"
+          style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" } as React.CSSProperties}
         >
           <Plus className="h-4 w-4" />
-          Create Automation
+          Nova automação
         </GatedButton>
       </div>
 
       {showTemplates && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-muted-foreground">Quick-start templates</h2>
+          <h2 className="mb-3 text-sm font-semibold" style={{ color: "var(--ei-text-soft)", fontFamily: "'JetBrains Mono', monospace" }}>Templates rápidos</h2>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             {TEMPLATE_ORDER.map((slug) => {
               const t = AUTOMATION_TEMPLATES[slug]
@@ -187,13 +188,16 @@ export default function AutomationsPage() {
                 <button
                   key={slug}
                   onClick={() => startFromTemplate(slug)}
-                  className="group flex flex-col items-start rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-card/80"
+                  className="flex flex-col items-start rounded-xl p-4 text-left transition-colors"
+                  style={{ backgroundColor: "var(--ei-surface-card)", border: "1px solid rgba(159,176,201,0.18)" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(43,111,219,0.40)"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(43,111,219,0.04)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(159,176,201,0.18)"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-surface-card)"; }}
                 >
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg" style={{ backgroundColor: "rgba(43,111,219,0.12)", color: "var(--ei-cobalt)" }}>
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="text-sm font-semibold text-foreground">{t.name}</div>
-                  <p className="mt-1 text-xs text-muted-foreground">{t.description}</p>
+                  <div className="text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{t.name}</div>
+                  <p className="mt-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{t.description}</p>
                 </button>
               )
             })}
@@ -202,13 +206,13 @@ export default function AutomationsPage() {
       )}
 
       {automations.length === 0 ? (
-        <div className="flex h-48 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/40">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-            <Zap className="h-6 w-6 text-primary" />
+        <div className="flex h-48 flex-col items-center justify-center rounded-xl" style={{ border: "1px dashed rgba(159,176,201,0.25)", backgroundColor: "rgba(14,28,50,0.40)" }}>
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl" style={{ backgroundColor: "rgba(43,111,219,0.10)" }}>
+            <Zap className="h-6 w-6" style={{ color: "var(--ei-cobalt)" }} />
           </div>
-          <p className="mt-3 text-sm font-medium text-foreground">No automations yet</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Pick a template above or create one from scratch.
+          <p className="mt-3 text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Nenhuma automação ainda</p>
+          <p className="mt-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Escolha um template acima ou crie do zero.
           </p>
         </div>
       ) : (
@@ -277,13 +281,17 @@ function AutomationCard({
 }) {
   const meta = triggerMeta(automation.trigger_type)
   return (
-    <li className="rounded-xl border border-border bg-card transition-colors hover:border-border">
+    <li className="rounded-xl transition-colors" style={{ border: "1px solid rgba(159,176,201,0.18)", backgroundColor: "var(--ei-surface-card)" }}
+      onMouseEnter={e => { (e.currentTarget as HTMLLIElement).style.borderColor = "rgba(43,111,219,0.30)"; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLLIElement).style.borderColor = "rgba(159,176,201,0.18)"; }}
+    >
       <div className="flex items-center gap-4 p-4">
         <div
-          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10"
+          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg"
+          style={{ backgroundColor: automation.is_active ? "rgba(43,111,219,0.12)" : "rgba(159,176,201,0.06)" }}
           aria-hidden
         >
-          <Zap className="h-5 w-5 text-primary" />
+          <Zap className="h-5 w-5" style={{ color: automation.is_active ? "var(--ei-cobalt)" : "var(--ei-text-soft)" }} />
         </div>
 
         <button
@@ -292,20 +300,20 @@ function AutomationCard({
           className="min-w-0 flex-1 text-left"
         >
           <div className="flex items-center gap-2">
-            <span className="truncate text-sm font-semibold text-foreground">
+            <span className="truncate text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               {automation.name}
             </span>
             {automation.is_active && (
               <span className="relative flex h-2 w-2" aria-label="active">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ backgroundColor: "var(--ei-iris)" }} />
+                <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: "var(--ei-iris)" }} />
               </span>
             )}
           </div>
           {automation.description && (
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">{automation.description}</p>
+            <p className="mt-0.5 truncate text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{automation.description}</p>
           )}
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs" style={{ color: "var(--ei-text-soft)" }}>
             <span
               className={cn(
                 "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",

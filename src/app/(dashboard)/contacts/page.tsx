@@ -342,9 +342,9 @@ export default function ContactsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Contacts</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage your contact list. {totalCount > 0 && `${totalCount} total contacts.`}
+          <h1 className="text-2xl font-bold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Contatos</h1>
+          <p className="mt-1 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Gerencie sua lista de contatos.{totalCount > 0 && ` ${totalCount} contatos no total.`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -527,7 +527,7 @@ export default function ContactsPage() {
       )}
 
       {/* Table */}
-      <div className="rounded-lg border border-border overflow-hidden">
+      <div className="overflow-hidden rounded-xl" style={{ border: "1px solid rgba(159,176,201,0.18)", backgroundColor: "var(--ei-surface-card)" }}>
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
@@ -555,7 +555,7 @@ export default function ContactsPage() {
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
                     <Loader2 className="size-6 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">Loading contacts...</p>
+                    <p className="text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Carregando contatos…</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -563,21 +563,22 @@ export default function ContactsPage() {
               <TableRow className="border-border">
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
-                    <Users className="size-8 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
+                    <Users className="size-8" style={{ color: "var(--ei-text-soft)" }} />
+                    <p className="text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       {hasActiveFilters
-                        ? 'No contacts match your filters.'
-                        : 'No contacts yet.'}
+                        ? 'Nenhum contato corresponde aos filtros.'
+                        : 'Nenhum contato ainda.'}
                     </p>
                     {!hasActiveFilters && (
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={openAddForm}
-                        className="mt-2 border-border text-muted-foreground hover:bg-muted"
+                        className="mt-2"
+                        style={{ backgroundColor: "rgba(43,111,219,0.10)", borderColor: "rgba(43,111,219,0.25)", color: "var(--ei-cobalt)" }}
                       >
                         <Plus className="size-3.5" />
-                        Add your first contact
+                        Adicionar primeiro contato
                       </Button>
                     )}
                   </div>
