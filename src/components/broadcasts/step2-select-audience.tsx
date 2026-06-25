@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { CustomField, Tag } from '@/types';
-import { Button } from '@/components/ui/button';
 import {
   Users,
   Tags,
@@ -47,35 +46,43 @@ const audienceOptions: {
 }[] = [
   {
     type: 'all',
-    label: 'All Contacts',
-    description: 'Send to every contact in your database',
+    label: 'Todos os Contatos',
+    description: 'Enviar para todos os contatos do banco de dados',
     icon: Users,
   },
   {
     type: 'tags',
-    label: 'Filter by Tags',
-    description: 'Target contacts with specific tags',
+    label: 'Filtrar por Tags',
+    description: 'Segmentar contatos com tags específicas',
     icon: Tags,
   },
   {
     type: 'custom_field',
-    label: 'Custom Field',
-    description: 'Filter by a custom field value',
+    label: 'Campo Personalizado',
+    description: 'Filtrar por valor de campo personalizado',
     icon: Filter,
   },
   {
     type: 'csv',
-    label: 'Upload CSV',
-    description: 'Upload a list of phone numbers',
+    label: 'Importar CSV',
+    description: 'Carregar uma lista de números de telefone',
     icon: Upload,
   },
 ];
 
 const OPERATOR_OPTIONS: { value: CustomFieldOperator; label: string }[] = [
-  { value: 'is', label: 'is' },
-  { value: 'is_not', label: 'is not' },
-  { value: 'contains', label: 'contains' },
+  { value: 'is', label: 'é' },
+  { value: 'is_not', label: 'não é' },
+  { value: 'contains', label: 'contém' },
 ];
+
+const inputStyle: React.CSSProperties = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  outline: "none",
+};
 
 export function Step2SelectAudience({
   audience,
@@ -90,8 +97,6 @@ export function Step2SelectAudience({
   const [estimatedCount, setEstimatedCount] = useState<number | null>(null);
   const [loadingCount, setLoadingCount] = useState(false);
 
-  // Tags are used both by the primary "Filter by Tags" audience type
-  // AND by the exclude-list below — so always load once on mount.
   useEffect(() => {
     async function fetchTags() {
       setLoadingTags(true);
@@ -106,7 +111,6 @@ export function Step2SelectAudience({
     fetchTags();
   }, []);
 
-  // Lazy-load custom fields only when that audience type is active.
   useEffect(() => {
     if (audience.type !== 'custom_field') return;
     async function fetchFields() {
@@ -129,17 +133,11 @@ export function Step2SelectAudience({
     setLoadingCount(true);
     try {
       const supabase = createClient();
-
-      // Base query — produces the superset before exclude is applied.
-      let baseIds: Set<string> | null = null; // null means "all contacts"
+      let baseIds: Set<string> | null = null;
 
       if (audience.type === 'all') {
-        // Handled below — full-table count adjusted by excludes.
-      } else if (
-        audience.type === 'tags' &&
-        audience.tagIds &&
-        audience.tagIds.length > 0
-      ) {
+        // handled below
+      } else if (audience.type === 'tags' && audience.tagIds && audience.tagIds.length > 0) {
         const { data } = await supabase
           .from('contact_tags')
           .select('contact_id')
@@ -160,20 +158,14 @@ export function Step2SelectAudience({
         else q = q.ilike('value', `%${value}%`);
         const { data } = await q;
         baseIds = new Set((data ?? []).map((r) => r.contact_id));
-      } else if (
-        audience.type === 'csv' &&
-        audience.csvContacts &&
-        audience.csvContacts.length > 0
-      ) {
+      } else if (audience.type === 'csv' && audience.csvContacts && audience.csvContacts.length > 0) {
         setEstimatedCount(audience.csvContacts.length);
         return;
       } else {
-        // Partially-configured audience — wait for the user to finish.
         setEstimatedCount(null);
         return;
       }
 
-      // Apply exclude tags
       let excludeSet: Set<string> | null = null;
       if (audience.excludeTagIds && audience.excludeTagIds.length > 0) {
         const { data: excludeRows } = await supabase
@@ -184,12 +176,9 @@ export function Step2SelectAudience({
       }
 
       if (baseIds) {
-        const effective = [...baseIds].filter(
-          (id) => !excludeSet?.has(id),
-        );
+        const effective = [...baseIds].filter((id) => !excludeSet?.has(id));
         setEstimatedCount(effective.length);
       } else {
-        // "All" — fetch the total, then subtract exclude set if any.
         const { count } = await supabase
           .from('contacts')
           .select('*', { count: 'exact', head: true });
@@ -199,13 +188,7 @@ export function Step2SelectAudience({
     } finally {
       setLoadingCount(false);
     }
-  }, [
-    audience.type,
-    audience.tagIds,
-    audience.customField,
-    audience.csvContacts,
-    audience.excludeTagIds,
-  ]);
+  }, [audience.type, audience.tagIds, audience.customField, audience.csvContacts, audience.excludeTagIds]);
 
   useEffect(() => {
     fetchEstimatedCount();
@@ -242,16 +225,23 @@ export function Step2SelectAudience({
     (audience.type === 'custom_field' &&
       !!audience.customField?.fieldId &&
       audience.customField.value.length > 0) ||
-    (audience.type === 'csv' &&
-      audience.csvContacts &&
-      audience.csvContacts.length > 0);
+    (audience.type === 'csv' && audience.csvContacts && audience.csvContacts.length > 0);
+
+  const cardStyle: React.CSSProperties = {
+    border: "1px solid rgba(159,176,201,0.18)",
+    backgroundColor: "rgba(159,176,201,0.04)",
+    borderRadius: "12px",
+    padding: "16px",
+  };
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Select Audience</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Choose who will receive this broadcast.
+        <h2 className="text-lg font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Selecionar Audiência
+        </h2>
+        <p className="mt-1 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Escolha quem receberá este broadcast.
         </p>
       </div>
 
@@ -266,35 +256,32 @@ export function Step2SelectAudience({
                 onUpdate({
                   ...audience,
                   type: option.type,
-                  // Wipe shape fields from other types to avoid stale
-                  // config leaking across selections.
                   tagIds: option.type === 'tags' ? audience.tagIds : undefined,
-                  customField:
-                    option.type === 'custom_field'
-                      ? audience.customField
-                      : undefined,
-                  csvContacts:
-                    option.type === 'csv' ? audience.csvContacts : undefined,
+                  customField: option.type === 'custom_field' ? audience.customField : undefined,
+                  csvContacts: option.type === 'csv' ? audience.csvContacts : undefined,
                 })
               }
-              className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
-                isSelected
-                  ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                  : 'border-border bg-card/50 hover:border-border'
-              }`}
+              className="flex items-start gap-3 rounded-xl p-4 text-left transition-all"
+              style={{
+                border: isSelected ? "1px solid rgba(43,111,219,0.60)" : "1px solid rgba(159,176,201,0.18)",
+                backgroundColor: isSelected ? "rgba(43,111,219,0.08)" : "rgba(159,176,201,0.04)",
+                boxShadow: isSelected ? "0 0 0 1px rgba(43,111,219,0.25)" : "none",
+              }}
             >
               <div
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                  isSelected
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-muted text-muted-foreground'
-                }`}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+                style={{
+                  backgroundColor: isSelected ? "rgba(43,111,219,0.12)" : "rgba(159,176,201,0.08)",
+                  color: isSelected ? "var(--ei-cobalt)" : "var(--ei-text-soft)",
+                }}
               >
                 <Icon className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-sm font-medium text-foreground">{option.label}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  {option.label}
+                </p>
+                <p className="mt-0.5 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   {option.description}
                 </p>
               </div>
@@ -304,32 +291,33 @@ export function Step2SelectAudience({
       </div>
 
       {audience.type === 'tags' && (
-        <div className="rounded-xl border border-border bg-card/50 p-4">
-          <p className="mb-3 text-sm font-medium text-foreground">Select Tags</p>
+        <div style={cardStyle}>
+          <p className="mb-3 text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Selecionar Tags
+          </p>
           {loadingTags ? (
-            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            <Loader2 className="h-5 w-5 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
           ) : tags.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No tags found. Create tags in Settings.
+            <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Nenhuma tag encontrada. Crie tags em Configurações.
             </p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => {
-                const isSelected = audience.tagIds?.includes(tag.id);
+                const isTagSelected = audience.tagIds?.includes(tag.id);
                 return (
                   <button
                     key={tag.id}
                     onClick={() => toggleTag(tag.id)}
-                    className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-all ${
-                      isSelected
-                        ? 'border-primary/30 bg-primary/10 text-primary'
-                        : 'border-border bg-muted text-muted-foreground hover:border-border'
-                    }`}
+                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium transition-all"
+                    style={{
+                      border: isTagSelected ? "1px solid rgba(43,111,219,0.40)" : "1px solid rgba(159,176,201,0.22)",
+                      backgroundColor: isTagSelected ? "rgba(43,111,219,0.10)" : "rgba(159,176,201,0.06)",
+                      color: isTagSelected ? "var(--ei-cobalt)" : "var(--ei-text-soft)",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    }}
                   >
-                    <span
-                      className="mr-1.5 h-2 w-2 rounded-full"
-                      style={{ backgroundColor: tag.color }}
-                    />
+                    <span className="mr-1.5 h-2 w-2 rounded-full" style={{ backgroundColor: tag.color }} />
                     {tag.name}
                   </button>
                 );
@@ -340,66 +328,67 @@ export function Step2SelectAudience({
       )}
 
       {audience.type === 'custom_field' && (
-        <div className="space-y-3 rounded-xl border border-border bg-card/50 p-4">
-          <p className="text-sm font-medium text-foreground">Custom Field Filter</p>
+        <div style={cardStyle} className="space-y-3">
+          <p className="text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Filtro por Campo Personalizado
+          </p>
           {loadingFields ? (
-            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            <Loader2 className="h-5 w-5 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
           ) : customFields.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No custom fields defined. Create one in Settings → Custom Fields.
+            <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Nenhum campo personalizado definido. Crie um em Configurações → Campos.
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_140px_minmax(0,1fr)]">
               <select
                 value={audience.customField?.fieldId ?? ''}
                 onChange={(e) => updateCustomField({ fieldId: e.target.value })}
-                className="h-9 rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="h-9 rounded-lg px-2.5 text-sm"
+                style={inputStyle}
               >
-                <option value="">Select field…</option>
+                <option value="">Selecionar campo…</option>
                 {customFields.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.field_name}
-                  </option>
+                  <option key={f.id} value={f.id}>{f.field_name}</option>
                 ))}
               </select>
               <select
                 value={audience.customField?.operator ?? 'is'}
-                onChange={(e) =>
-                  updateCustomField({
-                    operator: e.target.value as CustomFieldOperator,
-                  })
-                }
-                className="h-9 rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                onChange={(e) => updateCustomField({ operator: e.target.value as CustomFieldOperator })}
+                className="h-9 rounded-lg px-2.5 text-sm"
+                style={inputStyle}
               >
                 {OPERATOR_OPTIONS.map((op) => (
-                  <option key={op.value} value={op.value}>
-                    {op.label}
-                  </option>
+                  <option key={op.value} value={op.value}>{op.label}</option>
                 ))}
               </select>
               <input
                 type="text"
                 value={audience.customField?.value ?? ''}
                 onChange={(e) => updateCustomField({ value: e.target.value })}
-                placeholder="Value"
-                className="h-9 rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
+                placeholder="Valor"
+                className="h-9 rounded-lg px-2.5 text-sm"
+                style={inputStyle}
               />
             </div>
           )}
         </div>
       )}
 
-      {/* Exclude list — applies regardless of audience type */}
-      <div className="rounded-xl border border-border bg-card/50 p-4">
+      {/* Excluir por tags */}
+      <div style={cardStyle}>
         <div className="mb-3 flex items-center gap-2">
-          <X className="h-4 w-4 text-red-400" />
-          <p className="text-sm font-medium text-foreground">
-            Exclude contacts with these tags
+          <X className="h-4 w-4" style={{ color: "#f87171" }} />
+          <p className="text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Excluir contatos com estas tags
           </p>
-          <span className="text-xs text-muted-foreground">(optional)</span>
+          <span className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            (opcional)
+          </span>
         </div>
         {tags.length === 0 ? (
-          <p className="text-xs text-muted-foreground">No tags available.</p>
+          <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Nenhuma tag disponível.
+          </p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => {
@@ -408,16 +397,15 @@ export function Step2SelectAudience({
                 <button
                   key={tag.id}
                   onClick={() => toggleExcludeTag(tag.id)}
-                  className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-all ${
-                    isExcluded
-                      ? 'border-red-500/30 bg-red-500/10 text-red-300'
-                      : 'border-border bg-muted text-muted-foreground hover:border-border'
-                  }`}
+                  className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium transition-all"
+                  style={{
+                    border: isExcluded ? "1px solid rgba(248,113,113,0.35)" : "1px solid rgba(159,176,201,0.22)",
+                    backgroundColor: isExcluded ? "rgba(248,113,113,0.10)" : "rgba(159,176,201,0.06)",
+                    color: isExcluded ? "#f87171" : "var(--ei-text-soft)",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  }}
                 >
-                  <span
-                    className="mr-1.5 h-2 w-2 rounded-full"
-                    style={{ backgroundColor: tag.color }}
-                  />
+                  <span className="mr-1.5 h-2 w-2 rounded-full" style={{ backgroundColor: tag.color }} />
                   {tag.name}
                 </button>
               );
@@ -426,46 +414,59 @@ export function Step2SelectAudience({
         )}
       </div>
 
-      {/* Audience Summary */}
-      <div className="rounded-xl border border-border bg-card/50 p-4">
-        <p className="mb-2 text-sm font-medium text-foreground">Audience Summary</p>
+      {/* Resumo da audiência */}
+      <div style={cardStyle}>
+        <p className="mb-2 text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Resumo da Audiência
+        </p>
         {loadingCount ? (
           <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-            <span className="text-xs text-muted-foreground">Calculating…</span>
+            <Loader2 className="h-4 w-4 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
+            <span className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Calculando…
+            </span>
           </div>
         ) : estimatedCount !== null ? (
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" />
-            <span className="text-sm text-foreground">
-              {estimatedCount.toLocaleString()}
+            <Users className="h-4 w-4" style={{ color: "var(--ei-cobalt)" }} />
+            <span className="text-sm font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              {estimatedCount.toLocaleString('pt-BR')}
             </span>
-            <span className="text-xs text-muted-foreground">estimated recipients</span>
+            <span className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              destinatários estimados
+            </span>
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Select an audience type to see the estimate.
+          <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Selecione um tipo de audiência para ver a estimativa.
           </p>
         )}
       </div>
 
-      <div className="flex items-center justify-between border-t border-border pt-4">
-        <Button
-          variant="outline"
+      <div className="flex items-center justify-between pt-4" style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
+        <button
+          type="button"
           onClick={onBack}
-          className="border-border text-muted-foreground"
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+          style={{ backgroundColor: "rgba(159,176,201,0.08)", border: "1px solid rgba(159,176,201,0.22)", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.14)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
         >
           <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
-        <Button
+          Voltar
+        </button>
+        <button
+          type="button"
           onClick={onNext}
           disabled={!isValid}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+          style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          onMouseEnter={(e) => { if (isValid) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
         >
-          Next
+          Próximo
           <ArrowRight className="h-4 w-4" />
-        </Button>
+        </button>
       </div>
     </div>
   );

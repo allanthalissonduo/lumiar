@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { MessageTemplate } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
@@ -34,6 +32,14 @@ interface Step4Props {
   progress: number;
 }
 
+const inputStyle: React.CSSProperties = {
+  backgroundColor: "rgba(159,176,201,0.08)",
+  border: "1px solid rgba(159,176,201,0.22)",
+  color: "var(--ei-offwhite)",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  outline: "none",
+};
+
 export function Step4ScheduleSend({
   name,
   onNameChange,
@@ -54,7 +60,6 @@ export function Step4ScheduleSend({
       setLoadingReach(true);
       try {
         const supabase = createClient();
-
         if (audience.type === 'all') {
           const { count } = await supabase
             .from('contacts')
@@ -65,7 +70,6 @@ export function Step4ScheduleSend({
             .from('contact_tags')
             .select('contact_id')
             .in('tag_id', audience.tagIds);
-
           const uniqueIds = new Set((contactTags ?? []).map((ct) => ct.contact_id));
           setEstimatedReach(uniqueIds.size);
         } else if (audience.type === 'csv' && audience.csvContacts) {
@@ -77,158 +81,200 @@ export function Step4ScheduleSend({
         setLoadingReach(false);
       }
     }
-
     calculateReach();
   }, [audience]);
 
   const audienceLabel =
     audience.type === 'all'
-      ? 'All Contacts'
+      ? 'Todos os Contatos'
       : audience.type === 'tags'
-        ? `Tags (${audience.tagIds?.length ?? 0} selected)`
+        ? `Tags (${audience.tagIds?.length ?? 0} selecionadas)`
         : audience.type === 'csv'
-          ? 'CSV Upload'
-          : 'Custom';
+          ? 'Importação CSV'
+          : 'Personalizado';
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Review & Send</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Name your broadcast, review the details, and send.
+        <h2 className="text-lg font-semibold" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Revisar e Enviar
+        </h2>
+        <p className="mt-1 text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Nomeie o broadcast, revise os detalhes e envie.
         </p>
       </div>
 
-      {/* Broadcast Name */}
+      {/* Nome do broadcast */}
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-foreground">Broadcast Name</label>
-        <Input
+        <label className="mb-1.5 block text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Nome do Broadcast
+        </label>
+        <input
+          type="text"
           value={name}
           onChange={(e) => onNameChange(e.target.value)}
-          placeholder="e.g. Summer Sale Announcement"
-          className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
+          placeholder="ex: Anúncio de Promoção de Verão"
+          className="h-9 w-full rounded-lg px-3 text-sm"
+          style={inputStyle}
         />
       </div>
 
-      {/* Summary Card */}
-      <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
-        <p className="text-sm font-medium text-foreground">Summary</p>
+      {/* Resumo */}
+      <div
+        className="space-y-3 rounded-xl p-4"
+        style={{ border: "1px solid rgba(159,176,201,0.18)", backgroundColor: "rgba(159,176,201,0.04)" }}
+      >
+        <p className="text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Resumo
+        </p>
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <p className="text-xs text-muted-foreground">Template</p>
-            <p className="text-foreground">{template.name}</p>
+            <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Template</p>
+            <p style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{template.name}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Audience</p>
-            <p className="text-foreground">{audienceLabel}</p>
+            <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Audiência</p>
+            <p style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{audienceLabel}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Estimated Reach</p>
+            <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Alcance estimado</p>
             <div className="flex items-center gap-1.5">
               {loadingReach ? (
-                <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                <Loader2 className="h-3 w-3 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
               ) : (
                 <>
-                  <Users className="h-3.5 w-3.5 text-primary" />
-                  <p className="font-medium text-foreground">{estimatedReach.toLocaleString()}</p>
+                  <Users className="h-3.5 w-3.5" style={{ color: "var(--ei-cobalt)" }} />
+                  <p className="font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                    {estimatedReach.toLocaleString('pt-BR')}
+                  </p>
                 </>
               )}
             </div>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Language</p>
-            <p className="text-foreground">{template.language ?? 'en_US'}</p>
+            <p className="text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Idioma</p>
+            <p style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{template.language ?? 'pt_BR'}</p>
           </div>
         </div>
       </div>
 
-      {/* Processing overlay */}
+      {/* Progresso de envio */}
       {isProcessing && (
-        <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+        <div
+          className="rounded-xl p-4"
+          style={{ border: "1px solid rgba(43,111,219,0.25)", backgroundColor: "rgba(43,111,219,0.08)" }}
+        >
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              <p className="text-sm font-medium text-foreground">Sending broadcast...</p>
+              <Loader2 className="h-4 w-4 animate-spin" style={{ color: "var(--ei-cobalt)" }} />
+              <p className="text-sm font-medium" style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Enviando broadcast…
+              </p>
             </div>
-            <span className="text-xs font-medium text-primary">{progress}%</span>
+            <span className="text-xs font-medium" style={{ color: "var(--ei-cobalt)", fontFamily: "'JetBrains Mono', monospace" }}>
+              {progress}%
+            </span>
           </div>
-          <div className="h-1.5 w-full rounded-full bg-muted">
+          <div className="h-1.5 w-full rounded-full" style={{ backgroundColor: "rgba(159,176,201,0.12)" }}>
             <div
-              className="h-1.5 rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              className="h-1.5 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%`, backgroundColor: "var(--ei-cobalt)" }}
             />
           </div>
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
-        <Button
-          variant="outline"
+      <div
+        className="flex flex-wrap items-center justify-between gap-2 pt-4"
+        style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}
+      >
+        <button
+          type="button"
           onClick={onBack}
           disabled={isProcessing}
-          className="border-border text-muted-foreground"
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+          style={{ backgroundColor: "rgba(159,176,201,0.08)", border: "1px solid rgba(159,176,201,0.22)", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          onMouseEnter={(e) => { if (!isProcessing) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.14)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
         >
           <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
+          Voltar
+        </button>
 
         <div className="flex items-center gap-2">
           {onSaveDraft && (
-            <Button
-              variant="outline"
+            <button
+              type="button"
               onClick={onSaveDraft}
               disabled={!name.trim() || isProcessing}
-              className="border-border text-muted-foreground hover:bg-muted disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{ backgroundColor: "rgba(159,176,201,0.08)", border: "1px solid rgba(159,176,201,0.22)", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              onMouseEnter={(e) => { if (name.trim() && !isProcessing) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.14)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
             >
               <Save className="h-4 w-4" />
-              Save as Draft
-            </Button>
+              Salvar rascunho
+            </button>
           )}
 
           <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
-          <DialogTrigger
-            render={
-              <Button
-                disabled={!name.trim() || isProcessing}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-              />
-            }
-          >
-            <Send className="h-4 w-4" />
-            Send Broadcast
-          </DialogTrigger>
-          <DialogContent className="border-border bg-popover sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-popover-foreground">Confirm Broadcast</DialogTitle>
-              <DialogDescription className="text-muted-foreground">
-                You are about to send this broadcast to{' '}
-                <span className="font-medium text-popover-foreground">{estimatedReach.toLocaleString()}</span>{' '}
-                contacts using the{' '}
-                <span className="font-medium text-popover-foreground">{template.name}</span> template.
-                This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowConfirm(false)}
-                className="border-border text-muted-foreground"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowConfirm(false);
-                  onSend();
-                }}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                <Send className="h-4 w-4" />
-                Confirm & Send
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            <DialogTrigger
+              render={
+                <button
+                  type="button"
+                  disabled={!name.trim() || isProcessing}
+                  className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+                  style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onMouseEnter={(e) => { if (name.trim() && !isProcessing) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
+                />
+              }
+            >
+              <Send className="h-4 w-4" />
+              Enviar Broadcast
+            </DialogTrigger>
+            <DialogContent style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
+              <DialogHeader>
+                <DialogTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Confirmar Broadcast
+                </DialogTitle>
+                <DialogDescription style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Você está prestes a enviar este broadcast para{' '}
+                  <span className="font-medium" style={{ color: "var(--ei-offwhite)" }}>
+                    {estimatedReach.toLocaleString('pt-BR')}
+                  </span>{' '}
+                  contatos usando o template{' '}
+                  <span className="font-medium" style={{ color: "var(--ei-offwhite)" }}>
+                    {template.name}
+                  </span>.
+                  Esta ação não pode ser desfeita.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(false)}
+                  className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                  style={{ backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-offwhite)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowConfirm(false); onSend(); }}
+                  className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                  style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
+                >
+                  <Send className="h-4 w-4" />
+                  Confirmar e Enviar
+                </button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
