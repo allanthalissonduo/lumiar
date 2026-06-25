@@ -25,7 +25,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -199,56 +198,62 @@ export function PipelineSettings({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-popover border-border max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto" style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
         <DialogHeader>
-          <DialogTitle className="text-popover-foreground">Manage Pipeline</DialogTitle>
+          <DialogTitle style={{ color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Gerenciar Pipeline</DialogTitle>
         </DialogHeader>
 
         {showDeleteConfirm ? (
           <div className="py-4">
-            <div className="flex items-center gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-4">
-              <AlertTriangle className="h-5 w-5 shrink-0 text-red-400" />
+            <div className="flex items-center gap-3 rounded-lg p-4" style={{ border: "1px solid rgba(248,113,113,0.30)", backgroundColor: "rgba(248,113,113,0.10)" }}>
+              <AlertTriangle className="h-5 w-5 shrink-0" style={{ color: "#f87171" }} />
               <div>
-                <p className="text-sm font-medium text-red-400">
-                  Delete Pipeline
+                <p className="text-sm font-medium" style={{ color: "#f87171", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Excluir Pipeline
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  This will archive all deals in this pipeline. This cannot be
-                  undone.
+                <p className="mt-1 text-xs" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Todos os negócios deste pipeline serão arquivados. Esta ação não pode ser desfeita.
                 </p>
               </div>
             </div>
             <div className="mt-4 flex justify-end gap-2">
-              <Button
-                variant="outline"
+              <button
+                type="button"
                 onClick={() => setShowDeleteConfirm(false)}
-                className="border-border bg-transparent text-muted-foreground hover:bg-muted"
+                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
               >
-                Cancel
-              </Button>
-              <Button
+                Cancelar
+              </button>
+              <button
+                type="button"
                 onClick={handleDeletePipeline}
                 disabled={deleting}
-                className="bg-red-600 text-white hover:bg-red-700"
+                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ backgroundColor: "#dc2626", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { if (!deleting) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#b91c1c"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#dc2626"; }}
               >
-                {deleting ? "Deleting..." : "Delete Pipeline"}
-              </Button>
+                {deleting ? "Excluindo..." : "Excluir Pipeline"}
+              </button>
             </div>
           </div>
         ) : (
           <>
             <div className="grid gap-4 py-2">
               <div className="grid gap-2">
-                <Label className="text-muted-foreground">Pipeline Name</Label>
+                <Label style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Nome do Pipeline</Label>
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="border-border bg-muted text-foreground"
+                  style={{ backgroundColor: "rgba(159,176,201,0.08)", border: "1px solid rgba(159,176,201,0.22)", color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label className="text-muted-foreground">Stages</Label>
+                <Label style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Etapas</Label>
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -291,12 +296,9 @@ export function PipelineSettings({
                       className="h-5 w-5 rounded-full border-2 transition-transform hover:scale-110"
                       style={{
                         backgroundColor: color,
-                        borderColor:
-                          newStageColor === color
-                            ? "var(--foreground)"
-                            : "transparent",
+                        borderColor: newStageColor === color ? "var(--ei-offwhite)" : "transparent",
                       }}
-                      aria-label={`Pick color ${color}`}
+                      aria-label={`Escolher cor ${color}`}
                     />
                   ))}
                 </div>
@@ -304,57 +306,73 @@ export function PipelineSettings({
                   <Input
                     value={newStageName}
                     onChange={(e) => setNewStageName(e.target.value)}
-                    placeholder="New stage name"
-                    className="border-border bg-muted text-sm text-foreground"
+                    placeholder="Nome da nova etapa"
+                    className="text-sm"
+                    style={{ backgroundColor: "rgba(159,176,201,0.08)", border: "1px solid rgba(159,176,201,0.22)", color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleAddStage();
                     }}
                   />
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <button
+                    type="button"
                     onClick={handleAddStage}
                     disabled={!newStageName.trim()}
-                    className="shrink-0 border-border bg-transparent text-muted-foreground hover:bg-muted"
+                    className="flex shrink-0 items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                    style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    onMouseEnter={(e) => { if (newStageName.trim()) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
                   >
                     <Plus className="mr-1 h-3 w-3" />
-                    Add
-                  </Button>
+                    Adicionar
+                  </button>
                 </div>
               </div>
 
-              <Button
-                variant="outline"
+              <button
+                type="button"
                 onClick={onCreateNewPipeline}
-                className="w-full border-border bg-transparent text-muted-foreground hover:bg-muted"
+                className="flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
               >
                 <Plus className="mr-1 h-3 w-3" />
-                Create a new pipeline
-              </Button>
+                Criar novo pipeline
+              </button>
             </div>
 
-            <DialogFooter className="border-border bg-popover/50">
-              <Button
-                variant="destructive"
+            <DialogFooter style={{ borderTop: "1px solid rgba(159,176,201,0.14)" }}>
+              <button
+                type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="mr-auto bg-red-600 hover:bg-red-700"
+                className="mr-auto rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ backgroundColor: "rgba(248,113,113,0.15)", color: "#f87171", border: "1px solid rgba(248,113,113,0.25)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(248,113,113,0.25)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(248,113,113,0.15)"; }}
               >
-                Delete Pipeline
-              </Button>
-              <Button
-                variant="outline"
+                Excluir Pipeline
+              </button>
+              <button
+                type="button"
                 onClick={() => onOpenChange(false)}
-                className="border-border bg-transparent text-muted-foreground hover:bg-muted"
+                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ border: "1px solid rgba(159,176,201,0.22)", backgroundColor: "transparent", color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(159,176,201,0.08)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
               >
-                Cancel
-              </Button>
-              <Button
+                Cancelar
+              </button>
+              <button
+                type="button"
                 onClick={handleSave}
                 disabled={saving || !name.trim()}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                style={{ backgroundColor: "var(--ei-cobalt)", color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                onMouseEnter={(e) => { if (!saving && name.trim()) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-royal)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--ei-cobalt)"; }}
               >
-                {saving ? "Saving..." : "Save Changes"}
-              </Button>
+                {saving ? "Salvando..." : "Salvar Alterações"}
+              </button>
             </DialogFooter>
           </>
         )}
@@ -388,15 +406,16 @@ function SortableStageRow({
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className="flex items-center gap-2 rounded-lg border border-border bg-muted p-2"
+      style={{ ...style, border: "1px solid rgba(159,176,201,0.16)", backgroundColor: "rgba(159,176,201,0.06)" }}
+      className="flex items-center gap-2 rounded-lg p-2"
     >
       <button
         type="button"
         {...attributes}
         {...listeners}
-        className="cursor-grab touch-none text-muted-foreground hover:text-foreground active:cursor-grabbing"
-        aria-label="Drag to reorder"
+        className="cursor-grab touch-none active:cursor-grabbing"
+        style={{ color: "var(--ei-text-soft)" }}
+        aria-label="Arrastar para reordenar"
       >
         <GripVertical className="h-4 w-4" />
       </button>
@@ -404,16 +423,19 @@ function SortableStageRow({
       <Input
         value={stage.name}
         onChange={(e) => onNameChange(e.target.value)}
-        className="h-7 flex-1 border-transparent bg-transparent text-sm text-foreground focus:border-border"
+        className="h-7 flex-1 text-sm"
+        style={{ border: "none", backgroundColor: "transparent", color: "var(--ei-offwhite)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       />
-      <Button
-        variant="ghost"
-        size="icon-xs"
+      <button
+        type="button"
         onClick={onRemove}
-        className="text-muted-foreground hover:text-red-400"
+        className="flex h-6 w-6 items-center justify-center rounded transition-colors"
+        style={{ color: "var(--ei-text-soft)" }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#f87171"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ei-text-soft)"; }}
       >
         <Trash2 className="h-3 w-3" />
-      </Button>
+      </button>
     </div>
   );
 }
@@ -433,14 +455,14 @@ function ColorSwatch({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="h-4 w-4 rounded-full border border-border"
-        style={{ backgroundColor: value }}
-        aria-label="Change color"
+        className="h-4 w-4 rounded-full"
+        style={{ backgroundColor: value, border: "1px solid rgba(159,176,201,0.30)" }}
+        aria-label="Alterar cor"
       />
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-6 z-20 flex flex-wrap gap-1 rounded-lg border border-border bg-popover p-2 shadow-lg w-36">
+          <div className="absolute left-0 top-6 z-20 flex w-36 flex-wrap gap-1 rounded-lg p-2 shadow-lg" style={{ backgroundColor: "#0d1e36", border: "1px solid rgba(43,111,219,0.30)" }}>
             {colors.map((c) => (
               <button
                 key={c}
@@ -452,8 +474,7 @@ function ColorSwatch({
                 className="h-5 w-5 rounded-full border-2 transition-transform hover:scale-110"
                 style={{
                   backgroundColor: c,
-                  borderColor:
-                    c === value ? "var(--foreground)" : "transparent",
+                  borderColor: c === value ? "var(--ei-offwhite)" : "transparent",
                 }}
               />
             ))}
