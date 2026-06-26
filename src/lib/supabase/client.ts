@@ -76,6 +76,20 @@ function buildQuery(table: string) {
     },
     order() { return chain },
     limit(n: unknown) { _limit = n as number; return chain },
+    range() { return chain },
+    gte() { return chain },
+    lte() { return chain },
+    gt() { return chain },
+    lt() { return chain },
+    like() { return chain },
+    ilike() { return chain },
+    contains() { return chain },
+    not() { return chain },
+    filter() { return chain },
+    match() { return chain },
+    or() { return chain },
+    is() { return chain },
+    textSearch() { return chain },
     single() { _single = true; return resolve() },
     maybeSingle() { _maybeSingle = true; return resolve() },
     insert(rows: unknown) {
@@ -135,8 +149,9 @@ const MOCK_AUTH = {
     },
     error: null,
   }),
-  onAuthStateChange: (_event: unknown, cb: (event: string, session: unknown) => void) => {
-    setTimeout(() => cb('SIGNED_IN', { user: MOCK_USER }), 0)
+  onAuthStateChange: (cb: (event: string, session: unknown) => void) => {
+    const session = { user: MOCK_USER, access_token: 'mock', refresh_token: 'mock', expires_in: 3600, token_type: 'bearer' }
+    setTimeout(() => cb('SIGNED_IN', session), 0)
     return { data: { subscription: { unsubscribe: () => {} } } }
   },
   signOut: async () => ({ error: null }),
@@ -161,6 +176,7 @@ function createMockClient() {
       on: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }),
     }),
     removeChannel: () => {},
+    rpc: async (_fn: string, _args?: unknown) => ({ data: null, error: null }),
   }
 }
 
