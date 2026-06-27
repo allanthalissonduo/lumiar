@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServerClient } from "@/lib/supabase/server";
+import { resolveOpenRouterKey } from "@/app/api/account/ai-config/route";
 import type { Agent } from "@/types";
 
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
@@ -17,9 +18,9 @@ export interface SuggestRequestBody {
 }
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = await resolveOpenRouterKey();
   if (!apiKey) {
-    return NextResponse.json({ error: "OPENROUTER_API_KEY not configured" }, { status: 500 });
+    return NextResponse.json({ error: "Chave OpenRouter não configurada. Acesse Configurações → IA para adicionar." }, { status: 500 });
   }
 
   let body: SuggestRequestBody;

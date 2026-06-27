@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
-
-export const runtime = "edge";
+import { resolveOpenRouterKey } from "@/app/api/account/ai-config/route";
 
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 
@@ -19,9 +18,9 @@ export interface ChatRequestBody {
 }
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = await resolveOpenRouterKey();
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }), {
+    return new Response(JSON.stringify({ error: "Chave OpenRouter não configurada. Acesse Configurações → IA para adicionar." }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
