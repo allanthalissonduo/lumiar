@@ -91,18 +91,30 @@ function SignupPageInner() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
-        <Card className="w-full max-w-md border-border bg-card">
+      <div
+        className="flex min-h-screen items-center justify-center px-4"
+        style={{ background: "var(--color-abyssal)" }}
+      >
+        <Card
+          className="w-full max-w-md"
+          style={{
+            background: "var(--color-card-abyssal)",
+            border: "1px solid rgba(43,111,219,0.25)",
+          }}
+        >
           <CardHeader className="items-center text-center">
-            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-              <CheckCircle className="h-6 w-6 text-primary" />
+            <div
+              className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl"
+              style={{ background: "rgba(43,111,219,0.10)" }}
+            >
+              <CheckCircle className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
             </div>
-            <CardTitle className="text-xl text-foreground">
+            <CardTitle className="text-xl" style={{ color: "var(--color-off-white)" }}>
               Check your email
             </CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardDescription style={{ color: "var(--color-kraft-ocre)" }}>
               We&apos;ve sent a confirmation link to{" "}
-              <span className="text-foreground">{email}</span>. Please check your
+              <span style={{ color: "var(--color-off-white)" }}>{email}</span>. Please check your
               inbox and click the link to verify your account.
             </CardDescription>
           </CardHeader>
@@ -116,7 +128,11 @@ function SignupPageInner() {
             >
               <Button
                 variant="outline"
-                className="w-full border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  color: "var(--color-kraft-ocre)",
+                }}
               >
                 Back to sign in
               </Button>
@@ -128,20 +144,32 @@ function SignupPageInner() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md border-border bg-card">
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      style={{ background: "var(--color-abyssal)" }}
+    >
+      <Card
+        className="w-full max-w-md"
+        style={{
+          background: "var(--color-card-abyssal)",
+          border: "1px solid rgba(43,111,219,0.25)",
+        }}
+      >
         <CardHeader className="items-center text-center">
-          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+          <div
+            className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl"
+            style={{ background: "rgba(43,111,219,0.10)" }}
+          >
             {inviteToken ? (
-              <UsersRound className="h-6 w-6 text-primary" />
+              <UsersRound className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
             ) : (
-              <MessageSquare className="h-6 w-6 text-primary" />
+              <MessageSquare className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
             )}
           </div>
-          <CardTitle className="text-xl text-foreground">
+          <CardTitle className="text-xl" style={{ color: "var(--color-off-white)" }}>
             {inviteToken ? "Create account & join" : "Create account"}
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardDescription style={{ color: "var(--color-kraft-ocre)" }}>
             {inviteToken
               ? "Verify your email, then accept the invitation to join your team."
               : "Get started with CRM Template for WhatsApp"}
@@ -156,7 +184,7 @@ function SignupPageInner() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="fullName" className="text-muted-foreground">
+              <Label htmlFor="fullName" style={{ color: "var(--color-kraft-ocre)" }}>
                 Full name
               </Label>
               <Input
@@ -166,12 +194,17 @@ function SignupPageInner() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  background: "rgba(26,63,158,0.15)",
+                  color: "var(--color-off-white)",
+                }}
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground">
+              <Label htmlFor="email" style={{ color: "var(--color-kraft-ocre)" }}>
                 Email
               </Label>
               <Input
@@ -181,12 +214,17 @@ function SignupPageInner() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  background: "rgba(26,63,158,0.15)",
+                  color: "var(--color-off-white)",
+                }}
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password" className="text-muted-foreground">
+              <Label htmlFor="password" style={{ color: "var(--color-kraft-ocre)" }}>
                 Password
               </Label>
               <Input
@@ -196,12 +234,17 @@ function SignupPageInner() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  background: "rgba(26,63,158,0.15)",
+                  color: "var(--color-off-white)",
+                }}
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="confirmPassword" className="text-muted-foreground">
+              <Label htmlFor="confirmPassword" style={{ color: "var(--color-kraft-ocre)" }}>
                 Confirm password
               </Label>
               <Input
@@ -211,20 +254,29 @@ function SignupPageInner() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  background: "rgba(26,63,158,0.15)",
+                  color: "var(--color-off-white)",
+                }}
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              className="mt-2 h-10 w-full disabled:opacity-50"
+              style={{
+                background: "var(--color-electric)",
+                color: "var(--color-off-white)",
+              }}
             >
               {loading ? "Creating account..." : "Create account"}
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
             Already have an account?{" "}
             <Link
               href={
@@ -232,7 +284,7 @@ function SignupPageInner() {
                   ? `/login?invite=${encodeURIComponent(inviteToken)}`
                   : "/login"
               }
-              className="text-primary hover:text-primary/80"
+              style={{ color: "var(--color-electric)" }}
             >
               Sign in
             </Link>

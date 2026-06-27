@@ -340,7 +340,8 @@ function AutomationCard({
           <DropdownMenu>
             <DropdownMenuTrigger
               aria-label="Open menu"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[popup-open]:bg-muted"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors"
+              style={{ color: "var(--color-kraft-ocre)" }}
             >
               <MoreVertical className="h-4 w-4" />
             </DropdownMenuTrigger>

@@ -50,15 +50,18 @@ interface StatCardProps {
 function StatCard({ label, value, total, icon, color }: StatCardProps) {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div
+      className="rounded-xl p-4"
+      style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}
+    >
       <div className="flex items-center justify-between">
         <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${color}`}>
           {icon}
         </div>
-        <span className="text-xs text-muted-foreground">{pct}%</span>
+        <span className="text-xs" style={{ color: "var(--color-kraft-ocre)" }}>{pct}%</span>
       </div>
-      <p className="mt-3 text-2xl font-bold text-foreground">{value.toLocaleString()}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-3 text-2xl font-bold" style={{ color: "var(--color-off-white)" }}>{value.toLocaleString()}</p>
+      <p className="text-xs" style={{ color: "var(--color-kraft-ocre)" }}>{label}</p>
     </div>
   );
 }
@@ -77,8 +80,11 @@ interface FunnelStep {
 function FunnelChart({ steps }: { steps: FunnelStep[] }) {
   const max = Math.max(...steps.map((s) => s.value), 1);
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <h3 className="mb-4 text-sm font-medium text-foreground">Funnel</h3>
+    <div
+      className="rounded-xl p-4"
+      style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}
+    >
+      <h3 className="mb-4 text-sm font-medium" style={{ color: "var(--color-off-white)" }}>Funnel</h3>
       <div className="space-y-2">
         {steps.map((step) => {
           const pctOfMax = Math.max(5, Math.round((step.value / max) * 100));
@@ -88,17 +94,20 @@ function FunnelChart({ steps }: { steps: FunnelStep[] }) {
               : 0;
           return (
             <div key={step.label} className="flex items-center gap-3">
-              <span className="w-20 shrink-0 text-xs text-muted-foreground">
+              <span className="w-20 shrink-0 text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
                 {step.label}
               </span>
-              <div className="relative h-7 flex-1 rounded-full bg-muted">
+              <div
+                className="relative h-7 flex-1 rounded-full"
+                style={{ background: "rgba(26,63,158,0.15)" }}
+              >
                 <div
                   className={`h-7 rounded-full ${step.color} transition-[width] duration-500`}
                   style={{ width: `${pctOfMax}%` }}
                 />
-                <span className="absolute inset-0 flex items-center px-3 text-xs font-medium text-foreground">
+                <span className="absolute inset-0 flex items-center px-3 text-xs font-medium" style={{ color: "var(--color-off-white)" }}>
                   {step.value.toLocaleString()}
-                  <span className="ml-2 text-muted-foreground/80">
+                  <span className="ml-2" style={{ color: "var(--color-kraft-ocre)" }}>
                     ({pctOfSent}%)
                   </span>
                 </span>
@@ -246,7 +255,7 @@ export default function BroadcastDetailPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--color-electric)" }} />
       </div>
     );
   }
@@ -280,20 +289,20 @@ export default function BroadcastDetailPage() {
             variant="outline"
             size="icon"
             onClick={() => router.push('/broadcasts')}
-            className="border-border"
+            style={{ border: "1px solid rgba(43,111,219,0.25)" }}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-foreground">{broadcast.name}</h1>
+              <h1 className="text-2xl font-bold" style={{ color: "var(--color-off-white)" }}>{broadcast.name}</h1>
               <span
                 className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${status.classes}`}
               >
                 {status.label}
               </span>
             </div>
-            <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
+            <div className="mt-1 flex items-center gap-3 text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
               <span>Template: {broadcast.template_name}</span>
               <span>-</span>
               <span>
@@ -315,7 +324,8 @@ export default function BroadcastDetailPage() {
               size="sm"
               onClick={() => setConfirmDelete(false)}
               disabled={deleting}
-              className="h-7 border-border bg-transparent text-muted-foreground hover:bg-muted"
+              className="h-7 bg-transparent text-muted-foreground hover:bg-muted"
+              style={{ border: "1px solid rgba(43,111,219,0.25)" }}
             >
               Cancel
             </Button>
@@ -339,7 +349,8 @@ export default function BroadcastDetailPage() {
                 ? 'Cannot delete while a broadcast is actively sending'
                 : 'Delete this broadcast'
             }
-            className="border-red-500/30 bg-transparent text-red-400 hover:bg-red-500/10 disabled:opacity-40"
+            className="bg-transparent text-red-400 hover:bg-red-500/10 disabled:opacity-40"
+            style={{ border: "1px solid rgba(239,68,68,0.3)" }}
           >
             <Trash2 className="h-3.5 w-3.5" />
             Delete
@@ -396,9 +407,15 @@ export default function BroadcastDetailPage() {
       <FunnelChart steps={funnelSteps} />
 
       {/* Recipients Table */}
-      <div className="rounded-xl border border-border bg-card">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
-          <h2 className="text-sm font-medium text-foreground">
+      <div
+        className="rounded-xl"
+        style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}
+      >
+        <div
+          className="flex flex-wrap items-center justify-between gap-2 px-4 py-3"
+          style={{ borderBottom: "1px solid rgba(43,111,219,0.25)" }}
+        >
+          <h2 className="text-sm font-medium" style={{ color: "var(--color-off-white)" }}>
             Recipients ({filteredRecipients.length}
             {statusFilter !== 'all' ? ` of ${recipients.length}` : ''})
           </h2>
@@ -409,7 +426,8 @@ export default function BroadcastDetailPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-border text-muted-foreground hover:bg-muted"
+                    className="hover:bg-muted"
+                    style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)" }}
                   />
                 }
               >
@@ -419,12 +437,12 @@ export default function BroadcastDetailPage() {
                   : getRecipientStatus(statusFilter).label}
                 <ChevronDown className="h-3 w-3" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="border-border bg-popover">
+              <DropdownMenuContent
+                style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}
+              >
                 <DropdownMenuItem
                   onClick={() => setStatusFilter('all')}
-                  className={
-                    statusFilter === 'all' ? 'text-primary' : 'text-popover-foreground'
-                  }
+                  style={statusFilter === 'all' ? { color: "var(--color-electric)" } : { color: "var(--color-off-white)" }}
                 >
                   All statuses
                 </DropdownMenuItem>
@@ -432,11 +450,7 @@ export default function BroadcastDetailPage() {
                   <DropdownMenuItem
                     key={s}
                     onClick={() => setStatusFilter(s)}
-                    className={
-                      statusFilter === s
-                        ? 'text-primary'
-                        : 'text-popover-foreground'
-                    }
+                    style={statusFilter === s ? { color: "var(--color-electric)" } : { color: "var(--color-off-white)" }}
                   >
                     {getRecipientStatus(s).label}
                   </DropdownMenuItem>
@@ -449,7 +463,8 @@ export default function BroadcastDetailPage() {
               size="sm"
               onClick={handleExport}
               disabled={recipients.length === 0}
-              className="border-border text-muted-foreground hover:bg-muted"
+              className="hover:bg-muted"
+              style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)" }}
             >
               <Download className="h-3.5 w-3.5" />
               Export CSV
@@ -459,7 +474,7 @@ export default function BroadcastDetailPage() {
 
         {filteredRecipients.length === 0 ? (
           <div className="flex h-32 items-center justify-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
               {recipients.length === 0
                 ? 'No recipients found.'
                 : 'No recipients match this filter.'}
@@ -469,25 +484,25 @@ export default function BroadcastDetailPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="text-muted-foreground">Contact</TableHead>
-                  <TableHead className="text-muted-foreground">Phone</TableHead>
-                  <TableHead className="text-muted-foreground">Status</TableHead>
-                  <TableHead className="text-muted-foreground">Sent</TableHead>
-                  <TableHead className="text-muted-foreground">Delivered</TableHead>
-                  <TableHead className="text-muted-foreground">Read</TableHead>
-                  <TableHead className="text-muted-foreground">Error</TableHead>
+                <TableRow className="hover:bg-transparent" style={{ borderColor: "rgba(43,111,219,0.25)" }}>
+                  <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Contact</TableHead>
+                  <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Phone</TableHead>
+                  <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Status</TableHead>
+                  <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Sent</TableHead>
+                  <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Delivered</TableHead>
+                  <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Read</TableHead>
+                  <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Error</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredRecipients.map((recipient) => {
                   const rStatus = getRecipientStatus(recipient.status);
                   return (
-                    <TableRow key={recipient.id} className="border-border">
-                      <TableCell className="font-medium text-foreground">
+                    <TableRow key={recipient.id} style={{ borderColor: "rgba(43,111,219,0.25)" }}>
+                      <TableCell className="font-medium" style={{ color: "var(--color-off-white)" }}>
                         {recipient.contact?.name ?? 'Unknown'}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell style={{ color: "var(--color-kraft-ocre)" }}>
                         {recipient.contact?.phone ?? '-'}
                       </TableCell>
                       <TableCell>
@@ -497,17 +512,17 @@ export default function BroadcastDetailPage() {
                           {rStatus.label}
                         </span>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell style={{ color: "var(--color-kraft-ocre)" }}>
                         {recipient.sent_at
                           ? new Date(recipient.sent_at).toLocaleString()
                           : '-'}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell style={{ color: "var(--color-kraft-ocre)" }}>
                         {recipient.delivered_at
                           ? new Date(recipient.delivered_at).toLocaleString()
                           : '-'}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell style={{ color: "var(--color-kraft-ocre)" }}>
                         {recipient.read_at
                           ? new Date(recipient.read_at).toLocaleString()
                           : '-'}

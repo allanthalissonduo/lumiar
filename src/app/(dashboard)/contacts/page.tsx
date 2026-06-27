@@ -352,7 +352,8 @@ export default function ContactsPage() {
             <Button
               variant="outline"
               onClick={() => setCustomFieldsOpen(true)}
-              className="border-border text-muted-foreground hover:bg-muted"
+              className="rounded-lg px-3 py-2 text-sm"
+              style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
             >
               <SlidersHorizontal className="size-4" />
               Custom fields
@@ -363,7 +364,8 @@ export default function ContactsPage() {
             canAct={canEdit}
             gateReason="add or import contacts"
             onClick={() => setImportOpen(true)}
-            className="border-border text-muted-foreground hover:bg-muted"
+            className="rounded-lg px-3 py-2 text-sm"
+            style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
           >
             <Upload className="size-4" />
             Import
@@ -372,7 +374,8 @@ export default function ContactsPage() {
             canAct={canEdit}
             gateReason="add or import contacts"
             onClick={openAddForm}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium"
+            style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
           >
             <Plus className="size-4" />
             Add Contact
@@ -384,7 +387,7 @@ export default function ContactsPage() {
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative w-full max-w-sm">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4" style={{ color: "var(--color-kraft-ocre)" }} />
             <Input
               value={search}
               onChange={(e) => {
@@ -394,7 +397,8 @@ export default function ContactsPage() {
                 setPage(0);
               }}
               placeholder="Search by name, phone, or email..."
-              className="pl-8 bg-card border-border text-foreground placeholder:text-muted-foreground"
+              className="pl-8"
+              style={{ background: "var(--color-card-abyssal)", border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-off-white)" }}
             />
           </div>
 
@@ -403,34 +407,36 @@ export default function ContactsPage() {
               render={
                 <Button
                   variant="outline"
-                  className="border-border text-muted-foreground hover:bg-muted shrink-0"
+                  className="shrink-0 rounded-lg px-3 py-2 text-sm"
+                  style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
                 />
               }
             >
               <Filter className="size-4" />
               Filter by tags
               {selectedTagIds.length > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
+                <span className="ml-1 inline-flex items-center justify-center rounded-full px-1.5 text-[10px] font-semibold" style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}>
                   {selectedTagIds.length}
                 </span>
               )}
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-64 p-0">
-              <div className="flex items-center justify-between px-3 py-2 border-b border-border">
-                <span className="text-sm font-medium text-popover-foreground">
+            <PopoverContent align="start" className="w-64 p-0" style={{ background: "var(--color-card-abyssal)", border: "1px solid rgba(43,111,219,0.25)" }}>
+              <div className="flex items-center justify-between px-3 py-2" style={{ borderBottom: "1px solid rgba(43,111,219,0.25)" }}>
+                <span className="text-sm font-medium" style={{ color: "var(--color-off-white)" }}>
                   Filter by tags
                 </span>
                 {selectedTagIds.length > 0 && (
                   <button
                     onClick={clearTagFilters}
-                    className="text-xs text-muted-foreground hover:text-foreground"
+                    className="text-xs"
+                    style={{ color: "var(--color-kraft-ocre)" }}
                   >
                     Clear all
                   </button>
                 )}
               </div>
               {allTags.length === 0 ? (
-                <p className="px-3 py-4 text-sm text-muted-foreground text-center">
+                <p className="px-3 py-4 text-sm text-center" style={{ color: "var(--color-kraft-ocre)" }}>
                   No tags yet.
                 </p>
               ) : (
@@ -438,7 +444,7 @@ export default function ContactsPage() {
                   {allTags.map((tag) => (
                     <label
                       key={tag.id}
-                      className="flex items-center gap-2.5 px-3 py-1.5 cursor-pointer hover:bg-muted/50"
+                      className="flex items-center gap-2.5 px-3 py-1.5 cursor-pointer"
                     >
                       <Checkbox
                         checked={selectedTagIds.includes(tag.id)}
@@ -449,7 +455,7 @@ export default function ContactsPage() {
                         className="size-2.5 shrink-0 rounded-full"
                         style={{ backgroundColor: tag.color }}
                       />
-                      <span className="text-sm text-popover-foreground truncate">
+                      <span className="text-sm truncate" style={{ color: "var(--color-off-white)" }}>
                         {tag.name}
                       </span>
                     </label>
@@ -488,7 +494,8 @@ export default function ContactsPage() {
             })}
             <button
               onClick={clearTagFilters}
-              className="text-xs text-muted-foreground hover:text-foreground px-1"
+              className="text-xs px-1"
+              style={{ color: "var(--color-kraft-ocre)" }}
             >
               Clear all
             </button>
@@ -498,8 +505,8 @@ export default function ContactsPage() {
 
       {/* Bulk action bar */}
       {selected.size > 0 && (
-        <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/40 px-4 py-2">
-          <p className="text-sm text-foreground">
+        <div className="flex items-center justify-between gap-4 rounded-lg px-4 py-2" style={{ border: "1px solid rgba(43,111,219,0.25)", background: "rgba(26,63,158,0.15)" }}>
+          <p className="text-sm" style={{ color: "var(--color-off-white)" }}>
             <span className="font-medium">{selected.size}</span>{' '}
             {selected.size === 1 ? 'contact' : 'contacts'} selected
           </p>
@@ -508,7 +515,7 @@ export default function ContactsPage() {
               variant="ghost"
               size="sm"
               onClick={() => setSelected(new Set())}
-              className="text-muted-foreground hover:text-foreground"
+              style={{ color: "var(--color-kraft-ocre)" }}
             >
               Clear
             </Button>
@@ -530,7 +537,7 @@ export default function ContactsPage() {
       <div className="overflow-hidden rounded-xl" style={{ border: "1px solid rgba(159,176,201,0.18)", backgroundColor: "var(--ei-surface-card)" }}>
         <Table>
           <TableHeader>
-            <TableRow className="border-border hover:bg-transparent">
+            <TableRow className="hover:bg-transparent" style={{ borderColor: "rgba(43,111,219,0.25)" }}>
               <TableHead className="w-10">
                 <Checkbox
                   checked={allOnPageSelected}
@@ -540,27 +547,27 @@ export default function ContactsPage() {
                   aria-label="Select all contacts on this page"
                 />
               </TableHead>
-              <TableHead className="text-muted-foreground">Name</TableHead>
-              <TableHead className="text-muted-foreground">Phone</TableHead>
-              <TableHead className="text-muted-foreground hidden md:table-cell">Email</TableHead>
-              <TableHead className="text-muted-foreground hidden lg:table-cell">Company</TableHead>
-              <TableHead className="text-muted-foreground hidden md:table-cell">Tags</TableHead>
-              <TableHead className="text-muted-foreground hidden lg:table-cell">Created</TableHead>
-              <TableHead className="text-muted-foreground w-12" />
+              <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Name</TableHead>
+              <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Phone</TableHead>
+              <TableHead className="hidden md:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Email</TableHead>
+              <TableHead className="hidden lg:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Company</TableHead>
+              <TableHead className="hidden md:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Tags</TableHead>
+              <TableHead className="hidden lg:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Created</TableHead>
+              <TableHead className="w-12" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow className="border-border">
+              <TableRow style={{ borderColor: "rgba(43,111,219,0.25)" }}>
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="size-6 animate-spin text-primary" />
+                    <Loader2 className="size-6 animate-spin" style={{ color: "var(--color-electric)" }} />
                     <p className="text-sm" style={{ color: "var(--ei-text-soft)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Carregando contatos…</p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : contacts.length === 0 ? (
-              <TableRow className="border-border">
+              <TableRow style={{ borderColor: "rgba(43,111,219,0.25)" }}>
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
                     <Users className="size-8" style={{ color: "var(--ei-text-soft)" }} />
@@ -588,7 +595,8 @@ export default function ContactsPage() {
               contacts.map((contact) => (
                 <TableRow
                   key={contact.id}
-                  className="border-border hover:bg-muted/50 cursor-pointer"
+                  className="cursor-pointer hover:bg-transparent"
+                  style={{ borderColor: "rgba(43,111,219,0.25)" }}
                   onClick={() => openDetail(contact.id)}
                 >
                   <TableCell onClick={(e) => e.stopPropagation()}>
@@ -598,17 +606,17 @@ export default function ContactsPage() {
                       aria-label={`Select ${contact.name || contact.phone}`}
                     />
                   </TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {contact.name || <span className="text-muted-foreground italic">Unnamed</span>}
+                  <TableCell className="font-medium" style={{ color: "var(--color-off-white)" }}>
+                    {contact.name || <span className="italic" style={{ color: "var(--color-kraft-ocre)" }}>Unnamed</span>}
                   </TableCell>
-                  <TableCell className="text-muted-foreground font-mono text-xs">
+                  <TableCell className="font-mono text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
                     {contact.phone}
                   </TableCell>
-                  <TableCell className="text-muted-foreground hidden md:table-cell text-sm">
-                    {contact.email || <span className="text-muted-foreground">-</span>}
+                  <TableCell className="hidden md:table-cell text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
+                    {contact.email || <span style={{ color: "var(--color-kraft-ocre)" }}>-</span>}
                   </TableCell>
-                  <TableCell className="text-muted-foreground hidden lg:table-cell text-sm">
-                    {contact.company || <span className="text-muted-foreground">-</span>}
+                  <TableCell className="hidden lg:table-cell text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
+                    {contact.company || <span style={{ color: "var(--color-kraft-ocre)" }}>-</span>}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
@@ -626,16 +634,16 @@ export default function ContactsPage() {
                           </span>
                         ))
                       ) : (
-                        <span className="text-muted-foreground text-xs">-</span>
+                        <span className="text-xs" style={{ color: "var(--color-kraft-ocre)" }}>-</span>
                       )}
                       {contact.tags && contact.tags.length > 3 && (
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-[10px]" style={{ color: "var(--color-kraft-ocre)" }}>
                           +{contact.tags.length - 3}
                         </span>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-xs hidden lg:table-cell">
+                  <TableCell className="text-xs hidden lg:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>
                     {new Date(contact.created_at).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -649,7 +657,7 @@ export default function ContactsPage() {
                           <Button
                             variant="ghost"
                             size="icon-sm"
-                            className="text-muted-foreground hover:text-foreground"
+                            style={{ color: "var(--color-kraft-ocre)" }}
                             onClick={(e) => e.stopPropagation()}
                           />
                         }
@@ -658,19 +666,19 @@ export default function ContactsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="bg-popover border-border"
+                        style={{ background: "var(--color-card-abyssal)", border: "1px solid rgba(43,111,219,0.25)" }}
                       >
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
                             openEditForm(contact);
                           }}
-                          className="text-popover-foreground focus:bg-muted focus:text-foreground"
+                          style={{ color: "var(--color-off-white)" }}
                         >
                           <Pencil className="size-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-border" />
+                        <DropdownMenuSeparator style={{ background: "rgba(43,111,219,0.25)" }} />
                         <DropdownMenuItem
                           variant="destructive"
                           onClick={(e) => {
@@ -694,7 +702,7 @@ export default function ContactsPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
             Showing {page * PAGE_SIZE + 1}-{Math.min((page + 1) * PAGE_SIZE, totalCount)} of{' '}
             {totalCount}
           </p>
@@ -704,11 +712,12 @@ export default function ContactsPage() {
               size="icon-sm"
               disabled={!hasPrev}
               onClick={() => setPage((p) => p - 1)}
-              className="border-border text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
+              className="disabled:opacity-30"
+              style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
             >
               <ChevronLeft className="size-4" />
             </Button>
-            <span className="text-xs text-muted-foreground px-2">
+            <span className="text-xs px-2" style={{ color: "var(--color-kraft-ocre)" }}>
               Page {page + 1} of {totalPages}
             </span>
             <Button
@@ -716,7 +725,8 @@ export default function ContactsPage() {
               size="icon-sm"
               disabled={!hasNext}
               onClick={() => setPage((p) => p + 1)}
-              className="border-border text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
+              className="disabled:opacity-30"
+              style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
             >
               <ChevronRight className="size-4" />
             </Button>
@@ -765,22 +775,22 @@ export default function ContactsPage() {
 
       {/* Delete Confirmation */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent className="bg-popover border-border text-popover-foreground sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm" style={{ background: "var(--color-card-abyssal)", border: "1px solid rgba(43,111,219,0.25)" }}>
           <DialogHeader>
-            <DialogTitle className="text-popover-foreground">Delete Contact</DialogTitle>
-            <DialogDescription className="text-muted-foreground">
+            <DialogTitle style={{ color: "var(--color-off-white)" }}>Delete Contact</DialogTitle>
+            <DialogDescription style={{ color: "var(--color-kraft-ocre)" }}>
               Are you sure you want to delete{' '}
-              <span className="text-popover-foreground font-medium">
+              <span className="font-medium" style={{ color: "var(--color-off-white)" }}>
                 {deleteTarget?.name || deleteTarget?.phone}
               </span>
               ? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="bg-popover border-border">
+          <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setDeleteConfirmOpen(false)}
-              className="border-border text-muted-foreground hover:bg-muted"
+              style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
             >
               Cancel
             </Button>
@@ -798,24 +808,24 @@ export default function ContactsPage() {
 
       {/* Bulk Delete Confirmation */}
       <Dialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
-        <DialogContent className="bg-popover border-border text-popover-foreground sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm" style={{ background: "var(--color-card-abyssal)", border: "1px solid rgba(43,111,219,0.25)" }}>
           <DialogHeader>
-            <DialogTitle className="text-popover-foreground">
+            <DialogTitle style={{ color: "var(--color-off-white)" }}>
               Delete {selected.size} {selected.size === 1 ? 'Contact' : 'Contacts'}
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground">
+            <DialogDescription style={{ color: "var(--color-kraft-ocre)" }}>
               Are you sure you want to delete{' '}
-              <span className="text-popover-foreground font-medium">
+              <span className="font-medium" style={{ color: "var(--color-off-white)" }}>
                 {selected.size} {selected.size === 1 ? 'contact' : 'contacts'}
               </span>
               ? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="bg-popover border-border">
+          <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setBulkDeleteOpen(false)}
-              className="border-border text-muted-foreground hover:bg-muted"
+              style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
             >
               Cancel
             </Button>

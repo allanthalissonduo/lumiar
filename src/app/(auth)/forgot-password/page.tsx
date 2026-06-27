@@ -43,18 +43,30 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
-        <Card className="w-full max-w-md border-border bg-card">
+      <div
+        className="flex min-h-screen items-center justify-center px-4"
+        style={{ background: "var(--color-abyssal)" }}
+      >
+        <Card
+          className="w-full max-w-md"
+          style={{
+            background: "var(--color-card-abyssal)",
+            border: "1px solid rgba(43,111,219,0.25)",
+          }}
+        >
           <CardHeader className="items-center text-center">
-            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-              <CheckCircle className="h-6 w-6 text-primary" />
+            <div
+              className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl"
+              style={{ background: "rgba(43,111,219,0.10)" }}
+            >
+              <CheckCircle className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
             </div>
-            <CardTitle className="text-xl text-foreground">
+            <CardTitle className="text-xl" style={{ color: "var(--color-off-white)" }}>
               Check your email
             </CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardDescription style={{ color: "var(--color-kraft-ocre)" }}>
               We&apos;ve sent a password reset link to{" "}
-              <span className="text-foreground">{email}</span>. Please check your
+              <span style={{ color: "var(--color-off-white)" }}>{email}</span>. Please check your
               inbox.
             </CardDescription>
           </CardHeader>
@@ -62,7 +74,11 @@ export default function ForgotPasswordPage() {
             <Link href="/login">
               <Button
                 variant="outline"
-                className="w-full border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  color: "var(--color-kraft-ocre)",
+                }}
               >
                 Back to sign in
               </Button>
@@ -74,14 +90,28 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md border-border bg-card">
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      style={{ background: "var(--color-abyssal)" }}
+    >
+      <Card
+        className="w-full max-w-md"
+        style={{
+          background: "var(--color-card-abyssal)",
+          border: "1px solid rgba(43,111,219,0.25)",
+        }}
+      >
         <CardHeader className="items-center text-center">
-          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-            <MessageSquare className="h-6 w-6 text-primary" />
+          <div
+            className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl"
+            style={{ background: "rgba(43,111,219,0.10)" }}
+          >
+            <MessageSquare className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
           </div>
-          <CardTitle className="text-xl text-foreground">Reset password</CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardTitle className="text-xl" style={{ color: "var(--color-off-white)" }}>
+            Reset password
+          </CardTitle>
+          <CardDescription style={{ color: "var(--color-kraft-ocre)" }}>
             Enter your email and we&apos;ll send you a reset link
           </CardDescription>
         </CardHeader>
@@ -94,7 +124,7 @@ export default function ForgotPasswordPage() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground">
+              <Label htmlFor="email" style={{ color: "var(--color-kraft-ocre)" }}>
                 Email
               </Label>
               <Input
@@ -104,14 +134,23 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  background: "rgba(26,63,158,0.15)",
+                  color: "var(--color-off-white)",
+                }}
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              className="mt-2 h-10 w-full disabled:opacity-50"
+              style={{
+                background: "var(--color-electric)",
+                color: "var(--color-off-white)",
+              }}
             >
               {loading ? "Sending..." : "Send reset link"}
             </Button>
@@ -119,7 +158,8 @@ export default function ForgotPasswordPage() {
 
           <Link
             href="/login"
-            className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+            className="mt-6 flex items-center justify-center gap-2 text-sm"
+            style={{ color: "var(--color-kraft-ocre)" }}
           >
             <ArrowLeft className="h-4 w-4" />
             Back to sign in

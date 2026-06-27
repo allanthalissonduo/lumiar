@@ -67,20 +67,32 @@ function LoginPageInner() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md border-border bg-card">
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      style={{ background: "var(--color-abyssal)" }}
+    >
+      <Card
+        className="w-full max-w-md"
+        style={{
+          background: "var(--color-card-abyssal)",
+          border: "1px solid rgba(43,111,219,0.25)",
+        }}
+      >
         <CardHeader className="items-center text-center">
-          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+          <div
+            className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl"
+            style={{ background: "rgba(43,111,219,0.10)" }}
+          >
             {inviteToken ? (
-              <UsersRound className="h-6 w-6 text-primary" />
+              <UsersRound className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
             ) : (
-              <MessageSquare className="h-6 w-6 text-primary" />
+              <MessageSquare className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
             )}
           </div>
-          <CardTitle className="text-xl text-foreground">
+          <CardTitle className="text-xl" style={{ color: "var(--color-off-white)" }}>
             {inviteToken ? "Sign in to accept" : "Welcome back"}
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardDescription style={{ color: "var(--color-kraft-ocre)" }}>
             {inviteToken
               ? "Sign in and we'll take you to the invitation."
               : "Sign in to your account"}
@@ -95,7 +107,7 @@ function LoginPageInner() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground">
+              <Label htmlFor="email" style={{ color: "var(--color-kraft-ocre)" }}>
                 Email
               </Label>
               <Input
@@ -105,18 +117,24 @@ function LoginPageInner() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  background: "rgba(26,63,158,0.15)",
+                  color: "var(--color-off-white)",
+                }}
               />
             </div>
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-muted-foreground">
+                <Label htmlFor="password" style={{ color: "var(--color-kraft-ocre)" }}>
                   Password
                 </Label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-primary hover:text-primary/80"
+                  className="text-sm"
+                  style={{ color: "var(--color-electric)" }}
                 >
                   Forgot password?
                 </Link>
@@ -128,20 +146,29 @@ function LoginPageInner() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="w-full"
+                style={{
+                  border: "1px solid rgba(43,111,219,0.25)",
+                  background: "rgba(26,63,158,0.15)",
+                  color: "var(--color-off-white)",
+                }}
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              className="mt-2 h-10 w-full disabled:opacity-50"
+              style={{
+                background: "var(--color-electric)",
+                color: "var(--color-off-white)",
+              }}
             >
               {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
             Don&apos;t have an account?{" "}
             <Link
               href={
@@ -149,7 +176,7 @@ function LoginPageInner() {
                   ? `/signup?invite=${encodeURIComponent(inviteToken)}`
                   : "/signup"
               }
-              className="text-primary hover:text-primary/80"
+              style={{ color: "var(--color-electric)" }}
             >
               Create account
             </Link>

@@ -194,7 +194,7 @@ export default function FlowsPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--color-kraft-ocre)" }} />
       </div>
     );
   }
@@ -204,12 +204,12 @@ export default function FlowsPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold text-foreground">Flows</h1>
+            <h1 className="text-2xl font-semibold" style={{ color: "var(--color-off-white)" }}>Flows</h1>
             <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
               Beta
             </span>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
             Build branching, button-driven WhatsApp conversations. Useful for
             menus, FAQs, and triage before a human steps in.
           </p>
@@ -247,17 +247,20 @@ export default function FlowsPage() {
             `sm:max-w-sm` baked into its default classes. Without the
             sm: prefix our override applies at base only and the
             sm-scoped 384px wins at every real desktop breakpoint. */}
-        <DialogContent className="sm:max-w-4xl bg-popover text-popover-foreground">
+        <DialogContent
+          className="sm:max-w-4xl"
+          style={{ background: "var(--color-card-abyssal)", color: "var(--color-off-white)" }}
+        >
           <DialogHeader>
             <DialogTitle>Create a new flow</DialogTitle>
-            <DialogDescription className="text-muted-foreground">
+            <DialogDescription style={{ color: "var(--color-kraft-ocre)" }}>
               Start from a template or build from scratch.
             </DialogDescription>
           </DialogHeader>
 
           {templates.length > 0 && (
             <div className="space-y-3">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs uppercase tracking-wide" style={{ color: "var(--color-kraft-ocre)" }}>
                 Start from a template
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -269,16 +272,20 @@ export default function FlowsPage() {
                       type="button"
                       onClick={() => handleUseTemplate(t.slug)}
                       disabled={creating}
-                      className="flex flex-col gap-2.5 rounded-lg border border-border bg-background p-4 text-left transition-colors hover:border-primary/40 hover:bg-muted disabled:opacity-50"
+                      className="flex flex-col gap-2.5 rounded-lg p-4 text-left transition-colors disabled:opacity-50"
+                      style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-abyssal)" }}
                     >
-                      <Icon className="h-5 w-5 text-primary" />
-                      <span className="text-sm font-semibold text-popover-foreground">
+                      <Icon className="h-5 w-5" style={{ color: "var(--color-electric)" }} />
+                      <span className="text-sm font-semibold" style={{ color: "var(--color-off-white)" }}>
                         {t.name}
                       </span>
-                      <span className="text-xs leading-relaxed text-muted-foreground">
+                      <span className="text-xs leading-relaxed" style={{ color: "var(--color-kraft-ocre)" }}>
                         {t.description}
                       </span>
-                      <span className="mt-auto border-t border-border pt-2 text-[11px] text-muted-foreground">
+                      <span
+                        className="mt-auto pt-2 text-[11px]"
+                        style={{ borderTop: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)" }}
+                      >
                         {t.node_count} {t.node_count === 1 ? "node" : "nodes"}
                       </span>
                     </button>
@@ -288,8 +295,8 @@ export default function FlowsPage() {
             </div>
           )}
 
-          <div className="space-y-2 border-t border-border pt-4">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+          <div className="space-y-2 pt-4" style={{ borderTop: "1px solid rgba(43,111,219,0.25)" }}>
+            <p className="text-xs uppercase tracking-wide" style={{ color: "var(--color-kraft-ocre)" }}>
               Or start blank
             </p>
             <Input
@@ -330,14 +337,20 @@ function EmptyState({
   canCreate: boolean;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card/50 px-6 py-16 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-        <Workflow className="h-6 w-6 text-muted-foreground" />
+    <div
+      className="flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-16 text-center"
+      style={{ borderColor: "rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}
+    >
+      <div
+        className="flex h-14 w-14 items-center justify-center rounded-full"
+        style={{ background: "rgba(26,63,158,0.15)" }}
+      >
+        <Workflow className="h-6 w-6" style={{ color: "var(--color-kraft-ocre)" }} />
       </div>
-      <h2 className="mt-4 text-base font-medium text-foreground">
+      <h2 className="mt-4 text-base font-medium" style={{ color: "var(--color-off-white)" }}>
         No flows yet
       </h2>
-      <p className="mt-1 max-w-md text-sm text-muted-foreground">
+      <p className="mt-1 max-w-md text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
         Build your first conversation — a welcome menu, an order lookup, an FAQ
         bot. Customers tap buttons; the bot routes them to the right answer (or
         the right agent).
@@ -372,11 +385,14 @@ function FlowCard({
         ? Archive
         : PauseCircle;
   return (
-    <div className="flex flex-col rounded-lg border border-border bg-card p-4 transition-colors hover:border-border">
+    <div
+      className="flex flex-col rounded-lg p-4 transition-colors"
+      style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <Workflow className="h-4 w-4 shrink-0 text-primary" />
-          <h3 className="truncate text-sm font-semibold text-foreground">
+          <Workflow className="h-4 w-4 shrink-0" style={{ color: "var(--color-electric)" }} />
+          <h3 className="truncate text-sm font-semibold" style={{ color: "var(--color-off-white)" }}>
             {flow.name}
           </h3>
         </div>
@@ -392,18 +408,21 @@ function FlowCard({
         </Badge>
       </div>
 
-      <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">
+      <p className="mt-2 line-clamp-2 text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
         {flow.description || triggerSummary}
       </p>
 
-      <div className="mt-4 flex items-center gap-3 text-[11px] text-muted-foreground">
+      <div className="mt-4 flex items-center gap-3 text-[11px]" style={{ color: "var(--color-kraft-ocre)" }}>
         <span className="inline-flex items-center gap-1">
           <MessageSquare className="h-3 w-3" />
           {flow.execution_count} {flow.execution_count === 1 ? "run" : "runs"}
         </span>
       </div>
 
-      <div className="mt-4 flex items-center justify-end gap-2 border-t border-border pt-3">
+      <div
+        className="mt-4 flex items-center justify-end gap-2 pt-3"
+        style={{ borderTop: "1px solid rgba(43,111,219,0.25)" }}
+      >
         <Button variant="ghost" size="sm" onClick={onEdit}>
           <Pencil className="h-3.5 w-3.5" />
           Edit

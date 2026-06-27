@@ -65,18 +65,19 @@ export default function FlowEditorPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--color-kraft-ocre)" }} />
       </div>
     );
   }
   if (notFound || !flow) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3">
-        <p className="text-sm text-muted-foreground">Flow not found.</p>
+        <p className="text-sm" style={{ color: "var(--color-kraft-ocre)" }}>Flow not found.</p>
         <button
           type="button"
           onClick={() => router.push("/flows")}
-          className="text-sm text-primary hover:opacity-80"
+          className="text-sm hover:opacity-80"
+          style={{ color: "var(--color-electric)" }}
         >
           ← Back to flows
         </button>

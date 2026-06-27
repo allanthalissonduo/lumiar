@@ -151,18 +151,19 @@ export default function FlowRunsPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--color-kraft-ocre)" }} />
       </div>
     );
   }
   if (notFound || !flow) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3">
-        <p className="text-sm text-muted-foreground">Flow not found.</p>
+        <p className="text-sm" style={{ color: "var(--color-kraft-ocre)" }}>Flow not found.</p>
         <button
           type="button"
           onClick={() => router.push("/flows")}
-          className="text-sm text-primary hover:opacity-80"
+          className="text-sm hover:opacity-80"
+          style={{ color: "var(--color-electric)" }}
         >
           ← Back to flows
         </button>
@@ -175,19 +176,23 @@ export default function FlowRunsPage() {
       <button
         type="button"
         onClick={() => router.push(`/flows/${flow.id}`)}
-        className="mb-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+        className="mb-2 inline-flex items-center gap-1 text-xs hover:opacity-80"
+        style={{ color: "var(--color-kraft-ocre)" }}
       >
         <ArrowLeft className="h-3 w-3" />
         {flow.name}
       </button>
-      <h1 className="text-xl font-semibold text-foreground">Runs</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <h1 className="text-xl font-semibold" style={{ color: "var(--color-off-white)" }}>Runs</h1>
+      <p className="mt-1 text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
         The 50 most recent times this flow ran. Expand a row to see the engine&apos;s
         per-step log.
       </p>
 
       {runs.length === 0 ? (
-        <div className="mt-6 rounded-lg border border-dashed border-border bg-card/50 px-6 py-12 text-center text-sm text-muted-foreground">
+        <div
+          className="mt-6 rounded-lg border border-dashed px-6 py-12 text-center text-sm"
+          style={{ borderColor: "rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)", color: "var(--color-kraft-ocre)" }}
+        >
           No runs yet. Trigger the flow from a personal WhatsApp number to see
           it appear here.
         </div>
@@ -229,20 +234,23 @@ function RunCard({
       })
     : null;
   return (
-    <div className="rounded-lg border border-border bg-card">
+    <div
+      className="rounded-lg"
+      style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}
+    >
       <button
         type="button"
         onClick={onToggle}
         className="flex w-full items-center gap-3 px-4 py-3 text-left"
       >
         {expanded ? (
-          <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <ChevronDown className="h-4 w-4 shrink-0" style={{ color: "var(--color-kraft-ocre)" }} />
         ) : (
-          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <ChevronRight className="h-4 w-4 shrink-0" style={{ color: "var(--color-kraft-ocre)" }} />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="truncate text-sm font-medium text-foreground">
+            <span className="truncate text-sm font-medium" style={{ color: "var(--color-off-white)" }}>
               {contactLabel}
             </span>
             <Badge variant="outline" className={cn("gap-1", meta.classes)}>
@@ -250,12 +258,15 @@ function RunCard({
               {meta.label}
             </Badge>
             {run.status === "active" && run.current_node_key && (
-              <code className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+              <code
+                className="rounded px-1.5 py-0.5 text-[10px]"
+                style={{ background: "rgba(26,63,158,0.15)", color: "var(--color-kraft-ocre)" }}
+              >
                 at {run.current_node_key}
               </code>
             )}
           </div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+          <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px]" style={{ color: "var(--color-kraft-ocre)" }}>
             <span>Started {format(new Date(run.started_at), "PP p")}</span>
             {run.reprompt_count > 0 && (
               <span>· {run.reprompt_count} re-prompts</span>
@@ -265,20 +276,23 @@ function RunCard({
         </div>
       </button>
       {expanded && (
-        <div className="border-t border-border px-4 py-3">
+        <div className="px-4 py-3" style={{ borderTop: "1px solid rgba(43,111,219,0.25)" }}>
           {Object.keys(run.vars).length > 0 && (
             <details className="mb-3">
-              <summary className="cursor-pointer text-xs text-muted-foreground">
+              <summary className="cursor-pointer text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
                 Captured vars ({Object.keys(run.vars).length})
               </summary>
-              <pre className="mt-2 overflow-x-auto rounded-md bg-background p-2 text-[11px] text-muted-foreground">
+              <pre
+                className="mt-2 overflow-x-auto rounded-md p-2 text-[11px]"
+                style={{ background: "var(--color-abyssal)", color: "var(--color-kraft-ocre)" }}
+              >
                 {JSON.stringify(run.vars, null, 2)}
               </pre>
             </details>
           )}
           <div className="flex flex-col gap-1">
             {events.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
                 No events recorded for this run.
               </p>
             ) : (
@@ -307,19 +321,22 @@ function EventLine({ ev }: { ev: EventRow }) {
   const cls = EVENT_COLOR[ev.event_type] ?? "text-muted-foreground";
   return (
     <div className="flex items-start gap-2 rounded-md px-2 py-1 text-xs">
-      <span className="w-32 shrink-0 text-[10px] text-muted-foreground">
+      <span className="w-32 shrink-0 text-[10px]" style={{ color: "var(--color-kraft-ocre)" }}>
         {format(new Date(ev.created_at), "HH:mm:ss")}
       </span>
       <span className={cn("w-32 shrink-0 font-mono text-[10px]", cls)}>
         {ev.event_type}
       </span>
       {ev.node_key && (
-        <code className="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] text-muted-foreground">
+        <code
+          className="shrink-0 rounded px-1 py-0.5 text-[10px]"
+          style={{ background: "rgba(26,63,158,0.15)", color: "var(--color-kraft-ocre)" }}
+        >
           {ev.node_key}
         </code>
       )}
       {Object.keys(ev.payload).length > 0 && (
-        <span className="min-w-0 truncate text-[10px] text-muted-foreground">
+        <span className="min-w-0 truncate text-[10px]" style={{ color: "var(--color-kraft-ocre)" }}>
           {summarizePayload(ev.payload)}
         </span>
       )}

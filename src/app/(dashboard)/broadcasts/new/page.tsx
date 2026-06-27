@@ -129,8 +129,8 @@ export default function NewBroadcastPage() {
     <div className="mx-auto max-w-3xl space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">New Broadcast</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 className="text-2xl font-bold" style={{ color: "var(--color-off-white)" }}>New Broadcast</h1>
+        <p className="mt-1 text-sm" style={{ color: "var(--color-kraft-ocre)" }}>
           Create and send a broadcast message to your contacts.
         </p>
       </div>
@@ -145,29 +145,34 @@ export default function NewBroadcastPage() {
             <div key={step.key} className="flex flex-1 items-center">
               <div className="flex items-center gap-2">
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-all ${
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-all"
+                  style={
                     isCompleted
-                      ? 'bg-primary text-primary-foreground'
+                      ? { background: "var(--color-electric)", color: "var(--color-off-white)" }
                       : isActive
-                        ? 'border-2 border-primary bg-primary/10 text-primary'
-                        : 'border border-border bg-muted text-muted-foreground'
-                  }`}
+                        ? { border: "2px solid var(--color-electric)", background: "rgba(26,63,158,0.15)", color: "var(--color-electric)" }
+                        : { border: "1px solid rgba(43,111,219,0.25)", background: "rgba(26,63,158,0.15)", color: "var(--color-kraft-ocre)" }
+                  }
                 >
                   {isCompleted ? <Check className="h-4 w-4" /> : index + 1}
                 </div>
                 <span
-                  className={`hidden text-sm font-medium sm:block ${
-                    isActive ? 'text-foreground' : isCompleted ? 'text-primary' : 'text-muted-foreground'
-                  }`}
+                  className="hidden text-sm font-medium sm:block"
+                  style={
+                    isActive
+                      ? { color: "var(--color-off-white)" }
+                      : isCompleted
+                        ? { color: "var(--color-electric)" }
+                        : { color: "var(--color-kraft-ocre)" }
+                  }
                 >
                   {step.label}
                 </span>
               </div>
               {index < steps.length - 1 && (
                 <div
-                  className={`mx-3 h-px flex-1 ${
-                    index < currentStep ? 'bg-primary' : 'bg-muted'
-                  }`}
+                  className="mx-3 h-px flex-1"
+                  style={{ background: index < currentStep ? "var(--color-electric)" : "rgba(26,63,158,0.15)" }}
                 />
               )}
             </div>

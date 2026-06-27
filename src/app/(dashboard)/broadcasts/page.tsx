@@ -33,23 +33,22 @@ function percent(numerator: number, denominator: number): number {
 function RateCell({
   value,
   total,
-  color,
+  barColor,
 }: {
   value: number;
   total: number;
-  /** Tailwind bg class for the fill, e.g. "bg-primary" */
-  color: string;
+  barColor: string;
 }) {
   const pct = percent(value, total);
   return (
     <div className="flex items-center gap-2">
-      <span className="w-10 text-right text-xs tabular-nums text-muted-foreground">
+      <span className="w-10 text-right text-xs tabular-nums" style={{ color: "var(--color-kraft-ocre)" }}>
         {pct}%
       </span>
-      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+      <div className="h-1.5 w-20 overflow-hidden rounded-full" style={{ background: "rgba(26,63,158,0.15)" }}>
         <div
-          className={`h-1.5 rounded-full ${color}`}
-          style={{ width: `${pct}%` }}
+          className="h-1.5 rounded-full"
+          style={{ width: `${pct}%`, background: barColor }}
         />
       </div>
     </div>
@@ -131,7 +130,7 @@ export default function BroadcastsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--color-electric)" }} />
       </div>
     );
   }
@@ -155,9 +154,10 @@ export default function BroadcastsPage() {
         <div
           role="progressbar"
           aria-label="Broadcast in progress"
-          className="broadcast-indeterminate fixed inset-x-0 top-0 z-40 h-0.5 overflow-hidden bg-muted"
+          className="broadcast-indeterminate fixed inset-x-0 top-0 z-40 h-0.5 overflow-hidden"
+          style={{ background: "rgba(26,63,158,0.15)" }}
         >
-          <div className="broadcast-indeterminate-bar h-0.5 bg-primary" />
+          <div className="broadcast-indeterminate-bar h-0.5" style={{ background: "var(--color-electric)" }} />
           <style jsx>{`
             .broadcast-indeterminate-bar {
               width: 33%;
@@ -220,16 +220,16 @@ export default function BroadcastsPage() {
         <div className="overflow-x-auto rounded-xl" style={{ border: "1px solid rgba(159,176,201,0.18)", backgroundColor: "var(--ei-surface-card)" }}>
           <Table>
             <TableHeader>
-              <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-muted-foreground">Name</TableHead>
-                <TableHead className="hidden text-muted-foreground md:table-cell">Template</TableHead>
-                <TableHead className="hidden text-right text-muted-foreground sm:table-cell">
+              <TableRow style={{ borderColor: "rgba(43,111,219,0.25)" }} className="hover:bg-transparent">
+                <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Name</TableHead>
+                <TableHead className="hidden md:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Template</TableHead>
+                <TableHead className="hidden text-right sm:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>
                   Recipients
                 </TableHead>
-                <TableHead className="hidden text-muted-foreground lg:table-cell">Delivery</TableHead>
-                <TableHead className="hidden text-muted-foreground lg:table-cell">Read</TableHead>
-                <TableHead className="text-muted-foreground">Status</TableHead>
-                <TableHead className="hidden text-muted-foreground sm:table-cell">Date</TableHead>
+                <TableHead className="hidden lg:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Delivery</TableHead>
+                <TableHead className="hidden lg:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Read</TableHead>
+                <TableHead style={{ color: "var(--color-kraft-ocre)" }}>Status</TableHead>
+                <TableHead className="hidden sm:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -238,30 +238,31 @@ export default function BroadcastsPage() {
                 return (
                   <TableRow
                     key={broadcast.id}
-                    className="cursor-pointer border-border hover:bg-muted/50"
+                    className="cursor-pointer hover:bg-transparent"
+                    style={{ borderColor: "rgba(43,111,219,0.25)" }}
                     onClick={() => router.push(`/broadcasts/${broadcast.id}`)}
                   >
-                    <TableCell className="font-medium text-foreground">
+                    <TableCell className="font-medium" style={{ color: "var(--color-off-white)" }}>
                       {broadcast.name}
                     </TableCell>
-                    <TableCell className="hidden text-muted-foreground md:table-cell">
+                    <TableCell className="hidden md:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>
                       {broadcast.template_name}
                     </TableCell>
-                    <TableCell className="hidden text-right text-muted-foreground tabular-nums sm:table-cell">
+                    <TableCell className="hidden text-right tabular-nums sm:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>
                       {broadcast.total_recipients}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <RateCell
                         value={broadcast.delivered_count}
                         total={broadcast.total_recipients}
-                        color="bg-primary"
+                        barColor="var(--color-electric)"
                       />
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <RateCell
                         value={broadcast.read_count}
                         total={broadcast.total_recipients}
-                        color="bg-blue-500"
+                        barColor="#3b82f6"
                       />
                     </TableCell>
                     <TableCell>
@@ -277,7 +278,7 @@ export default function BroadcastsPage() {
                         {status.label}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden text-muted-foreground sm:table-cell">
+                    <TableCell className="hidden sm:table-cell" style={{ color: "var(--color-kraft-ocre)" }}>
                       {new Date(broadcast.created_at).toLocaleDateString()}
                     </TableCell>
                   </TableRow>

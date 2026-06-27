@@ -74,11 +74,11 @@ const ROLE_LABEL: Record<PeekOk['role'], string> = {
 const FAIL_COPY: Record<PeekFail['reason'], { title: string; body: string }> = {
   not_found: {
     title: 'Invite not found',
-    body: 'This link doesn’t match a valid invitation. Double-check the URL or ask the person who invited you to send a new one.',
+    body: 'This link doesn't match a valid invitation. Double-check the URL or ask the person who invited you to send a new one.',
   },
   used: {
     title: 'Invite already used',
-    body: 'This invitation has already been accepted. If that wasn’t you, ask the account admin to send a fresh link.',
+    body: 'This invitation has already been accepted. If that wasn't you, ask the account admin to send a fresh link.',
   },
   expired: {
     title: 'Invite expired',
@@ -86,7 +86,7 @@ const FAIL_COPY: Record<PeekFail['reason'], { title: string; body: string }> = {
   },
   server_error: {
     title: 'Something went wrong',
-    body: 'We couldn’t verify this invitation right now. Try refreshing the page in a moment.',
+    body: 'We couldn't verify this invitation right now. Try refreshing the page in a moment.',
   },
 };
 
@@ -220,10 +220,10 @@ export default function JoinPage() {
   // ----- Loading state (peek pending OR auth not yet resolved) -----
   if (peek === null || authedUserId === undefined) {
     return (
-      <Card className="w-full max-w-md border-border bg-card">
+      <Card className="w-full max-w-md" style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}>
         <CardContent className="flex flex-col items-center gap-3 py-12">
-          <Loader2 className="size-6 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Verifying invitation…</p>
+          <Loader2 className="size-6 animate-spin" style={{ color: "var(--color-electric)" }} />
+          <p className="text-sm" style={{ color: "var(--color-kraft-ocre)" }}>Verifying invitation…</p>
         </CardContent>
       </Card>
     );
@@ -233,13 +233,13 @@ export default function JoinPage() {
   if (!peek.ok) {
     const copy = FAIL_COPY[peek.reason];
     return (
-      <Card className="w-full max-w-md border-border bg-card">
+      <Card className="w-full max-w-md" style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}>
         <CardHeader className="items-center text-center">
           <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10">
             <MailX className="h-6 w-6 text-red-400" />
           </div>
-          <CardTitle className="text-xl text-foreground">{copy.title}</CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardTitle className="text-xl" style={{ color: "var(--color-off-white)" }}>{copy.title}</CardTitle>
+          <CardDescription style={{ color: "var(--color-kraft-ocre)" }}>
             {copy.body}
           </CardDescription>
         </CardHeader>
@@ -255,14 +255,16 @@ export default function JoinPage() {
             <>
               <Button
                 onClick={loadPeekAndAuth}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                className="w-full"
+                style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
               >
                 Try again
               </Button>
               <Link href="/signup">
                 <Button
                   variant="outline"
-                  className="w-full border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="w-full"
+                  style={{ borderColor: "rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)" }}
                 >
                   Create a new account instead
                 </Button>
@@ -271,14 +273,18 @@ export default function JoinPage() {
           ) : (
             <>
               <Link href="/signup">
-                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button
+                  className="w-full"
+                  style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
+                >
                   Create a new account instead
                 </Button>
               </Link>
               <Link href="/login">
                 <Button
                   variant="outline"
-                  className="w-full border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="w-full"
+                  style={{ borderColor: "rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)" }}
                 >
                   Sign in
                 </Button>
@@ -293,17 +299,17 @@ export default function JoinPage() {
   // ----- Peek OK -----
   const inviteHeader = (
     <CardHeader className="items-center text-center">
-      <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-        <UsersRound className="h-6 w-6 text-primary" />
+      <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: "rgba(26,63,158,0.15)" }}>
+        <UsersRound className="h-6 w-6" style={{ color: "var(--color-electric)" }} />
       </div>
-      <CardTitle className="text-xl text-foreground">
+      <CardTitle className="text-xl" style={{ color: "var(--color-off-white)" }}>
         You&apos;re invited to{' '}
-        <span className="text-primary">{peek.account_name}</span>
+        <span style={{ color: "var(--color-electric)" }}>{peek.account_name}</span>
       </CardTitle>
-      <CardDescription className="text-muted-foreground">
+      <CardDescription style={{ color: "var(--color-kraft-ocre)" }}>
         You&apos;ll join as{' '}
-        <span className="inline-flex items-center gap-1 text-foreground">
-          <ShieldCheck className="size-3.5 text-primary" />
+        <span className="inline-flex items-center gap-1" style={{ color: "var(--color-off-white)" }}>
+          <ShieldCheck className="size-3.5" style={{ color: "var(--color-electric)" }} />
           {ROLE_LABEL[peek.role]}
         </span>
         . Link valid until{' '}
@@ -321,13 +327,14 @@ export default function JoinPage() {
   if (authedUserId) {
     return (
       <>
-        <Card className="w-full max-w-md border-border bg-card">
+        <Card className="w-full max-w-md" style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}>
           {inviteHeader}
           <CardContent className="flex flex-col gap-3">
             <Button
               onClick={handleAccept}
               disabled={accepting}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              className="w-full"
+              style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
             >
               {accepting ? (
                 <>
@@ -341,9 +348,9 @@ export default function JoinPage() {
                 </>
               )}
             </Button>
-            <p className="text-center text-xs text-muted-foreground">
+            <p className="text-center text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
               Accepting moves your login into{' '}
-              <span className="text-muted-foreground">{peek.account_name}</span>. Your
+              <span style={{ color: "var(--color-kraft-ocre)" }}>{peek.account_name}</span>. Your
               empty personal account from signup will be cleaned up.
             </p>
           </CardContent>
@@ -359,37 +366,37 @@ export default function JoinPage() {
             if (!open) setConflictMessage(null);
           }}
         >
-          <DialogContent className="bg-popover border-border sm:max-w-md">
+          <DialogContent className="sm:max-w-md" style={{ background: "var(--color-card-abyssal)", borderColor: "rgba(43,111,219,0.25)" }}>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-popover-foreground">
+              <DialogTitle className="flex items-center gap-2" style={{ color: "var(--color-off-white)" }}>
                 <AlertTriangle className="size-4 text-amber-400" />
                 Can&apos;t join {peek.account_name} with this account
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground">
+              <DialogDescription style={{ color: "var(--color-kraft-ocre)" }}>
                 {conflictMessage}
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-2 py-2 text-xs text-muted-foreground">
+            <div className="space-y-2 py-2 text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
               <p>
                 To join{' '}
-                <span className="text-popover-foreground">{peek.account_name}</span>,
+                <span style={{ color: "var(--color-off-white)" }}>{peek.account_name}</span>,
                 sign out and sign up again with a different email address.
                 The invite link stays valid as long as it hasn&apos;t
                 expired.
               </p>
             </div>
-            <DialogFooter className="bg-popover border-border">
+            <DialogFooter style={{ background: "var(--color-card-abyssal)", borderColor: "rgba(43,111,219,0.25)" }}>
               <Button
                 variant="outline"
                 onClick={() => setConflictMessage(null)}
-                className="border-border text-popover-foreground hover:bg-muted"
+                style={{ borderColor: "rgba(43,111,219,0.25)", color: "var(--color-off-white)" }}
               >
                 Stay signed in
               </Button>
               <Button
                 onClick={handleSignOutAndRetry}
                 disabled={signingOut}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
               >
                 {signingOut ? (
                   <>
@@ -409,18 +416,22 @@ export default function JoinPage() {
 
   // ----- Not authed: prompt to sign up or sign in -----
   return (
-    <Card className="w-full max-w-md border-border bg-card">
+    <Card className="w-full max-w-md" style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)" }}>
       {inviteHeader}
       <CardContent className="flex flex-col gap-2">
         <Link href={`/signup?invite=${encodeURIComponent(token!)}`}>
-          <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button
+            className="w-full"
+            style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
+          >
             Create account &amp; join
           </Button>
         </Link>
         <Link href={`/login?invite=${encodeURIComponent(token!)}`}>
           <Button
             variant="outline"
-            className="w-full border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="w-full"
+            style={{ borderColor: "rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)" }}
           >
             I already have an account
           </Button>

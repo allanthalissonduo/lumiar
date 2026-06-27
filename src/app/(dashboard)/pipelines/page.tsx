@@ -299,12 +299,12 @@ export default function PipelinesPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-          <div className="h-9 w-28 animate-pulse rounded-lg bg-muted" />
+          <div className="h-8 w-48 animate-pulse rounded" style={{ background: "rgba(26,63,158,0.15)" }} />
+          <div className="h-9 w-28 animate-pulse rounded-lg" style={{ background: "rgba(26,63,158,0.15)" }} />
         </div>
         <div className="flex gap-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-96 w-72 animate-pulse rounded-xl bg-muted/50" />
+            <div key={i} className="h-96 w-72 animate-pulse rounded-xl" style={{ background: "rgba(26,63,158,0.10)" }} />
           ))}
         </div>
       </div>
@@ -330,10 +330,11 @@ export default function PipelinesPage() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              className="w-64 border-border bg-popover text-popover-foreground"
+              className="w-64"
+              style={{ background: "var(--color-card-abyssal)", border: "1px solid rgba(43,111,219,0.25)" }}
             >
               {pipelines.length === 0 && (
-                <DropdownMenuItem disabled className="text-muted-foreground">
+                <DropdownMenuItem disabled style={{ color: "var(--color-kraft-ocre)" }}>
                   No pipelines yet
                 </DropdownMenuItem>
               )}
@@ -341,21 +342,17 @@ export default function PipelinesPage() {
                 <DropdownMenuItem
                   key={p.id}
                   onClick={() => setSelectedPipelineId(p.id)}
-                  className={
-                    p.id === selectedPipelineId
-                      ? "text-primary"
-                      : "text-popover-foreground"
-                  }
+                  style={{ color: p.id === selectedPipelineId ? "var(--color-electric)" : "var(--color-off-white)" }}
                 >
                   <GitBranch className="mr-2 h-3.5 w-3.5" />
                   {p.name}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuSeparator style={{ background: "rgba(43,111,219,0.25)" }} />
               {selectedPipeline && (
                 <DropdownMenuItem
                   onClick={() => setSettingsOpen(true)}
-                  className="text-popover-foreground"
+                  style={{ color: "var(--color-off-white)" }}
                 >
                   <Settings className="mr-2 h-3.5 w-3.5" />
                   Manage Pipelines
@@ -371,7 +368,8 @@ export default function PipelinesPage() {
             canAct={canEditSettings}
             gateReason="create pipelines"
             onClick={() => setNewPipelineOpen(true)}
-            className="border-border bg-card text-foreground hover:bg-muted"
+            className="inline-flex items-center rounded-lg px-3 py-2 text-sm"
+            style={{ border: "1px solid rgba(43,111,219,0.25)", background: "var(--color-card-abyssal)", color: "var(--color-off-white)" }}
           >
             <Plus className="mr-1 h-4 w-4" />
             Add Pipeline
@@ -381,7 +379,8 @@ export default function PipelinesPage() {
             gateReason="create deals"
             disabled={!selectedPipelineId || stages.length === 0}
             onClick={() => handleAddDeal()}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium"
+            style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
           >
             <Plus className="mr-1 h-4 w-4" />
             Add Deal
@@ -427,37 +426,38 @@ export default function PipelinesPage() {
 
       {/* New Pipeline Dialog */}
       <Dialog open={newPipelineOpen} onOpenChange={setNewPipelineOpen}>
-        <DialogContent className="sm:max-w-sm bg-popover border-border">
+        <DialogContent className="sm:max-w-sm" style={{ background: "var(--color-card-abyssal)", border: "1px solid rgba(43,111,219,0.25)" }}>
           <DialogHeader>
-            <DialogTitle className="text-popover-foreground">New Pipeline</DialogTitle>
+            <DialogTitle style={{ color: "var(--color-off-white)" }}>New Pipeline</DialogTitle>
           </DialogHeader>
           <div className="py-2">
-            <Label className="text-muted-foreground">Pipeline Name</Label>
+            <Label style={{ color: "var(--color-kraft-ocre)" }}>Pipeline Name</Label>
             <Input
               value={newPipelineName}
               onChange={(e) => setNewPipelineName(e.target.value)}
               placeholder="e.g., Enterprise Sales"
-              className="mt-2 bg-muted border-border text-foreground"
+              className="mt-2"
+              style={{ background: "rgba(26,63,158,0.15)", border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-off-white)" }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleCreatePipeline();
               }}
             />
-            <p className="mt-2 text-xs text-muted-foreground">
+            <p className="mt-2 text-xs" style={{ color: "var(--color-kraft-ocre)" }}>
               Default stages (New Lead → Won) will be created automatically.
             </p>
           </div>
-          <DialogFooter className="bg-popover/50 border-border">
+          <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setNewPipelineOpen(false)}
-              className="border-border text-muted-foreground hover:bg-muted"
+              style={{ border: "1px solid rgba(43,111,219,0.25)", color: "var(--color-kraft-ocre)", background: "transparent" }}
             >
               Cancel
             </Button>
             <Button
               onClick={handleCreatePipeline}
               disabled={creating || !newPipelineName.trim()}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              style={{ background: "var(--color-electric)", color: "var(--color-off-white)" }}
             >
               {creating ? "Creating..." : "Create Pipeline"}
             </Button>
