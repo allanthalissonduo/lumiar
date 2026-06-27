@@ -74,11 +74,11 @@ const ROLE_LABEL: Record<PeekOk['role'], string> = {
 const FAIL_COPY: Record<PeekFail['reason'], { title: string; body: string }> = {
   not_found: {
     title: 'Invite not found',
-    body: 'This link doesn't match a valid invitation. Double-check the URL or ask the person who invited you to send a new one.',
+    body: "This link doesn't match a valid invitation. Double-check the URL or ask the person who invited you to send a new one.",
   },
   used: {
     title: 'Invite already used',
-    body: 'This invitation has already been accepted. If that wasn't you, ask the account admin to send a fresh link.',
+    body: "This invitation has already been accepted. If that wasn't you, ask the account admin to send a fresh link.",
   },
   expired: {
     title: 'Invite expired',
@@ -86,7 +86,7 @@ const FAIL_COPY: Record<PeekFail['reason'], { title: string; body: string }> = {
   },
   server_error: {
     title: 'Something went wrong',
-    body: 'We couldn't verify this invitation right now. Try refreshing the page in a moment.',
+    body: "We couldn't verify this invitation right now. Try refreshing the page in a moment.",
   },
 };
 

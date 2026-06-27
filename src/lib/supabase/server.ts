@@ -1,4 +1,4 @@
-import { MOCK_USER, MOCK_PROFILE, MOCK_ACCOUNT, MOCK_CONTACTS, MOCK_TAGS, MOCK_TEMPLATES, MOCK_BROADCASTS, MOCK_AUTOMATIONS, MOCK_MEMBERS } from './mock-data'
+import { MOCK_USER, MOCK_PROFILE, MOCK_ACCOUNT, MOCK_CONTACTS, MOCK_TAGS, MOCK_TEMPLATES, MOCK_BROADCASTS, MOCK_AUTOMATIONS, MOCK_MEMBERS, MOCK_AGENTS } from './mock-data'
 
 const TABLE_DATA: Record<string, unknown[]> = {
   profiles: [MOCK_PROFILE],
@@ -10,6 +10,7 @@ const TABLE_DATA: Record<string, unknown[]> = {
   message_templates: MOCK_TEMPLATES,
   broadcasts: MOCK_BROADCASTS,
   automations: MOCK_AUTOMATIONS,
+  agents: MOCK_AGENTS,
   account_members: MOCK_MEMBERS,
   contact_tags: [],
   custom_fields: [],

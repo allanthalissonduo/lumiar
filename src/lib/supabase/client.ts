@@ -3,7 +3,7 @@
 import {
   MOCK_CONTACTS, MOCK_TAGS, MOCK_CONVERSATIONS, MOCK_MESSAGES,
   MOCK_TEMPLATES, MOCK_BROADCASTS, MOCK_AUTOMATIONS, MOCK_MEMBERS,
-  MOCK_PROFILE, MOCK_ACCOUNT, MOCK_USER,
+  MOCK_PROFILE, MOCK_ACCOUNT, MOCK_USER, MOCK_AGENTS,
 } from './mock-data'
 
 const TABLE_DATA: Record<string, unknown[]> = {
@@ -16,6 +16,7 @@ const TABLE_DATA: Record<string, unknown[]> = {
   message_templates: MOCK_TEMPLATES,
   broadcasts: MOCK_BROADCASTS,
   automations: MOCK_AUTOMATIONS,
+  agents: MOCK_AGENTS,
   account_members: MOCK_MEMBERS,
   contact_tags: [],
   contact_custom_values: [],

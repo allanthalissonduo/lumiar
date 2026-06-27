@@ -542,3 +542,43 @@ export interface AutomationLog {
   created_at: string;
   contact?: Contact;
 }
+
+// ============================================================
+// AI Agents
+// ============================================================
+
+export type AgentTone = "formal" | "amigável" | "técnico";
+
+export interface AgentTool {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+}
+
+export interface AgentObjective {
+  id: string;
+  text: string;
+  metric: string;
+  target: number;
+}
+
+export interface Agent {
+  id: string;
+  account_id: string;
+  name: string;
+  description: string;
+  /** OpenRouter model identifier, e.g. "anthropic/claude-sonnet-4-6" */
+  model: string;
+  system_prompt: string;
+  tone: AgentTone;
+  tools: AgentTool[];
+  /** Skill IDs enabled for this agent */
+  skill_ids: string[];
+  objectives: AgentObjective[];
+  is_active: boolean;
+  /** When true, agent auto-replies to every new message in assigned conversations */
+  auto_reply: boolean;
+  created_at: string;
+  updated_at: string;
+}

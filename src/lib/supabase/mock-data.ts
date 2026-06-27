@@ -170,3 +170,50 @@ export const MOCK_AUTOMATIONS = [
 export const MOCK_MEMBERS: import('@/types').AccountMember[] = [
   { user_id: 'mock-user-id', full_name: 'Allan Thalisson', email: 'allan@duo.studio', avatar_url: null, role: 'owner', joined_at: new Date().toISOString() },
 ]
+
+export const MOCK_AGENTS: import('@/types').Agent[] = [
+  {
+    id: 'agent-1',
+    account_id: 'mock-account-id',
+    name: 'Assistente de Vendas',
+    description: 'Qualifica leads, responde dúvidas de produtos e encaminha pedidos.',
+    model: 'anthropic/claude-haiku-4-5',
+    system_prompt: 'Você é um assistente de vendas da loja. Responda de forma amigável e objetiva.\n\nSempre:\n- Confirme o nome do cliente\n- Apresente produtos relevantes\n- Ofereça ajuda com dúvidas sobre entrega e devolução',
+    tone: 'amigável',
+    tools: [
+      { id: 'vtex-order', name: 'Consultar Pedido', description: 'Busca status e detalhes de um pedido pelo ID.', enabled: true },
+      { id: 'vtex-catalog', name: 'Buscar Produto', description: 'Retorna nome, preço e disponibilidade de produtos.', enabled: true },
+      { id: 'vtex-cart', name: 'Criar Carrinho', description: 'Cria um carrinho e retorna link de checkout.', enabled: false },
+    ],
+    skill_ids: ['order-status', 'escalate'],
+    objectives: [
+      { id: '1', text: 'Taxa de resolução sem humano ≥ 70%', metric: 'resolution_rate', target: 70 },
+      { id: '2', text: 'Tempo médio de resposta ≤ 10s', metric: 'avg_response_ms', target: 10000 },
+    ],
+    is_active: true,
+    auto_reply: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'agent-2',
+    account_id: 'mock-account-id',
+    name: 'Suporte Pós-Compra',
+    description: 'Rastreia pedidos, processa devoluções e escala reclamações.',
+    model: 'anthropic/claude-sonnet-4-6',
+    system_prompt: 'Você é um agente de suporte pós-compra. Seja empático e resolva problemas rapidamente.',
+    tone: 'formal',
+    tools: [
+      { id: 'vtex-order', name: 'Consultar Pedido', description: 'Busca status e detalhes de um pedido pelo ID.', enabled: true },
+      { id: 'webhook', name: 'Webhook Customizado', description: 'Chama uma URL externa com payload JSON.', enabled: true },
+    ],
+    skill_ids: ['return-request', 'escalate'],
+    objectives: [
+      { id: '1', text: 'CSAT ≥ 4.5 estrelas', metric: 'csat', target: 4.5 },
+    ],
+    is_active: false,
+    auto_reply: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+]

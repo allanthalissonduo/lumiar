@@ -18,6 +18,7 @@ import {
   Square,
   X,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GatedButton } from "@/components/ui/gated-button";
@@ -98,6 +99,10 @@ interface MessageComposerProps {
   onOpenTemplates: () => void;
   replyTo?: ReplyDraft | null;
   onClearReply?: () => void;
+  /** Recent messages passed for AI suggest context. */
+  recentMessages?: Array<{ role: "user" | "assistant"; content: string }>;
+  /** Contact name for AI personalization. */
+  contactName?: string;
 }
 
 function formatDuration(seconds: number): string {
@@ -119,9 +124,12 @@ export function MessageComposer({
   onOpenTemplates,
   replyTo,
   onClearReply,
+  recentMessages,
+  contactName,
 }: MessageComposerProps) {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Media attachment state. `draft` holds an uploaded-but-not-yet-sent
@@ -204,6 +212,37 @@ export function MessageComposer({
       setSending(false);
     }
   }, [text, sending, sessionExpired, onSend, replyTo?.id]);
+
+  const handleSuggest = useCallback(async () => {
+    if (suggesting || !recentMessages?.length) return;
+    setSuggesting(true);
+    try {
+      const res = await fetch("/api/ai/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: recentMessages, contact_name: contactName }),
+      });
+      if (!res.ok) {
+        const { error } = await res.json().catch(() => ({ error: "Erro ao sugerir resposta" }));
+        toast.error(error ?? "Erro ao sugerir resposta");
+        return;
+      }
+      const { suggestion } = await res.json();
+      if (suggestion) {
+        setText(suggestion);
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.focus();
+            adjustHeight();
+          }
+        }, 0);
+      }
+    } catch {
+      toast.error("Erro ao conectar com o agente IA");
+    } finally {
+      setSuggesting(false);
+    }
+  }, [suggesting, recentMessages, contactName, adjustHeight]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -542,6 +581,24 @@ export function MessageComposer({
           >
             <LayoutTemplate className="h-4 w-4" />
           </GatedButton>
+
+          {/* AI suggest button — visible only when there are messages to context */}
+          {recentMessages && recentMessages.length > 0 && (
+            <button
+              type="button"
+              title="Sugerir resposta com IA"
+              disabled={suggesting || readOnly || sessionExpired}
+              onClick={() => void handleSuggest()}
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md p-0 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ color: suggesting ? "var(--ei-iris)" : "var(--ei-text-soft)" }}
+            >
+              {suggesting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+            </button>
+          )}
 
           <textarea
             ref={textareaRef}

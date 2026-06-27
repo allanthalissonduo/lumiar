@@ -1144,6 +1144,11 @@ export function MessageThread({
         onOpenTemplates={handleOpenTemplates}
         replyTo={replyTo}
         onClearReply={() => setReplyTo(null)}
+        contactName={contact?.name}
+        recentMessages={messages.slice(-20).map((m) => ({
+          role: m.sender_type === "customer" ? "user" : "assistant",
+          content: m.content_text ?? "",
+        }))}
       />
 
       <TemplatePicker
