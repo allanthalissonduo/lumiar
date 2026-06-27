@@ -100,8 +100,30 @@
   --ei-shadow-raise:   0 2px 4px rgba(10, 22, 40, 0.14), 0 16px 40px rgba(10, 22, 40, 0.12);
 
   /* — Typography — */
-  --ei-font-serif:  Georgia, 'Times New Roman', serif;
-  --ei-font-mono:   'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --ei-font-serif:  var(--font-serif), Georgia, 'Times New Roman', serif;
+  --ei-font-sans:   var(--font-sans), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --ei-font-mono:   var(--font-mono), 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* — Type scale — */
+  --fs-display: clamp(3rem, 5vw, 5.5rem);
+  --fs-h1:      clamp(2.25rem, 4vw, 3.5rem);
+  --fs-h2:      clamp(1.75rem, 3vw, 2.5rem);
+  --fs-h3:      1.5rem;
+  --fs-lead:    1.25rem;
+  --fs-body:    1rem;
+  --fs-mono:    0.8125rem;
+  --fs-label:   0.6875rem;
+
+  /* — Spec aliases (--color-* conforme design system v1) — */
+  --color-abyssal:     #0A1628;
+  --color-royal-blue:  #1A3F9E;
+  --color-electric:    #2B6FDB;
+  --color-card-abyssal:#0E1C32;
+  --color-mahogany:    #7A4020;
+  --color-kraft-ocre:  #C8A888;
+  --color-iris-glow:   #1AB8A0;
+  --color-off-white:   #F5F3EE;
+  --color-papel:       #EAE6DC;
 
   /* — Spacing (pingo do i = 8px) — */
   --ei-sp-1: 4px;  --ei-sp-2: 8px;  --ei-sp-3: 12px; --ei-sp-4: 16px;
@@ -252,6 +274,300 @@ html[data-theme="rose"] {
   --sidebar-primary:     oklch(0.645 0.22 16);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-ring:        oklch(0.645 0.22 16);
+}
+
+/* ============================================================
+ * Eiaye DS · Typography utility classes
+ * ============================================================ */
+.text-display {
+  font-family: var(--ei-font-serif);
+  font-size: var(--fs-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-off-white);
+}
+.text-h1 {
+  font-family: var(--ei-font-serif);
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--color-off-white);
+}
+.text-h2 {
+  font-family: var(--ei-font-serif);
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-off-white);
+}
+.text-h3 {
+  font-family: var(--ei-font-serif);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--color-off-white);
+}
+.text-lead {
+  font-family: var(--ei-font-sans);
+  font-size: var(--fs-lead);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-kraft-ocre);
+}
+.text-body {
+  font-family: var(--ei-font-sans);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-off-white);
+}
+.text-mono {
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-mono);
+  color: var(--color-off-white);
+}
+.text-label {
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-kraft-ocre);
+}
+
+/* ============================================================
+ * Eiaye DS · Buttons
+ * ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-family: var(--ei-font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--color-royal-blue);
+  color: var(--color-off-white);
+  border-color: var(--color-royal-blue);
+}
+.btn-primary:hover {
+  background: var(--color-electric);
+  border-color: var(--color-electric);
+}
+.btn-secondary {
+  background: rgba(43, 111, 219, 0.12);
+  color: var(--color-electric);
+  border-color: rgba(43, 111, 219, 0.40);
+}
+.btn-secondary:hover {
+  background: rgba(43, 111, 219, 0.20);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--color-kraft-ocre);
+  border-color: rgba(200, 168, 136, 0.30);
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.btn-ghost:hover {
+  color: var(--color-off-white);
+  border-color: rgba(200, 168, 136, 0.60);
+}
+
+/* ============================================================
+ * Eiaye DS · Badges
+ * ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.badge-operational {
+  background: rgba(26, 184, 160, 0.10);
+  color: var(--color-iris-glow);
+  border: 1px solid rgba(26, 184, 160, 0.25);
+}
+.badge-active {
+  background: rgba(43, 111, 219, 0.12);
+  color: var(--color-electric);
+  border: 1px solid rgba(43, 111, 219, 0.30);
+}
+.badge-draft {
+  background: rgba(200, 168, 136, 0.10);
+  color: var(--color-kraft-ocre);
+  border: 1px solid rgba(200, 168, 136, 0.25);
+}
+
+/* ============================================================
+ * Eiaye DS · Cards
+ * ============================================================ */
+.card {
+  background: var(--color-card-abyssal);
+  border: 1px solid rgba(159, 176, 201, 0.18);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: var(--ei-shadow-card);
+}
+.card-label {
+  display: block;
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-kraft-ocre);
+  margin-bottom: 12px;
+}
+.card-ignite {
+  background: var(--color-card-abyssal);
+  border: 1px solid rgba(43, 111, 219, 0.40);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: var(--ei-glow-cobalt);
+}
+
+/* ============================================================
+ * Eiaye DS · Log entry & Data stream
+ * ============================================================ */
+.log-entry {
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-mono);
+  color: var(--color-kraft-ocre);
+  line-height: 1.8;
+  padding: 16px;
+  background: rgba(10, 22, 40, 0.60);
+  border: 1px solid rgba(159, 176, 201, 0.14);
+  border-radius: 4px;
+}
+.log-value { color: var(--color-off-white); }
+.log-ok    { color: var(--color-iris-glow); }
+
+.data-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-mono);
+}
+.data-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dr-key   { color: var(--color-kraft-ocre); letter-spacing: 0.08em; text-transform: uppercase; min-width: 80px; }
+.dr-line  { flex: 1; border-top: 1px dashed rgba(159, 176, 201, 0.20); }
+.dr-value { color: var(--color-off-white); }
+.dr-value.ok { color: var(--color-iris-glow); }
+
+.text-telemetry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-mono);
+}
+.tele-key   { color: var(--color-kraft-ocre); letter-spacing: 0.08em; text-transform: uppercase; }
+.tele-dots  { flex: 1; border-top: 1px dotted rgba(159, 176, 201, 0.20); min-width: 20px; }
+.tele-value { color: var(--color-off-white); }
+.tele-value.ok { color: var(--color-iris-glow); }
+
+/* ============================================================
+ * Eiaye DS · Section eyebrow
+ * ============================================================ */
+.section-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.eyebrow-num {
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  color: var(--color-electric);
+  letter-spacing: 0.1em;
+}
+.eyebrow-label {
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-kraft-ocre);
+}
+
+/* ============================================================
+ * Eiaye DS · Grid background náutico
+ * ============================================================ */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(159, 176, 201, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(159, 176, 201, 0.07) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ============================================================
+ * Eiaye DS · Topbar & Status bar
+ * ============================================================ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 44px;
+  background: rgba(10, 22, 40, 0.80);
+  border-bottom: 1px solid rgba(159, 176, 201, 0.14);
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+.topbar-nav { display: flex; gap: 32px; list-style: none; }
+.topbar-nav a { color: var(--color-kraft-ocre); text-decoration: none; transition: color 0.15s; }
+.topbar-nav a:hover { color: var(--color-off-white); }
+.topbar-right { color: var(--color-electric); }
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 36px;
+  background: rgba(10, 22, 40, 0.95);
+  border-top: 1px solid rgba(159, 176, 201, 0.14);
+  font-family: var(--ei-font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-kraft-ocre);
+}
+.sb-status span, .sb-build span { color: var(--color-iris-glow); }
+.sb-brand { color: var(--color-electric); }
+
+/* ============================================================
+ * Eiaye DS · Glyphs
+ * ============================================================ */
+.glyph {
+  font-family: var(--ei-font-mono);
+  color: var(--color-electric);
+  font-size: 1rem;
+  line-height: 1;
 }
 
 @layer base {
